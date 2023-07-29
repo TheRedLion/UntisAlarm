@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.carlkarenfort.test.api.ApiCalls
 import com.carlkarenfort.test.ui.theme.TestTheme
 
 private const val TAG = "MainActivity"
@@ -35,20 +34,26 @@ class MainActivity : ComponentActivity() {
         button.setOnClickListener{
             Log.i(TAG,"button clicked")
             //Get api data
-            makeAIPcall()
+            makeAPIcall()
         }
 
 
     }
 
-    private fun makeAIPcall() {
-        val strForeName = foreName.text.toString()
-        val strLongName = longName.text.toString()
-        val strUsername = username.text.toString()
-        val strPassword = password.text.toString()
-        Log.i(TAG, "foreName (makeAPICALL):$strForeName $strLongName $strUsername $strPassword")
+    private fun makeAPIcall() {
+        //set logindata
+        //ApiCalls.setUsername(username.text.toString())
+        //ApiCalls.setPassword(password.text.toString())
+        //ApiCalls.setServer()
 
-        ApiCalls.call(strUsername,strPassword)
+        //test login data to test api
+        ApiCalls.setUsername("KarenfCar")
+        ApiCalls.setPassword("Mytimetable1!")
+        ApiCalls.setServer("https://nessa.webuntis.com")
+        ApiCalls.setSchoolName("gym-beskidenstrasse")
+        ApiCalls.setUntisID(436)
+        //make API call
+        ApiCalls.APIcall()
     }
 }
 
