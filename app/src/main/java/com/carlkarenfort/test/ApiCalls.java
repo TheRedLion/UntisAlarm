@@ -29,20 +29,19 @@ public class ApiCalls {
     private static Integer untisID;
 
     //public method to start thread
-
     public static void APIcall() {
         Log.i(TAG,"makeAPIcall");
         APIthread.start();
     }
 
     //new thread for network activity
-
     static Thread APIthread = new Thread(new Runnable() {
         @Override
         public void run() {
             try  {
                 //code on this thread
                 Log.i(TAG,"inthread");
+
                 call();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -79,6 +78,7 @@ public class ApiCalls {
         }
     }
 
+    //setter
     public static void setUsername(String username) {
         ApiCalls.username = username;
     }

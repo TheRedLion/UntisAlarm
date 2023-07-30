@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <!-- enter fore name -->
+  <EditText
+      android:id="@+id/foreName"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="200dp"
+      android:ems="15"
+      android:hint="Fore Name"
+      android:inputType="text"
+      android:textSize="20sp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.5"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <!-- enter long name-->
+  <EditText
+      android:id="@+id/longName"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:ems="15"
+      android:hint="Last Name"
+      android:inputType="text"
+      android:textSize="20sp"
+      app:layout_constraintEnd_toEndOf="@+id/foreName"
+      app:layout_constraintStart_toStartOf="@+id/foreName"
+      app:layout_constraintTop_toBottomOf="@+id/foreName" />
+
+  <!-- enter webuntis user name -->
+  <EditText
+      android:id="@+id/untisUsername"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:ems="15"
+      android:hint="Webuntis Username"
+      android:inputType="text"
+      android:textSize="20sp"
+      app:layout_constraintEnd_toEndOf="@+id/longName"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="@+id/longName"
+      app:layout_constraintTop_toBottomOf="@+id/untisURL" />
+
+  <!-- enter your schools webuntis url -->
+  <EditText
+      android:id="@+id/untisURL"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:ems="15"
+      android:hint="Webuntis URL"
+      android:inputType="text"
+      android:textSize="20sp"
+      app:layout_constraintEnd_toEndOf="@+id/longName"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="@+id/longName"
+      app:layout_constraintTop_toBottomOf="@+id/longName" />
+
+  <!-- enter your webuntis password -->
+  <EditText
+      android:id="@+id/untisPassword"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:ems="15"
+      android:hint="Webuntis Passowrd"
+      android:inputType="textPassword"
+      android:textSize="20sp"
+      app:layout_constraintEnd_toEndOf="@+id/untisUsername"
+      app:layout_constraintStart_toStartOf="@+id/untisUsername"
+      app:layout_constraintTop_toBottomOf="@+id/untisUsername" />
+
+  <!-- confirm entered values and to to MainActivity-->
+  <Button
+      android:id="@+id/runButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="30dp"
+      android:text="Log in"
+      app:layout_constraintEnd_toEndOf="@+id/untisPassword"
+      app:layout_constraintStart_toStartOf="@+id/untisPassword"
+      app:layout_constraintTop_toBottomOf="@+id/untisPassword" />
+
+  <!-- since passowords are stored unencryped warn users of the risk -->
+  <TextView
+      android:id="@+id/encryptionWarning"
+      android:layout_width="200dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="50dp"
+      android:text="Warning: Passowords are not encrypted, your account may be compromised! Do not use this app as a teacher! Your Webuntis Password should not be used on any other platform!"
+      android:textColor="#F44336"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.497"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

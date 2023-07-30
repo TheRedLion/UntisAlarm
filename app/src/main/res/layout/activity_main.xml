@@ -5,123 +5,77 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/foreName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="100dp"
-        android:text="Vorname:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+  <!-- toggle alarm on or off -->
+  <Switch
+      android:id="@+id/toggleAlarm"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="40dp"
+      android:scaleX="1.8"
+      android:scaleY="1.8"
+      app:layout_constraintEnd_toEndOf="@+id/alarmPreview"
+      app:layout_constraintStart_toStartOf="@+id/alarmPreview"
+      app:layout_constraintTop_toBottomOf="@+id/alarmPreview" />
 
-    <TextView
-        android:id="@+id/longName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Nachname:"
-        app:layout_constraintEnd_toEndOf="@+id/foreName"
-        app:layout_constraintTop_toBottomOf="@+id/foreName" />
+  <!-- go back to welcome screen -->
+  <Button
+      android:id="@+id/addNewUser"
+      style="@style/Widget.AppCompat.Button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="20dp"
+      android:layout_marginTop="20dp"
+      android:text="new User"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Nutzername:"
-        app:layout_constraintEnd_toEndOf="@+id/foreName"
-        app:layout_constraintTop_toBottomOf="@+id/longName" />
+  <!-- show the current TBS-->
+  <TextView
+      android:id="@+id/timeBeforeSchool"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="130dp"
+      android:text="60m"
+      android:textSize="25sp"
+      android:textStyle="bold"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.5"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Passwort:"
-        app:layout_constraintEnd_toEndOf="@+id/foreName"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+  <!-- enter a new TBS -->
+  <EditText
+      android:id="@+id/setTBS"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="30dp"
+      android:ems="6"
+      android:inputType="time"
+      android:textSize="20sp"
+      app:layout_constraintEnd_toEndOf="@+id/timeBeforeSchool"
+      app:layout_constraintStart_toStartOf="@+id/timeBeforeSchool"
+      app:layout_constraintTop_toBottomOf="@+id/timeBeforeSchool" />
 
-    <TextView
-        android:id="@+id/testoutput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="400dp"
-        android:text="out:"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+  <!-- comfirm the new TBS-->
+  <Button
+      android:id="@+id/updateTBS"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="20dp"
+      android:text="Update"
+      app:layout_constraintStart_toEndOf="@+id/setTBS"
+      app:layout_constraintTop_toTopOf="@+id/setTBS" />
 
-    <EditText
-        android:id="@+id/foreNameField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:ems="15"
-        android:hint="Vorname hier eingeben"
-        android:inputType="text"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/foreName"
-        app:layout_constraintStart_toEndOf="@+id/foreName"
-        app:layout_constraintTop_toTopOf="@+id/foreName" />
-
-    <EditText
-        android:id="@+id/longNameField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="Nachname hier eingeben"
-        android:inputType="text"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/longName"
-        app:layout_constraintStart_toStartOf="@+id/foreNameField"
-        app:layout_constraintTop_toTopOf="@+id/longName" />
-
-    <EditText
-        android:id="@+id/untisUsernameField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="Webuntis Nutzername eingeben"
-        android:inputType="text"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/username"
-        app:layout_constraintStart_toStartOf="@+id/longNameField"
-        app:layout_constraintTop_toTopOf="@+id/username" />
-
-    <EditText
-        android:id="@+id/untisPasswordField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="15"
-        android:hint="Webuntis Passowrt hier eingeben"
-        android:inputType="textPassword"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/password"
-        app:layout_constraintStart_toStartOf="@+id/untisUsernameField"
-        app:layout_constraintTop_toTopOf="@+id/password" />
-
-    <TextView
-        android:id="@+id/output"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:text="TextView"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/testoutput"
-        app:layout_constraintStart_toEndOf="@+id/testoutput"
-        app:layout_constraintTop_toTopOf="@+id/testoutput" />
-
-    <Button
-        android:id="@+id/runButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="330dp"
-        android:text="Start"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+  <!-- display the next alarm time -->
+  <TextView
+      android:id="@+id/alarmPreview"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="70dp"
+      android:text="07:00"
+      android:textSize="24sp"
+      android:textStyle="bold"
+      app:layout_constraintEnd_toEndOf="@+id/setTBS"
+      app:layout_constraintStart_toStartOf="@+id/setTBS"
+      app:layout_constraintTop_toBottomOf="@+id/setTBS" />
 </androidx.constraintlayout.widget.ConstraintLayout>
