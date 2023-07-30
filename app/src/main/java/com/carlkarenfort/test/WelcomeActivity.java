@@ -1,6 +1,8 @@
 package com.carlkarenfort.test;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -16,6 +18,7 @@ public class WelcomeActivity extends AppCompatActivity {
     EditText untisUserName;
     Button runButton;
 
+    Context context = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +35,15 @@ public class WelcomeActivity extends AppCompatActivity {
 
         runButton.setOnClickListener((v)->{
             //getID from foreName and longName
-            Log.i(TAG,foreName.toString());
-            Log.i(TAG,foreName.toString());
+
             //set values in store data
-            //StoreData.setUntisID(0) //tbd
-            //StoreData.setUntisUsername(untisUserName.)
-            //StoreData.setUntisPassword(untisPassword.toString())
-            //StoreData.setUntisServer(StoreData.returnServerFromURL(untisURL.))
+            StoreData.setUntisID(423); //tbd
+            StoreData.setUntisUsername(untisUserName.getText().toString());
+            StoreData.setUntisPassword(untisPassword.getText().toString());
+            StoreData.setUntisServer(StoreData.returnServerFromURL(untisURL.getText().toString()));
+            StoreData.setUntisSchool(StoreData.returnSchoolFromURL(untisURL.getText().toString()));
 
-            //TODO("store data in sharedPrefs")
-
+            StoreData.storeData(context);
             //TODO("go to MainActivity")
         });
 

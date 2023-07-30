@@ -2,6 +2,7 @@ package com.carlkarenfort.test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     TextView alarmPreview;
     Switch toggleAlarm;
 
+    Context context = this;
     Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
 
         //set listener for setting a new TBS
         updateTBS.setOnClickListener((v)->{
+            //temp logging
+            StoreData.loadData(context);
+            Log.i(TAG,StoreData.getUntisID().toString());
+            Log.i(TAG,StoreData.getUntisServer());
+            Log.i(TAG,StoreData.getUntisSchool());
+            Log.i(TAG,StoreData.getUntisUsername());
+            Log.i(TAG,StoreData.getUntisPassword());
+
 
             //when clicked
             Log.i(TAG,"updating TBS");

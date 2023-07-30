@@ -2,6 +2,7 @@ package com.carlkarenfort.test;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.foundation.gestures.ForEachGestureKt;
@@ -12,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class StoreData extends AppCompatActivity {
+    private static String TAG = "StoreData";
     private static Integer untisID;
     private static String untisUsername;
     private static String untisPassword;
@@ -29,8 +31,8 @@ public class StoreData extends AppCompatActivity {
     public static final String ACTIVE = "active";
     public static final String SHARED_PREFS = "sharedPrefs";
     //store data in shared prefs
-    public void storeData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+    public static void storeData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putInt(ID,untisID);
@@ -40,11 +42,20 @@ public class StoreData extends AppCompatActivity {
         editor.putString(SCHOOL, untisSchool);
         editor.putInt(TBS,timeBeforeSchool);
         editor.putBoolean(ACTIVE,alarmAcive);
+
+        Log.i(TAG, "in store data");
+        Log.i(TAG, untisID.toString());
+        Log.i(TAG, untisUsername);
+        Log.i(TAG, untisPassword);
+        Log.i(TAG, untisServer);
+        Log.i(TAG, untisSchool);
+        Log.i(TAG, timeBeforeSchool.toString());
+        Log.i(TAG, alarmAcive.toString());
     }
 
     //retrieve data and store in class variables
-    public void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+    public static void loadData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         untisID = sharedPreferences.getInt(ID, 0);
         untisUsername = sharedPreferences.getString(USERNAME, "");
         untisPassword = sharedPreferences.getString(PASSWORD, "");
@@ -52,6 +63,16 @@ public class StoreData extends AppCompatActivity {
         untisSchool = sharedPreferences.getString(SCHOOL, "");
         timeBeforeSchool = sharedPreferences.getInt(TBS, 60);
         alarmAcive = sharedPreferences.getBoolean(ACTIVE, false);
+
+        //temp logs
+        Log.i(TAG, "in load data");
+        Log.i(TAG, untisID.toString());
+        Log.i(TAG, untisUsername);
+        Log.i(TAG, untisPassword);
+        Log.i(TAG, untisServer);
+        Log.i(TAG, untisSchool);
+        Log.i(TAG, timeBeforeSchool.toString());
+        Log.i(TAG, alarmAcive.toString());
     }
 
     //take login url and extract the Server adress
