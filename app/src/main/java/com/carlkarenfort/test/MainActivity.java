@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     Button updateTBS;
     TextView alarmPreview;
     Switch toggleAlarm;
-
+    TextView tempDisplay;
     Context context = this;
     Intent intent;
     @Override
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         updateTBS = findViewById(R.id.updateTBS);
         alarmPreview = findViewById(R.id.alarmPreview);
         toggleAlarm = findViewById(R.id.toggleAlarm);
-
+        tempDisplay = findViewById(R.id.tempDisplay);
 
         setNewUser.setOnClickListener((v)->{
                 intent = new Intent(MainActivity.this, WelcomeActivity.class);
@@ -45,13 +45,12 @@ public class MainActivity extends AppCompatActivity {
         //set listener for setting a new TBS
         updateTBS.setOnClickListener((v)->{
             //temp logging
-            StoreData.loadData(context);
-            Log.i(TAG,StoreData.getUntisID().toString());
-            Log.i(TAG,StoreData.getUntisServer());
+            Log.i(TAG,StoreData.loadID(context).toString());
+            /*Log.i(TAG,StoreData.getUntisServer());
             Log.i(TAG,StoreData.getUntisSchool());
             Log.i(TAG,StoreData.getUntisUsername());
             Log.i(TAG,StoreData.getUntisPassword());
-
+             */
 
             //when clicked
             Log.i(TAG,"updating TBS");
@@ -67,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         //store data
 
-        //TODO("setting a new TBS")
         });
 
     }

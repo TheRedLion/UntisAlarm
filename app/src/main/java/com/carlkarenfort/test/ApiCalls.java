@@ -1,102 +1,103 @@
 package com.carlkarenfort.test;
 
-import android.app.Activity;
-import android.app.LoaderManager;
-import android.app.Service;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.IBinder;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
-
-import com.carlkarenfort.test.MainActivity;
 
 import org.bytedream.untis4j.LoginException;
 import org.bytedream.untis4j.Session;
 import org.bytedream.untis4j.responseObjects.Timetable;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.time.LocalDate;
 
-public class ApiCalls {
-    private static String TAG = "ApiCalls";
-    private static String username;
-    private static String password;
-    private static String server;
-    private static String schoolName;
-    private static Integer untisID;
+public class ApiCalls implements Runnable {
+    private final String TAG = "ApiCalls";
+    private String foreName;
+    private String longName;
+    private String username;
+    private String password;
+    private String server;
+    private String schoolName;
+    private Integer untisID;
+    //private static (dataType for Time) time;
 
-    //public method to start thread
-    public static void APIcall() {
-        Log.i(TAG,"makeAPIcall");
-        APIthread.start();
-    }
-
-    //new thread for network activity
-    static Thread APIthread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            try  {
-                //code on this thread
-                Log.i(TAG,"inthread");
-
-                call();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    });
-
-    private static void call() {
-        //currently testcode from untis4j
-        try {
+    @Override
+    public void run() {
+        /*try  {
+            //code on this thread
             Log.i(TAG,"logging in");
             Log.i(TAG,"credentials: " + " " + username + " " + password + " " + server + " " + schoolName);
             Session session = Session.login(
-                    "KarenfCar",
-                    "Mytimetable1!",
-                    "https://nessa.webuntis.com",
-                    "gym-beskidenstrasse"
+                    username,
+                    password,
+                    server,
+                    schoolName
             ); // create a new webuntis session
             Log.i(TAG,session.getSubjects().toString());
-            // get the timetable and print every lesson
-            Timetable timetable = session.getTimetableFromPersonId(LocalDate.of(2023,6,21), LocalDate.of(2023,6,21), untisID);
-            for (int i = 0; i < timetable.size(); i++) {
-                Log.i("apiCalls","Lesson " + (i+1) + ": " + timetable.get(i).getSubjects().toString());
-            }
+            */
+        Log.i(TAG,"setting untisID with " + foreName + " " + longName);
+        untisID = 423; //temp value
+            //set untisID to 0 if no match was found
 
             // logout
-            session.logout();
-        } catch (LoginException e) {
+            //session.logout();
+        /*} catch (LoginException e) {
             // this exception get thrown if something went wrong with Session.login
-            System.out.println("Failed to login: " + e.getMessage());
+            e.printStackTrace();
         } catch (IOException e) {
             // if an error appears this get thrown
             e.printStackTrace();
-        }
-    }
-
-    //setter
-    public static void setUsername(String username) {
-        ApiCalls.username = username;
-    }
-
-    public static void setPassword(String password) {
-        ApiCalls.password = password;
-    }
-
-    public static void setServer(String server) {
-        ApiCalls.server = server;
-    }
-
-    public static void setSchoolName(String schoolName) {
-        ApiCalls.schoolName = schoolName;
-    }
-    public static void setUntisID(Integer untisID) {
-        ApiCalls.untisID = untisID;
+        }*/
     }
 
 
+    public void setUsername(String usernameIn) {
+        username = usernameIn;
+    }
+
+    public void setPassword(String passwordIn) {
+        password = passwordIn;
+    }
+
+    public void setServer(String serverIn) {
+        server = serverIn;
+    }
+
+    public void setSchoolName(String schoolNameIn) {
+        schoolName = schoolNameIn;
+    }
+
+    public void setUntisID(Integer untisIDIn) {
+        untisID = untisIDIn;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public String getServer() {
+        return server;
+    }
+    public String getSchoolName() {
+        return schoolName;
+    }
+    public Integer getUntisID() {
+        return untisID;
+    }
+
+    public String getForeName() {
+        return foreName;
+    }
+    public void setForeName(String foreNameIn) {
+        foreName = foreNameIn;
+    }
+
+    public String getLongName() {
+        return longName;
+    }
+
+    public void setLongName(String longNameIn) {
+        longName = longNameIn;
+    }
 }

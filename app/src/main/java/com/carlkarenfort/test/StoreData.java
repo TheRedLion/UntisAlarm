@@ -2,77 +2,71 @@ package com.carlkarenfort.test;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.foundation.gestures.ForEachGestureKt;
+import androidx.datastore.core.DataStore;
+import androidx.datastore.preferences.core.MutablePreferences;
+import androidx.datastore.preferences.core.Preferences;
+import androidx.datastore.preferences.core.PreferencesKeys;
+import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
+import androidx.datastore.rxjava3.RxDataStore;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+
 public class StoreData extends AppCompatActivity {
-    private static String TAG = "StoreData";
-    private static Integer untisID;
-    private static String untisUsername;
-    private static String untisPassword;
-    private static String untisServer;
-    private static String untisSchool;
-    private static Integer timeBeforeSchool;
-    private static Boolean alarmAcive;
+    private static final String TAG = "StoreData";
 
-    public static final String ID = "id";
-    public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
-    public static final String SERVER = "server";
-    public static final String SCHOOL = "SCHOOL";
-    public static final String TBS = "tbs";
-    public static final String ACTIVE = "active";
-    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final Preferences.Key<Integer> ID = PreferencesKeys.intKey("id");
+    public static final Preferences.Key<String> USERNAME = PreferencesKeys.stringKey("username");
+    public static final Preferences.Key<String> PASSWORD = PreferencesKeys.stringKey("password");
+    public static final Preferences.Key<String> SERVER = PreferencesKeys.stringKey("server");
+    public static final Preferences.Key<String> SCHOOL = PreferencesKeys.stringKey("school");
+    public static final Preferences.Key<Integer> TBS = PreferencesKeys.intKey("tbs");
+    public static final Preferences.Key<Boolean> ACTIVE = PreferencesKeys.booleanKey("active");
     //store data in shared prefs
-    public static void storeData(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+    public static void storeUntisData(Context context, Integer untisID, String untisUsername, String untisPassword, String untisServer, String untisSchool) {
+        Log.i(TAG,"in store data");
+        // check that no inputs are null
+        if (untisID == null || untisUsername == null || untisPassword == null || untisServer == null || untisSchool == null) {
+            Log.i(TAG, "in storeUntisData: no input may be null");
+            return;
+        }
 
-        editor.putInt(ID,untisID);
-        editor.putString(USERNAME,untisUsername);
-        editor.putString(PASSWORD,untisPassword);
-        editor.putString(SERVER, untisServer);
-        editor.putString(SCHOOL, untisSchool);
-        editor.putInt(TBS,timeBeforeSchool);
-        editor.putBoolean(ACTIVE,alarmAcive);
+        RxDataStore<Preferences> dataStore = new RxPreferenceDataStoreBuilder(context, /*name=*/ "settings").build();
+        Single<Preferences> updateResult =  dataStore.updateDataAsync(prefsIn -> {
+            MutablePreferences mutablePreferences = prefsIn.toMutablePreferences();
 
-        Log.i(TAG, "in store data");
-        Log.i(TAG, untisID.toString());
-        Log.i(TAG, untisUsername);
-        Log.i(TAG, untisPassword);
-        Log.i(TAG, untisServer);
-        Log.i(TAG, untisSchool);
-        Log.i(TAG, timeBeforeSchool.toString());
-        Log.i(TAG, alarmAcive.toString());
+            mutablePreferences.set(ID, untisID);
+            mutablePreferences.set(USERNAME, untisUsername);
+            mutablePreferences.set(PASSWORD, untisPassword);
+            mutablePreferences.set(SERVER, untisServer);
+            mutablePreferences.set(SCHOOL, untisSchool);
+
+            return Single.just(mutablePreferences);
+        });
     }
 
     //retrieve data and store in class variables
-    public static void loadData(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        untisID = sharedPreferences.getInt(ID, 0);
-        untisUsername = sharedPreferences.getString(USERNAME, "");
-        untisPassword = sharedPreferences.getString(PASSWORD, "");
-        untisServer = sharedPreferences.getString(SERVER, "");
-        untisSchool = sharedPreferences.getString(SCHOOL, "");
-        timeBeforeSchool = sharedPreferences.getInt(TBS, 60);
-        alarmAcive = sharedPreferences.getBoolean(ACTIVE, false);
+    public static Integer loadID(Context context) {
+        RxDataStore<Preferences> dataStore = new RxPreferenceDataStoreBuilder(context, /*name=*/ "settings").build();
+        //Flowable<Integer> flowID = dataStore.data().map(preferences -> preferences.get(ID));
+        Single<Preferences> updateResult =  dataStore.updateDataAsync(prefsIn -> {
+            MutablePreferences mutablePreferences = prefsIn.toMutablePreferences();
+            Integer untisID = prefsIn.get(ID);
 
-        //temp logs
-        Log.i(TAG, "in load data");
-        Log.i(TAG, untisID.toString());
-        Log.i(TAG, untisUsername);
-        Log.i(TAG, untisPassword);
-        Log.i(TAG, untisServer);
-        Log.i(TAG, untisSchool);
-        Log.i(TAG, timeBeforeSchool.toString());
-        Log.i(TAG, alarmAcive.toString());
+            return Single.just(mutablePreferences);
+        });
+        //temp, should return untisID
+        return null;
     }
 
     //take login url and extract the Server adress
@@ -113,61 +107,5 @@ public class StoreData extends AppCompatActivity {
         }
         System.err.println("Invalid URL format: " + urlStr);
         return null;
-    }
-
-    public static Integer getUntisID() {
-        return untisID;
-    }
-
-    public static void setUntisID(Integer untisID) {
-        StoreData.untisID = untisID;
-    }
-
-    public static String getUntisUsername() {
-        return untisUsername;
-    }
-
-    public static void setUntisUsername(String untisUsername) {
-        StoreData.untisUsername = untisUsername;
-    }
-
-    public static String getUntisPassword() {
-        return untisPassword;
-    }
-
-    public static void setUntisPassword(String untisPassword) {
-        StoreData.untisPassword = untisPassword;
-    }
-
-    public static Integer getTimeBeforeSchool() {
-        return timeBeforeSchool;
-    }
-
-    public static void setTimeBeforeSchool(Integer timeBeforeSchool) {
-        StoreData.timeBeforeSchool = timeBeforeSchool;
-    }
-
-    public static Boolean getAlarmAcive() {
-        return alarmAcive;
-    }
-
-    public static void setAlarmAcive(Boolean alarmAcive) {
-        StoreData.alarmAcive = alarmAcive;
-    }
-
-    public static String getUntisServer() {
-        return untisServer;
-    }
-
-    public static void setUntisServer(String untisServer) {
-        StoreData.untisServer = untisServer;
-    }
-
-    public static String getUntisSchool() {
-        return untisSchool;
-    }
-
-    public static void setUntisSchool(String untisSchool) {
-        StoreData.untisSchool = untisSchool;
     }
 }
