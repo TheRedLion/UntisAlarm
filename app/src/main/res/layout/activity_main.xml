@@ -5,86 +5,86 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <!-- toggle alarm on or off -->
-  <Switch
-      android:id="@+id/toggleAlarm"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="40dp"
-      android:scaleX="1.8"
-      android:scaleY="1.8"
-      app:layout_constraintEnd_toEndOf="@+id/alarmPreview"
-      app:layout_constraintStart_toStartOf="@+id/alarmPreview"
-      app:layout_constraintTop_toBottomOf="@+id/alarmPreview" />
+    <!-- toggle alarm on or off -->
+    <Switch
+        android:id="@+id/toggleAlarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:scaleX="1.8"
+        android:scaleY="1.8"
+        app:layout_constraintEnd_toEndOf="@+id/alarmPreview"
+        app:layout_constraintStart_toStartOf="@+id/alarmPreview"
+        app:layout_constraintTop_toBottomOf="@+id/alarmPreview" />
 
-  <!-- go back to welcome screen -->
-  <Button
-      android:id="@+id/addNewUser"
-      style="@style/Widget.AppCompat.Button"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="20dp"
-      android:layout_marginTop="20dp"
-      android:text="new User"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+    <!-- go back to welcome screen -->
+    <Button
+        android:id="@+id/addNewUser"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="new User"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-  <!-- show the current TBS-->
-  <TextView
-      android:id="@+id/timeBeforeSchool"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="130dp"
-      android:text="60m"
-      android:textSize="25sp"
-      android:textStyle="bold"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.5"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+    <!-- show the current TBS-->
+    <TextView
+        android:id="@+id/timeBeforeSchool"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:text="60m"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-  <!-- enter a new TBS -->
-  <EditText
-      android:id="@+id/setTBS"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="30dp"
-      android:ems="6"
-      android:inputType="time"
-      android:textSize="20sp"
-      app:layout_constraintEnd_toEndOf="@+id/timeBeforeSchool"
-      app:layout_constraintStart_toStartOf="@+id/timeBeforeSchool"
-      app:layout_constraintTop_toBottomOf="@+id/timeBeforeSchool" />
+    <!-- enter a new TBS -->
+    <EditText
+        android:id="@+id/setTBS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:ems="6"
+        android:inputType="time"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/timeBeforeSchool"
+        app:layout_constraintStart_toStartOf="@+id/timeBeforeSchool"
+        app:layout_constraintTop_toBottomOf="@+id/timeBeforeSchool" />
 
-  <!-- comfirm the new TBS-->
-  <Button
-      android:id="@+id/updateTBS"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="20dp"
-      android:text="Update"
-      app:layout_constraintStart_toEndOf="@+id/setTBS"
-      app:layout_constraintTop_toTopOf="@+id/setTBS" />
+    <!-- comfirm the new TBS-->
+    <Button
+        android:id="@+id/updateTBS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Update"
+        app:layout_constraintStart_toEndOf="@+id/setTBS"
+        app:layout_constraintTop_toTopOf="@+id/setTBS" />
 
-  <!-- display the next alarm time -->
-  <TextView
-      android:id="@+id/alarmPreview"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="70dp"
-      android:text="07:00"
-      android:textSize="24sp"
-      android:textStyle="bold"
-      app:layout_constraintEnd_toEndOf="@+id/setTBS"
-      app:layout_constraintStart_toStartOf="@+id/setTBS"
-      app:layout_constraintTop_toBottomOf="@+id/setTBS" />
+    <!-- display the next alarm time -->
+    <TextView
+        android:id="@+id/alarmPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:text="07:00"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/setTBS"
+        app:layout_constraintStart_toStartOf="@+id/setTBS"
+        app:layout_constraintTop_toBottomOf="@+id/setTBS" />
 
-  <TextView
-      android:id="@+id/tempDisplay"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="150dp"
-      android:layout_marginTop="50dp"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tempDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
