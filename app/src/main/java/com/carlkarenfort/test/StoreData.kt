@@ -24,7 +24,6 @@ class StoreData (private val context: Context) {
     val TBS = intPreferencesKey("tbs")
     val ALARMACTIVE = booleanPreferencesKey("alarmactive")
 
-    val username: String = ""
 
     public suspend fun loadID(): Int {
         val id: Int = 0
@@ -44,24 +43,24 @@ class StoreData (private val context: Context) {
 
     suspend fun loadLoginData(): Array<String?> {
 
-        val username: String = "dipsidu"
-        val password: String = ""
-        val server: String = ""
-        val school: String = ""
+        /*
         val exampleCounterFlow: Flow<Unit> = context.dataStore.data
             .map { preferences ->
                 // No type safety.
-                username = preferences[USERNAME] ?: ""
-                password = preferences[PASSWORD] ?: ""
-                server = preferences[SERVER] ?: "ehile"
-                school = preferences[SCHOOL] ?: ""
+                preferences[USERNAME] ?: ""
+                preferences[PASSWORD] ?: ""
+                preferences[SERVER] ?: "ehile"
+                preferences[SCHOOL] ?: ""
             }
+        */
+
+        val preferences = context.dataStore.data.first()
 
         return arrayOf(
-            username,
-            password,
-            server,
-            school
+            preferences[USERNAME],
+            preferences[PASSWORD],
+            preferences[SERVER],
+            preferences[SCHOOL]
         )
     }
 

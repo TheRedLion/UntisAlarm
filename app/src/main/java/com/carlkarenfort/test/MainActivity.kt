@@ -46,11 +46,12 @@ class MainActivity : AppCompatActivity() {
 
             //when clicked
             Log.i(TAG, "updating TBS")
-            val storeData = StoreData(applicationContext)
+            var storeData = StoreData(applicationContext)
             val loginDataArr: Array<String?>
             runBlocking {
                 loginDataArr = storeData.loadLoginData()
             }
+
             Log.i(TAG, loginDataArr[0].toString())
             Log.i(TAG, loginDataArr[1].toString())
             Log.i(TAG, loginDataArr[2].toString())

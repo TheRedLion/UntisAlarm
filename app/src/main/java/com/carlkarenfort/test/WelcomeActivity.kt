@@ -99,7 +99,7 @@ class WelcomeActivity : AppCompatActivity() {
                         //id was found
                         //store data
                         Log.i(TAG, "setting values and calling store data")
-                        val storeData = StoreData(applicationContext)
+                        var storeData = StoreData(applicationContext)
                         runBlocking {
                             storeData.storeLoginData(
                                 untisUserName.text.toString(),
@@ -108,6 +108,7 @@ class WelcomeActivity : AppCompatActivity() {
                                 untisSchool
                             )
                         }
+                        
                         //go to MainActvity
                         intent = Intent(this@WelcomeActivity, MainActivity::class.java)
                         startActivity(intent)
