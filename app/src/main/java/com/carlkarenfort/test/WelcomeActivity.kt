@@ -43,23 +43,23 @@ class WelcomeActivity : AppCompatActivity() {
             //getID from foreName and longName
             if (foreName.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.parseColor(redHex))
+                warningText.setTextColor(Color.rgb(244, 67, 54))
                 warningText.text = "Fore Name may not be Empty!"
             } else if (longName.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.parseColor(redHex))
+                warningText.setTextColor(Color.rgb(244, 67, 54))
                 warningText.text = "Last Name may not be Empty!"
             } else if (untisURL.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.parseColor(redHex))
+                warningText.setTextColor(Color.rgb(244, 67, 54))
                 warningText.text = "Webuntis URL may not be Empty!"
             } else if (untisUserName.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.parseColor(redHex))
+                warningText.setTextColor(Color.rgb(244, 67, 54))
                 warningText.text = "Username may not be Empty!"
             } else if (untisPassword.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.parseColor(redHex))
+                warningText.setTextColor(Color.rgb(244, 67, 54))
                 warningText.text = "Password may not be Empty!"
             } else {
                 //all fields were filled
@@ -108,7 +108,7 @@ class WelcomeActivity : AppCompatActivity() {
                                 untisSchool
                             )
                         }
-                        
+
                         //go to MainActvity
                         intent = Intent(this@WelcomeActivity, MainActivity::class.java)
                         startActivity(intent)
