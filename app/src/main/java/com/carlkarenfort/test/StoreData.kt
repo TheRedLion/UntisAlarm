@@ -66,14 +66,14 @@ class StoreData (private val context: Context) {
         }
     }
 
-    suspend fun loadAlarmActive(): Int? {
+    suspend fun loadAlarmActive(): Boolean? {
         val preferences = context.dataStore.data.first()
-        return preferences[ID]
+        return preferences[ALARMACTIVE]
     }
 
-    suspend fun storeAlarmAcitive(id: Int) {
+    suspend fun storeAlarmAcitive(aa: Boolean) {
         context.dataStore.edit { settings ->
-            settings[ID] = id
+            settings[ALARMACTIVE] = aa
         }
     }
 
