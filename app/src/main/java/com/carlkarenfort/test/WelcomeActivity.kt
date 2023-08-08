@@ -39,7 +39,6 @@ class WelcomeActivity : AppCompatActivity() {
         runButton = findViewById(R.id.runButton);
 
         runButton.setOnClickListener { v: View? ->
-            val redHex: String = "F44336"
             //getID from foreName and longName
             if (foreName.text.toString().isEmpty()) {
                 //show warning
@@ -68,11 +67,11 @@ class WelcomeActivity : AppCompatActivity() {
                     ExtractURLData.returnServerFromURL(untisURL.text.toString())
                 val untisSchool: String =
                     ExtractURLData.returnSchoolFromURL(untisURL.text.toString())
-                if (untisServer == null) {
+                if (untisServer == "") {
                     //invalid url
                     warningText.setTextColor(Color.rgb(244, 67, 54))
                     warningText.text = "Invalid URL format!"
-                } else if (untisSchool == null) {
+                } else if (untisSchool == "") {
                     //invalid url
                     warningText.setTextColor(Color.rgb(244, 67, 54))
                     warningText.text = "Invalid URL format!"

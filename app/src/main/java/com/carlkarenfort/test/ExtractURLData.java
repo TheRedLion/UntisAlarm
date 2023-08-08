@@ -21,8 +21,7 @@ public class ExtractURLData extends AppCompatActivity {
             }
             return protocol + "://" + host;
         } catch (MalformedURLException e) {
-            System.err.println("Invalid URL format: " + urlStr);
-            return null;
+            return "";
         }
     }
 
@@ -43,9 +42,8 @@ public class ExtractURLData extends AppCompatActivity {
         } catch (URISyntaxException e) {
             e.printStackTrace();
             System.err.println("Invalid URL format: " + urlStr);
-            return null;
+            return "";
         }
-        System.err.println("Invalid URL format: " + urlStr);
-        return null;
+        return "";
     }
 }
