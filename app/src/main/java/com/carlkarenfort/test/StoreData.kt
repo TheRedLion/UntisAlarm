@@ -1,6 +1,7 @@
 package com.carlkarenfort.test
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
@@ -13,16 +14,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+private val TAG = "StoreData"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userToken")
 class StoreData (private val context: Context) {
 
-    val ID = intPreferencesKey("id")
-    val USERNAME = stringPreferencesKey("username")
-    val PASSWORD = stringPreferencesKey("password")
-    val SERVER = stringPreferencesKey("server")
-    val SCHOOL = stringPreferencesKey("school")
-    val TBS = intPreferencesKey("tbs")
-    val ALARMACTIVE = booleanPreferencesKey("alarmactive")
+    private val ID = intPreferencesKey("id")
+    private val USERNAME = stringPreferencesKey("username")
+    private val PASSWORD = stringPreferencesKey("password")
+    private val SERVER = stringPreferencesKey("server")
+    private val SCHOOL = stringPreferencesKey("school")
+    private val TBS = intPreferencesKey("tbs")
+    private val ALARMACTIVE = booleanPreferencesKey("alarmactive")
 
 
     suspend fun loadID(): Int? {

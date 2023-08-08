@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="130dp"
-        android:text="60m"
+        android:text="not loaded"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:ems="6"
-        android:inputType="time"
+        android:inputType="number"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/timeBeforeSchool"
         app:layout_constraintStart_toStartOf="@+id/timeBeforeSchool"
@@ -87,4 +87,14 @@
         android:layout_marginTop="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/updateTBSwarning"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="35dp"
+        android:textColor="#F44336"
+        app:layout_constraintBottom_toBottomOf="@+id/setTBS"
+        app:layout_constraintEnd_toStartOf="@+id/setTBS"
+        app:layout_constraintTop_toTopOf="@+id/setTBS" />
 </androidx.constraintlayout.widget.ConstraintLayout>
