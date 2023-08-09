@@ -1,18 +1,11 @@
 package com.carlkarenfort.test
 
-import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
-import java.io.IOException
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 class ApiCalls {
     private val TAG = "ApiCalls"
@@ -21,7 +14,7 @@ class ApiCalls {
     var server: String? = null
     var schoolName: String? = null
 
-    var scope = CoroutineScope(Job() + Dispatchers.Main)
+    private var scope = CoroutineScope(Job() + Dispatchers.Main)
     fun test() {
         scope.launch {
             var session = Session.login(
@@ -29,7 +22,7 @@ class ApiCalls {
                 "Mytimetable1!",
                 "https://nessa.webuntis.com/",
                 "gym-beskidenstrasse"
-            )
+            ).useCache(false)
             Log.i(TAG, "yoooo")
         }
     }

@@ -1,18 +1,18 @@
 package com.carlkarenfort.test
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.StrictMode
 import android.provider.AlarmClock
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import kotlinx.coroutines.runBlocking
 
 
@@ -26,10 +26,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toggleAlarm: Switch
     private lateinit var tempDisplay: TextView
     private lateinit var updateTBSwarning: TextView
-    lateinit var context: Context
 
-    var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
+    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //use proper layout
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
 
         //listener for going to welcome Activity
-        setNewUser.setOnClickListener { v: View? ->
+        setNewUser.setOnClickListener { _ : View? ->
             intent = Intent(this@MainActivity, WelcomeActivity::class.java)
             startActivity(intent)
         }
@@ -58,10 +58,10 @@ class MainActivity : AppCompatActivity() {
         runBlocking {
             tbs = storeData.loadTBS()
         }
-        timeBeforeSchool.setText(tbs.toString() + "min")
+        timeBeforeSchool.text = tbs.toString() + "min"
 
         //listener for updating TBS
-        updateTBS.setOnClickListener { v: View? ->
+        updateTBS.setOnClickListener { _ : View? ->
             //get new TBS as string
             val newTBSStr = setTBS.text.toString()
             //convert to int
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 updateTBSwarning.text = getString(R.string.invalid_number)
             }
             //update displayedTBS
-            timeBeforeSchool.setText(newTBS.toString() + "min")
+            timeBeforeSchool.text = newTBS.toString() + "min"
 
             //store data
             runBlocking {
@@ -85,14 +85,20 @@ class MainActivity : AppCompatActivity() {
 
             //update alarm preview and alarm tomorrow
 
+
             //temp
             /*
+            StrictMode.setThreadPolicy(policy)
+            var apiCalls = ApiCalls()
+            apiCalls.test()
+             */
+
             var intent = Intent(AlarmClock.ACTION_SET_ALARM)
+            intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
             intent.putExtra(AlarmClock.EXTRA_HOUR, 14)
             intent.putExtra(AlarmClock.EXTRA_MINUTES, 22)
             intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
             startActivity(intent)
-            */
         }
 
         //set switch to proper state
@@ -101,9 +107,7 @@ class MainActivity : AppCompatActivity() {
         runBlocking {
             aaStateNullable = storeData.loadAlarmActive()
         }
-        if (aaStateNullable == null) {
-            aaState = false
-        } else {
+        if (aaStateNullable != null) {
             aaState = aaStateNullable as Boolean
         }
 

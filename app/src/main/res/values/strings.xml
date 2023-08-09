@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Test</string>
     <string name="new_user">New User</string>
     <string name="log_in">Log in</string>
     <string name="webuntis_url" translatable="false">Webuntis URL</string>
@@ -16,4 +15,5 @@
     <string name="invalid_url_format">Invalid URL format!</string>
     <string name="no_matching_user">No user matching your Fore and Last Name!</string>
     <string name="invalid_number">Please only enter valid numbers</string>
+    <string name="app_name">Untis Alarm</string>
 </resources>

@@ -1,32 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Test</string>
+    <string name="app_name">Untis Wecker</string>
     <string name="new_user">Neuer Nutzer</string>
-    <string name="new_user">N</string>
     <string name="log_in">Anmelden</string>
-    <string name="log_in">A</string>
     <string name="fore_name">Vorname</string>
-    <string name="fore_name">V</string>
     <string name="last_name">Nachname</string>
-    <string name="last_name">N</string>
     <string name="webuntis_passowrd">Webuntis Passwort</string>
-    <string name="webuntis_passowrd">W</string>
     <string name="encryption_warning">Passwörter werden nicht verschlüsselt. Ihr Webuntis Passwort sollte auf keiner anderen Webseite benutzt werden. Nutze die App nicht als Lehrer.</string>
-    <string name="encryption_warning">P</string>
     <string name="webuntis_username">Webuntis Nutzername</string>
-    <string name="webuntis_username">W</string>
     <string name="fore_name_empty">Vorname darf nicht leer sein.</string>
-    <string name="fore_name_empty">V</string>
     <string name="last_name_empty">Nachname darf nicht leer sein.</string>
-    <string name="last_name_empty">N</string>
     <string name="webuntis_url_empty">Webuntis URL darf nicht leer sein.</string>
-    <string name="webuntis_url_empty">W</string>
     <string name="username_empty">Nutzername darf nicht leer sein.</string>
-    <string name="username_empty">N</string>
     <string name="password_empty">Passwort darf nicht leer sein.</string>
-    <string name="password_empty">P</string>
     <string name="invalid_url_format">Ungültiges URL format.</string>
-    <string name="invalid_url_format">U</string>
     <string name="no_matching_user">"Kein nutzer mit dem Namen gefunden. "</string>
-    <string name="no_matching_user">K</string>
 </resources>
