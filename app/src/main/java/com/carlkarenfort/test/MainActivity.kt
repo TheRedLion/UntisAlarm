@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.StrictMode
+import android.provider.AlarmClock
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var tempDisplay: TextView
     lateinit var context: Context
     lateinit var updateTBSwarning: TextView
+
+    var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +84,15 @@ class MainActivity : AppCompatActivity() {
             setTBS.setText("")
 
             //update alarm preview and alarm tomorrow
+
+            //temp
+            /*
+            var intent = Intent(AlarmClock.ACTION_SET_ALARM)
+            intent.putExtra(AlarmClock.EXTRA_HOUR, 14)
+            intent.putExtra(AlarmClock.EXTRA_MINUTES, 22)
+            intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
+            startActivity(intent)
+            */
         }
 
         //set switch to proper state

@@ -77,18 +77,11 @@ class WelcomeActivity : AppCompatActivity() {
                     warningText.text = "Invalid URL format!"
                 } else {
                     //get ID
-                    val apiCalls = ApiCalls()
-                    apiCalls.foreName = foreName.text.toString()
-                    apiCalls.longName = longName.text.toString()
-                    val thread = Thread(apiCalls)
-                    thread.start()
-                    try {
-                        thread.join()
-                    } catch (e: InterruptedException) {
-                        throw RuntimeException(e)
-                    }
-                    var untisID = apiCalls.untisID
-                    untisID = 123
+
+
+
+                    //var untisID = apiCalls.untisID
+                    var untisID = 123
                     //show warning if no ID was found
                     if (untisID == 0) {
                         //no match was found
@@ -97,7 +90,6 @@ class WelcomeActivity : AppCompatActivity() {
                     } else {
                         //id was found
                         //store data
-                        Log.i(TAG, "setting values and calling store data")
                         var storeData = StoreData(applicationContext)
                         runBlocking {
                             storeData.storeLoginData(
