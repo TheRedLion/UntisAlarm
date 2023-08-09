@@ -43,23 +43,23 @@ class WelcomeActivity : AppCompatActivity() {
             if (foreName.text.toString().isEmpty()) {
                 //show warning
                 warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = "Fore Name may not be Empty!"
+                warningText.text = getString(R.string.fore_name_empty)
             } else if (longName.text.toString().isEmpty()) {
                 //show warning
                 warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = "Last Name may not be Empty!"
+                warningText.text = getString(R.string.last_name_empty)
             } else if (untisURL.text.toString().isEmpty()) {
                 //show warning
                 warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = "Webuntis URL may not be Empty!"
+                warningText.text = getString(R.string.webuntis_url_empty)
             } else if (untisUserName.text.toString().isEmpty()) {
                 //show warning
                 warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = "Username may not be Empty!"
+                warningText.text = getString(R.string.username_empty)
             } else if (untisPassword.text.toString().isEmpty()) {
                 //show warning
                 warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = "Password may not be Empty!"
+                warningText.text = getString(R.string.password_empty)
             } else {
                 //all fields were filled
                 //get data from url
@@ -70,27 +70,26 @@ class WelcomeActivity : AppCompatActivity() {
                 if (untisServer == "") {
                     //invalid url
                     warningText.setTextColor(Color.rgb(244, 67, 54))
-                    warningText.text = "Invalid URL format!"
+                    warningText.text = getString(R.string.invalid_url_format)
                 } else if (untisSchool == "") {
                     //invalid url
                     warningText.setTextColor(Color.rgb(244, 67, 54))
-                    warningText.text = "Invalid URL format!"
+                    warningText.text = getString(R.string.invalid_url_format)
                 } else {
                     //get ID
 
-
-
                     //var untisID = apiCalls.untisID
-                    var untisID = 123
+                    //temp value
+                    val untisID = 123
                     //show warning if no ID was found
                     if (untisID == 0) {
                         //no match was found
                         warningText.setTextColor(Color.rgb(244, 67, 54))
-                        warningText.text = "No user matching your Fore and Last Name!"
+                        warningText.text = getString(R.string.no_matching_user)
                     } else {
                         //id was found
                         //store data
-                        var storeData = StoreData(applicationContext)
+                        val storeData = StoreData(applicationContext)
                         runBlocking {
                             storeData.storeLoginData(
                                 untisUserName.text.toString(),

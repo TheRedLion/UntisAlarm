@@ -18,15 +18,15 @@ import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
     var TAG = "MainActivity"
-    lateinit var setNewUser: Button
-    lateinit var timeBeforeSchool: TextView
-    lateinit var setTBS: EditText
-    lateinit var updateTBS: Button
-    lateinit var alarmPreview: TextView
-    lateinit var toggleAlarm: Switch
-    lateinit var tempDisplay: TextView
+    private lateinit var setNewUser: Button
+    private lateinit var timeBeforeSchool: TextView
+    private lateinit var setTBS: EditText
+    private lateinit var updateTBS: Button
+    private lateinit var alarmPreview: TextView
+    private lateinit var toggleAlarm: Switch
+    private lateinit var tempDisplay: TextView
+    private lateinit var updateTBSwarning: TextView
     lateinit var context: Context
-    lateinit var updateTBSwarning: TextView
 
     var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
 
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         tempDisplay = findViewById(R.id.tempDisplay)
         updateTBSwarning = findViewById(R.id.updateTBSwarning)
 
-        var storeData = StoreData(applicationContext)
+        val storeData = StoreData(applicationContext)
 
 
         //listener for going to welcome Activity
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 newTBS = Integer.parseInt(newTBSStr)
             } catch (e: NumberFormatException) {
                 updateTBSwarning.setTextColor(Color.rgb(244, 67, 54))
-                updateTBSwarning.text = "Please only enter valid numbers"
+                updateTBSwarning.text = getString(R.string.invalid_number)
             }
             //update displayedTBS
             timeBeforeSchool.setText(newTBS.toString() + "min")
