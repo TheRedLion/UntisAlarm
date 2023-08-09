@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
@@ -30,6 +30,7 @@
             android:exported="true"
             android:parentActivityName=".WelcomeActivity"
             android:theme="@style/Theme.AppCompat" />
+        <receiver android:name=".alarm.AlarmReciever"/>
     </application>
 
 </manifest>

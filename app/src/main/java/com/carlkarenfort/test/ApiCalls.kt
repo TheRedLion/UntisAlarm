@@ -1,11 +1,11 @@
 package com.carlkarenfort.test
 
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.bytedream.untis4j.Session
+import java.time.LocalDate
 
 class ApiCalls {
     private val TAG = "ApiCalls"
@@ -22,8 +22,12 @@ class ApiCalls {
                 "Mytimetable1!",
                 "https://nessa.webuntis.com/",
                 "gym-beskidenstrasse"
-            ).useCache(false)
-            Log.i(TAG, "yoooo")
+            )
+            var timetable = session.getTimetableFromPersonId(LocalDate.of(2023, 6,14),LocalDate.of(2023, 6,14),436)
+
+            for (i in 0 until timetable.size) {
+                println("Lesson " + (i + 1) + ": " + timetable.get(i).getSubjects().toString())
+            }
         }
     }
     /*

@@ -12,8 +12,10 @@ import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
+import com.carlkarenfort.test.alarm.AlarmItem
+import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 
 
 class MainActivity : AppCompatActivity() {
@@ -87,18 +89,28 @@ class MainActivity : AppCompatActivity() {
 
 
             //temp
-            /*
+
             StrictMode.setThreadPolicy(policy)
             var apiCalls = ApiCalls()
             apiCalls.test()
-             */
-
+             
+            /*
+            val scheduler = AndroidAlarmScheduler(this)
+            var alarmItem: AlarmItem? = null
+            alarmItem = AlarmItem(
+                id = 1,
+                time = LocalDateTime.of(2023,8,10,1,25)
+            )
+            alarmItem?.let(scheduler::schedule)
+            */
+            /*
             var intent = Intent(AlarmClock.ACTION_SET_ALARM)
             intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
             intent.putExtra(AlarmClock.EXTRA_HOUR, 14)
             intent.putExtra(AlarmClock.EXTRA_MINUTES, 22)
             intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
             startActivity(intent)
+             */
         }
 
         //set switch to proper state
