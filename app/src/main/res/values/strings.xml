@@ -16,4 +16,5 @@
     <string name="no_matching_user">No user matching your Fore and Last Name!</string>
     <string name="invalid_number">Please only enter valid numbers</string>
     <string name="app_name">Untis Alarm</string>
+    <string name="invalid_login_data">Invalid Login Data!</string>
 </resources>

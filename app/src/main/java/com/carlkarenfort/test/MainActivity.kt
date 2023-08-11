@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tempDisplay: TextView
     private lateinit var updateTBSwarning: TextView
 
-    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,9 +89,6 @@ class MainActivity : AppCompatActivity() {
 
             //temp
 
-            StrictMode.setThreadPolicy(policy)
-            var apiCalls = ApiCalls()
-            apiCalls.test()
              
             /*
             val scheduler = AndroidAlarmScheduler(this)
