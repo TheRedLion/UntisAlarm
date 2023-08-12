@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 updateTBSwarning.text = getString(R.string.invalid_number)
             }
             //update displayedTBS
-            timeBeforeSchool.text = newTBS.toString() + "min"
+            timeBeforeSchool.text = newTBS.toString() + " min"
 
             //store data
             runBlocking {
@@ -83,32 +83,38 @@ class MainActivity : AppCompatActivity() {
 
             //clear field afterwards
             setTBS.setText("")
+            runBlocking {
+                if (storeData.loadLoginData() != null) {
+                    //update alarm preview and alarm tomorrow
 
-            //update alarm preview and alarm tomorrow
+
+                    //temp
 
 
-            //temp
+                    /*
+                    val scheduler = AndroidAlarmScheduler(this)
+                    var alarmItem: AlarmItem? = null
+                    alarmItem = AlarmItem(
+                        id = 1,
+                        time = LocalDateTime.of(2023,8,10,1,25)
+                    )
+                    alarmItem?.let(scheduler::schedule)
+                    */
+                    /*
+                    var intent = Intent(AlarmClock.ACTION_SET_ALARM)
+                    intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
+                    intent.putExtra(AlarmClock.EXTRA_HOUR, 14)
+                    intent.putExtra(AlarmClock.EXTRA_MINUTES, 22)
+                    intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
+                    startActivity(intent)
+                     */
+                }
+            }
 
-             
-            /*
-            val scheduler = AndroidAlarmScheduler(this)
-            var alarmItem: AlarmItem? = null
-            alarmItem = AlarmItem(
-                id = 1,
-                time = LocalDateTime.of(2023,8,10,1,25)
-            )
-            alarmItem?.let(scheduler::schedule)
-            */
-            /*
-            var intent = Intent(AlarmClock.ACTION_SET_ALARM)
-            intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-            intent.putExtra(AlarmClock.EXTRA_HOUR, 14)
-            intent.putExtra(AlarmClock.EXTRA_MINUTES, 22)
-            intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
-            startActivity(intent)
-             */
+
+
         }
-
+        // TODO: set alarm when button isn't clicked
         //set switch to proper state
         var aaStateNullable: Boolean?
         var aaState = false
