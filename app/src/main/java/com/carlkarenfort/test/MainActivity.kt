@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.StrictMode
 import android.provider.AlarmClock
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toggleAlarm: Switch
     private lateinit var tempDisplay: TextView
     private lateinit var updateTBSwarning: TextView
+    private lateinit var logInWarning: TextView
 
 
     @SuppressLint("SetTextI18n")
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
         updateTBSwarning = findViewById(R.id.updateTBSwarning)
+        logInWarning = findViewById(R.id.notLoggedInWarning)
 
         val storeData = StoreData(applicationContext)
 
@@ -59,7 +62,8 @@ class MainActivity : AppCompatActivity() {
         runBlocking {
             tbs = storeData.loadTBS()
         }
-        timeBeforeSchool.text = tbs.toString() + "min"
+        // TODO: Null is being displayed when no previous tbs set
+        timeBeforeSchool.text = tbs.toString()  + " min"
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
@@ -84,7 +88,8 @@ class MainActivity : AppCompatActivity() {
             //clear field afterwards
             setTBS.setText("")
             runBlocking {
-                if (storeData.loadLoginData() != null) {
+                if (storeData.loadLoginData()[0] != null) {
+
                     //update alarm preview and alarm tomorrow
 
 
@@ -108,6 +113,10 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
                     startActivity(intent)
                      */
+                } else {
+                    // TODO: update text to invisible as soon as user logs in
+                    Log.i(TAG, "Not logged in tf")
+                    logInWarning.setVisibility(View.VISIBLE)
                 }
             }
 
