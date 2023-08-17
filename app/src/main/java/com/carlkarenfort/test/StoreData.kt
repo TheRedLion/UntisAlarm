@@ -10,68 +10,66 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 
-private val TAG = "StoreData"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userToken")
 class StoreData (private val context: Context) {
-
-    private val ID = intPreferencesKey("id")
-    private val USERNAME = stringPreferencesKey("username")
-    private val PASSWORD = stringPreferencesKey("password")
-    private val SERVER = stringPreferencesKey("server")
-    private val SCHOOL = stringPreferencesKey("school")
-    private val TBS = intPreferencesKey("tbs")
-    private val ALARMACTIVE = booleanPreferencesKey("alarmactive")
+    private val idKey = intPreferencesKey("id")
+    private val usernameKey = stringPreferencesKey("username")
+    private val passwordKey = stringPreferencesKey("password")
+    private val serverKey = stringPreferencesKey("server")
+    private val schoolKey = stringPreferencesKey("school")
+    private val timeBeforeSchoolKey = intPreferencesKey("tbs")
+    private val alarmActiveKey = booleanPreferencesKey("alarm-active")
 
 
     suspend fun loadID(): Int? {
         val preferences = context.dataStore.data.first()
-        return preferences[ID]
+        return preferences[idKey]
     }
 
     suspend fun storeID(id: Int) {
         context.dataStore.edit { settings ->
-            settings[ID] = id
+            settings[idKey] = id
         }
     }
 
     suspend fun loadLoginData(): Array<String?> {
         val preferences = context.dataStore.data.first()
         return arrayOf(
-            preferences[USERNAME],
-            preferences[PASSWORD],
-            preferences[SERVER],
-            preferences[SCHOOL]
+            preferences[usernameKey],
+            preferences[passwordKey],
+            preferences[serverKey],
+            preferences[schoolKey]
         )
     }
 
     suspend fun storeLoginData(username: String, password: String, server: String, school: String) {
         context.dataStore.edit { settings ->
-            settings[USERNAME] = username
-            settings[PASSWORD] = password
-            settings[SERVER] = server
-            settings[SCHOOL] = school
+            settings[usernameKey] = username
+            settings[passwordKey] = password
+            settings[serverKey] = server
+            settings[schoolKey] = school
         }
     }
 
     suspend fun loadTBS(): Int? {
         val preferences = context.dataStore.data.first()
-        return preferences[TBS]
+        return preferences[timeBeforeSchoolKey]
     }
 
     suspend fun storeTBS(timeBeforeSchool: Int) {
         context.dataStore.edit { settings ->
-            settings[TBS] = timeBeforeSchool
+            settings[timeBeforeSchoolKey] = timeBeforeSchool
         }
     }
 
     suspend fun loadAlarmActive(): Boolean? {
         val preferences = context.dataStore.data.first()
-        return preferences[ALARMACTIVE] 
+        return preferences[alarmActiveKey]
     }
 
-    suspend fun storeAlarmAcitive(aa: Boolean) {
+    suspend fun storeAlarmActive(aa: Boolean) {
         context.dataStore.edit { settings ->
-            settings[ALARMACTIVE] = aa
+            settings[alarmActiveKey] = aa
         }
     }
 

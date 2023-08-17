@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="invalid_number">Bitte nur valide Zahlen eingeben</string>
+    <string name="invalid_number">B</string>
     <string name="app_name">Untis Wecker</string>
     <string name="new_user">Neuer Nutzer</string>
     <string name="log_in">Anmelden</string>
@@ -15,4 +17,12 @@
     <string name="password_empty">Passwort darf nicht leer sein.</string>
     <string name="invalid_url_format">Ungültiges URL format.</string>
     <string name="no_matching_user">"Kein nutzer mit dem Namen gefunden. "</string>
+    <string name="invalid_login_data">Falsche Login Dataen</string>
+    <string name="invalid_login_data">F</string>
+    <string name="please_only_enter_intergers">Bitte nur Ganzzahlige</string>
+    <string name="please_only_enter_intergers">B</string>
+    <string name="not_loaded">Nicht geladen</string>
+    <string name="update">Aktualisieren</string>
+    <string name="time_before_school">Zeit vor Schulbeginn</string>
+    <string name="time_before_school">Z</string>
 </resources>

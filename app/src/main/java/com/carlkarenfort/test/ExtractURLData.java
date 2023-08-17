@@ -8,9 +8,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class ExtractURLData extends AppCompatActivity {
-    private static final String TAG = "StoreData";
-    //take login url and extract the Server adress
+
     public static String returnServerFromURL(String urlStr) {
+        //take login url and extract the Server address
         try {
             URL url = new URL(urlStr);
             String protocol = url.getProtocol();

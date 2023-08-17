@@ -1,7 +1,6 @@
 package com.carlkarenfort.test
 
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -10,12 +9,10 @@ import org.bytedream.untis4j.Session
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 
 class ApiCalls {
     private val TAG = "ApiCalls"
-    private var scope = CoroutineScope(Job() + Dispatchers.Main)
 
     fun verifyLoginData(
         username: String,
@@ -28,7 +25,7 @@ class ApiCalls {
         runBlocking {
             val job: Job = launch(context = Dispatchers.Default) {
                 try {
-                    var session = Session.login(
+                    Session.login(
                         username,
                         password,
                         server,
@@ -122,7 +119,7 @@ class ApiCalls {
                 id
             )
             //Log.i(TAG, timetable.toString())
-            val formatter = DateTimeFormatter.ofPattern("HHmm")
+
             var earliestTime: LocalTime? = null
 
             for (i in timetable.indices) {

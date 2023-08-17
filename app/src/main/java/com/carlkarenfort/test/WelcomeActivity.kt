@@ -4,19 +4,16 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.StrictMode
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
 
 
 class WelcomeActivity : AppCompatActivity() {
+    private var TAG: String = "WelcomeActivity"
     private lateinit var foreName: EditText
     private lateinit var longName: EditText
     private lateinit var untisURL: EditText
@@ -25,23 +22,22 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var warningText: TextView
     private lateinit var runButton: Button
     private lateinit var intent: Intent
-    private var TAG: String = "WelcomeActivity"
 
-    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build();
+    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
-        foreName = findViewById(R.id.foreName);
-        longName = findViewById(R.id.longName);
-        untisURL = findViewById(R.id.untisURL);
-        untisUserName = findViewById(R.id.untisUsername);
-        untisPassword = findViewById(R.id.untisPassword);
-        warningText = findViewById(R.id.warningText);
-        runButton = findViewById(R.id.runButton);
+        foreName = findViewById(R.id.foreName)
+        longName = findViewById(R.id.longName)
+        untisURL = findViewById(R.id.untisURL)
+        untisUserName = findViewById(R.id.untisUsername)
+        untisPassword = findViewById(R.id.untisPassword)
+        warningText = findViewById(R.id.warningText)
+        runButton = findViewById(R.id.runButton)
 
-        runButton.setOnClickListener { v: View? ->
+        runButton.setOnClickListener { _ : View? ->
             //getID from foreName and longName
             if (foreName.text.toString().isEmpty()) {
                 //show warning
@@ -79,8 +75,8 @@ class WelcomeActivity : AppCompatActivity() {
                     warningText.setTextColor(Color.rgb(244, 67, 54))
                     warningText.text = getString(R.string.invalid_url_format)
                 } else {
-                    var apiCalls = ApiCalls()
-                    //verify logindata
+                    val apiCalls = ApiCalls()
+                    //verify login data
                     //Log.i(TAG, "verifying login data")
                     if (!apiCalls.verifyLoginData(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool)) {
                         //Log.i(TAG, "invalid")
@@ -124,7 +120,7 @@ class WelcomeActivity : AppCompatActivity() {
 
 
                             //Log.i(TAG, apiCalls.getSchoolStartForDay(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool, untisID, LocalDate.of(2023,6,20)).toString())
-                            //go to MainActvity
+                            //go to MainActivity
                             intent = Intent(this@WelcomeActivity, MainActivity::class.java)
                             startActivity(intent)
                         }

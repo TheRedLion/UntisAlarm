@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="130dp"
-        android:text="not loaded"
+        android:text="@string/not_loaded"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,13 +46,15 @@
     <!-- enter a new TBS -->
     <EditText
         android:id="@+id/setTBS"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="-80dp"
         android:layout_marginTop="30dp"
+        android:autofillHints=""
         android:ems="6"
+        android:hint="@string/time_before_school"
         android:inputType="number"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/timeBeforeSchool"
         app:layout_constraintStart_toStartOf="@+id/timeBeforeSchool"
         app:layout_constraintTop_toBottomOf="@+id/timeBeforeSchool" />
 
@@ -62,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:text="Update"
+        android:text="@string/update"
         app:layout_constraintStart_toEndOf="@+id/setTBS"
         app:layout_constraintTop_toTopOf="@+id/setTBS" />
 
@@ -75,8 +77,8 @@
         android:text="07:00"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/setTBS"
-        app:layout_constraintStart_toStartOf="@+id/setTBS"
+        app:layout_constraintEnd_toEndOf="@+id/timeBeforeSchool"
+        app:layout_constraintStart_toStartOf="@+id/timeBeforeSchool"
         app:layout_constraintTop_toBottomOf="@+id/setTBS" />
 
     <TextView

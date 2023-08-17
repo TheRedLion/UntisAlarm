@@ -2,10 +2,7 @@ package com.carlkarenfort.test
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.os.StrictMode
-import android.provider.AlarmClock
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -14,14 +11,12 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.carlkarenfort.test.alarm.AlarmItem
-import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 
 
+@SuppressLint("UseSwitchCompatOrMaterialCode")
 class MainActivity : AppCompatActivity() {
-    var TAG = "MainActivity"
+    private var TAG = "MainActivity"
     private lateinit var setNewUser: Button
     private lateinit var timeBeforeSchool: TextView
     private lateinit var setTBS: EditText
@@ -94,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.please_only_enter_intergers), Toast.LENGTH_SHORT).show()
             }
             //update displayedTBS
-            timeBeforeSchool.text = newTBS.toString() + " min"
+            timeBeforeSchool.text = "$newTBS min"
 
             //store data
             runBlocking {
@@ -142,7 +137,7 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
             //store new state
             runBlocking {
-                storeData.storeAlarmAcitive(isChecked)
+                storeData.storeAlarmActive(isChecked)
             }
             //update alarm preview and alarm tomorrow
         }

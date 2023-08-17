@@ -18,4 +18,7 @@
     <string name="app_name">Untis Alarm</string>
     <string name="invalid_login_data">Invalid Login Data!</string>
     <string name="please_only_enter_intergers">Please only enter Intergers</string>
+    <string name="not_loaded">not loaded</string>
+    <string name="update">Update</string>
+    <string name="time_before_school">Time Before School</string>
 </resources>
