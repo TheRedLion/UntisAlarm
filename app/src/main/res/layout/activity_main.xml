@@ -88,29 +88,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/updateTBSwarning"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="35dp"
-        android:textColor="#F44336"
-        app:layout_constraintBottom_toBottomOf="@+id/setTBS"
-        app:layout_constraintEnd_toStartOf="@+id/setTBS"
-        app:layout_constraintTop_toTopOf="@+id/setTBS" />
-
-    <TextView
-        android:id="@+id/notLoggedInWarning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:text="Log-in to set alarm"
-        android:textColor="#FF0000"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggleAlarm" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

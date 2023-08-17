@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.alarm.AlarmItem
 import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
@@ -28,8 +29,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var alarmPreview: TextView
     private lateinit var toggleAlarm: Switch
     private lateinit var tempDisplay: TextView
-    private lateinit var updateTBSwarning: TextView
-    private lateinit var logInWarning: TextView
 
 
     @SuppressLint("SetTextI18n")
@@ -45,25 +44,43 @@ class MainActivity : AppCompatActivity() {
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
-        updateTBSwarning = findViewById(R.id.updateTBSwarning)
-        logInWarning = findViewById(R.id.notLoggedInWarning)
 
         val storeData = StoreData(applicationContext)
 
-
-        //listener for going to welcome Activity
-        setNewUser.setOnClickListener { _ : View? ->
-            intent = Intent(this@MainActivity, WelcomeActivity::class.java)
-            startActivity(intent)
+        //check if user has logged in, if so directly go to WelcomeActivity (at the top so the rest of the activity does not have to be built)
+        runBlocking {
+            if (storeData.loadLoginData()[0] == null) {
+                //go to welcome activity when not logged in
+                Log.i(TAG, "Not logged in tf")
+                intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                startActivity(intent)
+            }
         }
+
 
         //set TBS preview
         var tbs: Int?
         runBlocking {
             tbs = storeData.loadTBS()
         }
-        // TODO: Null is being displayed when no previous tbs set
-        timeBeforeSchool.text = tbs.toString()  + " min"
+
+        //check if tbs was already set
+        if (tbs == null) {
+            //if not put 60 as default
+            timeBeforeSchool.text = "60 min"
+            runBlocking {
+                storeData.storeTBS(60)
+            }
+        } else {
+            //else display loaded tbs
+            timeBeforeSchool.text = tbs.toString() + " min"
+        }
+
+        //listener for going to welcome Activity
+        setNewUser.setOnClickListener { _ : View? ->
+            intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+            startActivity(intent)
+        }
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
@@ -74,8 +91,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 newTBS = Integer.parseInt(newTBSStr)
             } catch (e: NumberFormatException) {
-                updateTBSwarning.setTextColor(Color.rgb(244, 67, 54))
-                updateTBSwarning.text = getString(R.string.invalid_number)
+                Toast.makeText(this, getString(R.string.please_only_enter_intergers), Toast.LENGTH_SHORT).show()
             }
             //update displayedTBS
             timeBeforeSchool.text = newTBS.toString() + " min"
@@ -87,42 +103,28 @@ class MainActivity : AppCompatActivity() {
 
             //clear field afterwards
             setTBS.setText("")
-            runBlocking {
-                if (storeData.loadLoginData()[0] != null) {
 
-                    //update alarm preview and alarm tomorrow
-
-
-                    //temp
-
-
-                    /*
-                    val scheduler = AndroidAlarmScheduler(this)
-                    var alarmItem: AlarmItem? = null
-                    alarmItem = AlarmItem(
-                        id = 1,
-                        time = LocalDateTime.of(2023,8,10,1,25)
-                    )
-                    alarmItem?.let(scheduler::schedule)
-                    */
-                    /*
-                    var intent = Intent(AlarmClock.ACTION_SET_ALARM)
-                    intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-                    intent.putExtra(AlarmClock.EXTRA_HOUR, 14)
-                    intent.putExtra(AlarmClock.EXTRA_MINUTES, 22)
-                    intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
-                    startActivity(intent)
-                     */
-                } else {
-                    // TODO: update text to invisible as soon as user logs in
-                    Log.i(TAG, "Not logged in tf")
-                    logInWarning.setVisibility(View.VISIBLE)
-                }
-            }
-
-
+            //temp code
+            /*
+                val scheduler = AndroidAlarmScheduler(this)
+                var alarmItem: AlarmItem? = null
+                alarmItem = AlarmItem(
+                    id = 1,
+                    time = LocalDateTime.of(2023,8,10,1,25)
+                )
+                alarmItem?.let(scheduler::schedule)
+                */
+            /*
+            var intent = Intent(AlarmClock.ACTION_SET_ALARM)
+            intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
+            intent.putExtra(AlarmClock.EXTRA_HOUR, 14)
+            intent.putExtra(AlarmClock.EXTRA_MINUTES, 22)
+            intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
+            startActivity(intent)
+             */
 
         }
+
         // TODO: set alarm when button isn't clicked
         //set switch to proper state
         var aaStateNullable: Boolean?

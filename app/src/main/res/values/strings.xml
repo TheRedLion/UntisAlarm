@@ -17,4 +17,5 @@
     <string name="invalid_number">Please only enter valid numbers</string>
     <string name="app_name">Untis Alarm</string>
     <string name="invalid_login_data">Invalid Login Data!</string>
+    <string name="please_only_enter_intergers">Please only enter Intergers</string>
 </resources>
