@@ -106,15 +106,4 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
-  <TextView
-      android:id="@+id/warningText"
-      android:layout_width="130dp"
-      android:layout_height="wrap_content"
-      android:layout_marginEnd="16dp"
-      android:textColor="#F44336"
-      android:textSize="20sp"
-      app:layout_constraintBottom_toBottomOf="@+id/runButton"
-      app:layout_constraintEnd_toStartOf="@+id/runButton"
-      app:layout_constraintTop_toTopOf="@+id/runButton" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

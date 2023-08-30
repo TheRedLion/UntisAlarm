@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.runBlocking
 
@@ -19,7 +20,6 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var untisURL: EditText
     private lateinit var untisPassword: EditText
     private lateinit var untisUserName: EditText
-    private lateinit var warningText: TextView
     private lateinit var runButton: Button
     private lateinit var intent: Intent
 
@@ -34,31 +34,25 @@ class WelcomeActivity : AppCompatActivity() {
         untisURL = findViewById(R.id.untisURL)
         untisUserName = findViewById(R.id.untisUsername)
         untisPassword = findViewById(R.id.untisPassword)
-        warningText = findViewById(R.id.warningText)
         runButton = findViewById(R.id.runButton)
 
         runButton.setOnClickListener { _ : View? ->
             //getID from foreName and longName
             if (foreName.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = getString(R.string.fore_name_empty)
+                Toast.makeText(this, getString(R.string.fore_name_empty), Toast.LENGTH_SHORT).show()
             } else if (longName.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = getString(R.string.last_name_empty)
+                Toast.makeText(this, getString(R.string.last_name_empty), Toast.LENGTH_SHORT).show()
             } else if (untisURL.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = getString(R.string.webuntis_url_empty)
+                Toast.makeText(this, getString(R.string.webuntis_url_empty), Toast.LENGTH_SHORT).show()
             } else if (untisUserName.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = getString(R.string.username_empty)
+                Toast.makeText(this, getString(R.string.username_empty), Toast.LENGTH_SHORT).show()
             } else if (untisPassword.text.toString().isEmpty()) {
                 //show warning
-                warningText.setTextColor(Color.rgb(244, 67, 54))
-                warningText.text = getString(R.string.password_empty)
+                Toast.makeText(this, getString(R.string.password_empty), Toast.LENGTH_SHORT).show()
             } else {
                 //all fields were filled
                 //get data from url
@@ -68,20 +62,17 @@ class WelcomeActivity : AppCompatActivity() {
                     ExtractURLData.returnSchoolFromURL(untisURL.text.toString())
                 if (untisServer == "") {
                     //invalid url
-                    warningText.setTextColor(Color.rgb(244, 67, 54))
-                    warningText.text = getString(R.string.invalid_url_format)
+                    Toast.makeText(this, getString(R.string.invalid_url_format), Toast.LENGTH_SHORT).show()
                 } else if (untisSchool == "") {
                     //invalid url
-                    warningText.setTextColor(Color.rgb(244, 67, 54))
-                    warningText.text = getString(R.string.invalid_url_format)
+                    Toast.makeText(this, getString(R.string.invalid_url_format), Toast.LENGTH_SHORT).show()
                 } else {
                     val apiCalls = ApiCalls()
                     //verify login data
                     //Log.i(TAG, "verifying login data")
                     if (!apiCalls.verifyLoginData(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool)) {
                         //Log.i(TAG, "invalid")
-                        warningText.setTextColor(Color.rgb(244, 67, 54))
-                        warningText.text = getString(R.string.invalid_login_data)
+                        Toast.makeText(this, getString(R.string.invalid_login_data), Toast.LENGTH_SHORT).show()
                     } else {
                         //Log.i(TAG, "valid")
                         //get ID
@@ -99,8 +90,7 @@ class WelcomeActivity : AppCompatActivity() {
                         //show warning if no ID was found
                         if (untisID == null) {
                             //no match was found
-                            warningText.setTextColor(Color.rgb(244, 67, 54))
-                            warningText.text = getString(R.string.no_matching_user)
+                            Toast.makeText(this, getString(R.string.no_matching_user), Toast.LENGTH_SHORT).show()
                         } else {
                             //id was found
 

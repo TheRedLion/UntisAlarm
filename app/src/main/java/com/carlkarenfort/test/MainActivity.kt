@@ -103,27 +103,16 @@ class MainActivity : AppCompatActivity() {
             //clear field afterwards
             setTBS.setText("")
 
+
+
             //temp code
-
-
             val scheduler = AndroidAlarmScheduler(this)
             var alarmItem: AlarmItem? = null
             alarmItem = AlarmItem(
                 id = 1,
-                time = LocalDateTime.of(2023,8,30,11,34)
+                time = LocalDateTime.of(2023,8,30,16,0,3)
             )
             alarmItem.let(scheduler::schedule)
-
-            /*
-            val intent = Intent(AlarmClock.ACTION_SET_ALARM)
-            intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-            intent.putExtra(AlarmClock.EXTRA_HOUR, 10)
-            intent.putExtra(AlarmClock.EXTRA_MINUTES, 20)
-            intent.putExtra(AlarmClock.EXTRA_MESSAGE, "yoooo")
-            startActivity(intent)
-            */
-
-
 
         }
 
