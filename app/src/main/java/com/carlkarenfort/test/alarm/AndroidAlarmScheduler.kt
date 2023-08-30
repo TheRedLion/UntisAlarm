@@ -5,8 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import java.time.ZoneOffset
-import java.util.Calendar
-import java.util.Date
 
 class AndroidAlarmScheduler(
     private val context: Context
@@ -16,8 +14,8 @@ class AndroidAlarmScheduler(
     override fun schedule(item: AlarmItem) {
         println("scheduled")
         val intent = Intent(context, AlarmReciever::class.java)
-        alarmManager.set(
-            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
             item.time.atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!!,
             PendingIntent.getBroadcast(
                 context,
@@ -29,7 +27,7 @@ class AndroidAlarmScheduler(
         )
     }
 
-    override fun cancal(item: AlarmItem) {
+    override fun cancel(item: AlarmItem) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
