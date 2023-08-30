@@ -3,7 +3,6 @@ package com.carlkarenfort.test
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.provider.AlarmClock
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -16,6 +15,7 @@ import com.carlkarenfort.test.alarm.AlarmItem
 import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+import java.util.Calendar
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -106,12 +106,15 @@ class MainActivity : AppCompatActivity() {
 
 
             //temp code
+
+
             val scheduler = AndroidAlarmScheduler(this)
-            var alarmItem: AlarmItem? = null
-            alarmItem = AlarmItem(
+
+            var alarmItem = AlarmItem(
                 id = 1,
-                time = LocalDateTime.of(2023,8,30,16,0,3)
+                time = LocalDateTime.now()
             )
+
             alarmItem.let(scheduler::schedule)
 
         }

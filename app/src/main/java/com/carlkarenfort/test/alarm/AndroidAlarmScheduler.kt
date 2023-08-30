@@ -4,27 +4,27 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import java.time.ZoneOffset
 
 class AndroidAlarmScheduler(
     private val context: Context
 ): AlarmScheduler {
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
-
+    private val ALARM_REQUEST_CODE = 123
     override fun schedule(item: AlarmItem) {
-        println("scheduled")
-        val intent = Intent(context, AlarmReciever::class.java)
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            item.time.atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!!,
-            PendingIntent.getBroadcast(
-                context,
-                item.id.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-
-            )
+        Log.i("AlarmScheduler", "Scheduled")
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            ALARM_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
         )
+        Log.i("AlarmScheduler", "Scheduled")
+        alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent);
+        Log.i("AlarmScheduler", "Scheduled")
+
     }
 
     override fun cancel(item: AlarmItem) {
@@ -32,7 +32,7 @@ class AndroidAlarmScheduler(
             PendingIntent.getBroadcast(
                 context,
                 item.id.hashCode(),
-                Intent(context, AlarmReciever::class.java),
+                Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
             )
