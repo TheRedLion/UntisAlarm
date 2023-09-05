@@ -8,7 +8,7 @@
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    
+
     <application
         android:name=".RunningApp"
         android:allowBackup="true"
@@ -39,6 +39,12 @@
             android:screenOrientation="portrait" />
         <receiver android:name=".alarm.AlarmReciever"/>
         <service android:name=".RunningService"/>
+        <receiver android:name=".alarm.AlarmReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="first.custom.action"> </action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
