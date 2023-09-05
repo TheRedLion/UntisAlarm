@@ -1,7 +1,12 @@
 package com.carlkarenfort.test
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.AlarmClock
 import android.util.Log
@@ -12,6 +17,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.carlkarenfort.test.alarm.AlarmItem
 import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.runBlocking
@@ -35,6 +41,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         //use proper layout
         setContentView(R.layout.activity_main)
+
+        //request permission for notifications
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
+
 
         setNewUser = findViewById(R.id.addNewUser)
         timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
@@ -106,6 +122,11 @@ class MainActivity : AppCompatActivity() {
 
 
             //temp code
+            Intent(applicationContext, RunningService::class.java).also {
+                it.action = RunningService.Actions.START.toString()
+                startService(it)
+            }
+            /*
             val scheduler = AndroidAlarmScheduler(this)
             var alarmItem: AlarmItem? = null
             alarmItem = AlarmItem(
@@ -113,6 +134,7 @@ class MainActivity : AppCompatActivity() {
                 time = LocalDateTime.of(2023,8,30,16,0,3)
             )
             alarmItem.let(scheduler::schedule)
+             */
 
         }
 

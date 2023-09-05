@@ -16,7 +16,7 @@ class AndroidAlarmScheduler(
         val intent = Intent(context, AlarmReciever::class.java)
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            item.time.atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!!,
+            System.currentTimeMillis() + 2000,
             PendingIntent.getBroadcast(
                 context,
                 item.id.hashCode(),
