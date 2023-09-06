@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.bytedream.untis4j.Session
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalTime
