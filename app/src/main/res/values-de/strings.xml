@@ -2,7 +2,7 @@
 <resources>
     <string name="invalid_number">Bitte nur valide Zahlen eingeben</string>
     <string name="app_name">Untis Wecker</string>
-    <string name="new_user">Neuer Nutzer</string>
+    <string name="new_user">Anmelden</string>
     <string name="log_in">Anmelden</string>
     <string name="fore_name">Vorname</string>
     <string name="last_name">Nachname</string>

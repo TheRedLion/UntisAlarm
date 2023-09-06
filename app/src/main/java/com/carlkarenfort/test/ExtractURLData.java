@@ -9,6 +9,8 @@ import java.net.URL;
 
 public class ExtractURLData extends AppCompatActivity {
 
+    //return Server from inputted URL
+    //return an empty string if none was found
     public static String returnServerFromURL(String urlStr) {
         //take login url and extract the Server address
         try {
@@ -25,7 +27,8 @@ public class ExtractURLData extends AppCompatActivity {
         }
     }
 
-    //take login url and extract the school name
+    //return School from inputted URL
+    //return an empty string if none was found
     public static String returnSchoolFromURL(String urlStr) {
         try {
             URI uri = new URI(urlStr);
@@ -39,11 +42,11 @@ public class ExtractURLData extends AppCompatActivity {
                     }
                 }
             }
+            return "";
         } catch (URISyntaxException e) {
             e.printStackTrace();
             System.err.println("Invalid URL format: " + urlStr);
             return "";
         }
-        return "";
     }
 }

@@ -2,13 +2,9 @@ package com.carlkarenfort.test
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.provider.AlarmClock
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -18,15 +14,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.carlkarenfort.test.alarm.AlarmItem
-import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-import java.util.Calendar
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
 class MainActivity : AppCompatActivity() {
+    //tag for logs
     private var TAG = "MainActivity"
     private lateinit var setNewUser: Button
     private lateinit var timeBeforeSchool: TextView
@@ -40,31 +34,16 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //use proper layout
-        setContentView(R.layout.activity_main)
 
-        //request permission for notifications
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                0
-            )
-        }
-
-
-        setNewUser = findViewById(R.id.addNewUser)
-        timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
-        setTBS = findViewById(R.id.setTBS)
-        updateTBS = findViewById(R.id.updateTBS)
-        alarmPreview = findViewById(R.id.alarmPreview)
-        toggleAlarm = findViewById(R.id.toggleAlarm)
-        tempDisplay = findViewById(R.id.tempDisplay)
-
+        //create store Data object to access user Data
         val storeData = StoreData(applicationContext)
 
-        //check if user has logged in, if so directly go to WelcomeActivity (at the top so the rest of the activity does not have to be built)
+
+        //check if user has not logged in yet
+        //if so directly go to WelcomeActivity (must be at the top so the rest of the activity does not have to be built)
+        //must block main thread to access a DataStore
         runBlocking {
+            //check if loginData is empty
             if (storeData.loadLoginData()[0] == null) {
                 //go to welcome activity when not logged in
                 Log.i(TAG, "Not logged in tf")
@@ -73,17 +52,47 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //use proper layout
+        setContentView(R.layout.activity_main)
 
-        //set TBS preview
+        //get objects from activity_main
+        setNewUser = findViewById(R.id.addNewUser)
+        timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
+        setTBS = findViewById(R.id.setTBS)
+        updateTBS = findViewById(R.id.updateTBS)
+        alarmPreview = findViewById(R.id.alarmPreview)
+        toggleAlarm = findViewById(R.id.toggleAlarm)
+        tempDisplay = findViewById(R.id.tempDisplay)
+
+        //request permission for notifications
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Log.i(TAG, "requesting permission")
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
+
+        //start foreground activity
+        Log.i(TAG, "starting background service")
+        Intent(applicationContext, RunningService::class.java).also {
+            it.action = RunningService.Actions.START.toString()
+            startService(it)
+        }
+
+        //load time before school must stop main thread since it accesses DataStore
         var tbs: Int?
         runBlocking {
             tbs = storeData.loadTBS()
         }
 
-        //check if tbs was already set
+        //check if tbs has not already been set
         if (tbs == null) {
             //if not put 60 as default
             timeBeforeSchool.text = "60 min"
+            //store 60 min in DataStore
+            //TODO: may be on different thread since it is only stoing data
             runBlocking {
                 storeData.storeTBS(60)
             }
@@ -100,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
-            //get new TBS as string
+            //get user inputted TBS as string
             val newTBSStr = setTBS.text.toString()
             //convert to int
             var newTBS = 0
@@ -111,8 +120,8 @@ class MainActivity : AppCompatActivity() {
             }
             //update displayedTBS
             timeBeforeSchool.text = "$newTBS min"
-
             //store data
+            //TODO: store tbs data on different thread to reduce lag
             runBlocking {
                 storeData.storeTBS(newTBS)
             }
@@ -123,10 +132,8 @@ class MainActivity : AppCompatActivity() {
 
 
             //temp code
-            Intent(applicationContext, RunningService::class.java).also {
-                it.action = RunningService.Actions.START.toString()
-                startService(it)
-            }
+
+
             /*
             val scheduler = AndroidAlarmScheduler(this)
             var alarmItem: AlarmItem? = null
@@ -138,14 +145,16 @@ class MainActivity : AppCompatActivity() {
              */
 
         }
-
         // TODO: set alarm when button isn't clicked
-        //set switch to proper state
+
+        //initialize values
         var aaStateNullable: Boolean?
         var aaState = false
+        //load stored state of switch
         runBlocking {
             aaStateNullable = storeData.loadAlarmActive()
         }
+        //convert Boolean? to Boolean
         if (aaStateNullable != null) {
             aaState = aaStateNullable as Boolean
         }

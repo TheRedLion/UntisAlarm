@@ -32,7 +32,7 @@ class AndroidAlarmScheduler(
             PendingIntent.getBroadcast(
                 context,
                 item.id.hashCode(),
-                Intent(context, AlarmReciever::class.java),
+                Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
             )

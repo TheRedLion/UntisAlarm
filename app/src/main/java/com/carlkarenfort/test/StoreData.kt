@@ -10,7 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userToken")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userData")
 class StoreData (private val context: Context) {
     private val idKey = intPreferencesKey("id")
     private val usernameKey = stringPreferencesKey("username")

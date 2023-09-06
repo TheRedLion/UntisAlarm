@@ -37,14 +37,8 @@
             android:parentActivityName=".WelcomeActivity"
             android:theme="@style/Theme.AppCompat"
             android:screenOrientation="portrait" />
-        <receiver android:name=".alarm.AlarmReciever"/>
+        <receiver android:name=".alarm.AlarmReceiver"/>
         <service android:name=".RunningService"/>
-        <receiver android:name=".alarm.AlarmReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="first.custom.action"> </action>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
