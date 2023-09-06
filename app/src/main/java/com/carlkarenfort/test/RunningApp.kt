@@ -10,14 +10,12 @@ import com.carlkarenfort.test.alarm.AlarmItem
 import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class RunningApp: Application() {
-
+    private val TAG = "RunningApp"
     override fun onCreate() {
         super.onCreate()
-
-        //create store data instance
-        val storeData = StoreData(applicationContext)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -30,18 +28,6 @@ class RunningApp: Application() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        var switch: Boolean?
-        runBlocking {
-            switch = storeData.loadAlarmActive()
-        }
-
-        if (switch == true) {
-            val apiCalls: ApiCalls = ApiCalls()
-            runBlocking {
-                val
-                apiCalls.getSchoolStartForDay()
-            }
-        }
 
         /*
         Log.i("RunningApp", "scheduling")
@@ -55,14 +41,54 @@ class RunningApp: Application() {
          */
     }
 
+    fun setAlarms() {
 
-    fun setAlarm(time: LocalDateTime) {
+        //create store data instance
+        val storeData = StoreData(applicationContext)
+
+
+        var switch: Boolean?
+        runBlocking {
+            switch = storeData.loadAlarmActive()
+        }
+
+        if (switch == true) {
+            val apiCalls: ApiCalls = ApiCalls()
+            var schoolStart: LocalTime?
+            var tbs: Int?
+
+            for (i in 1..5) {
+                val day = apiCalls.getWorkingDay(i.toLong())
+                runBlocking {
+                    val loginDataNullable = storeData.loadLoginData()
+                    val id = storeData.loadID()
+                    tbs = storeData.loadTBS()
+                    schoolStart = apiCalls.getSchoolStartForDay(
+                        loginDataNullable[0]!!,
+                        loginDataNullable[1]!!,
+                        loginDataNullable[2]!!,
+                        loginDataNullable[3]!!,
+                        id!!,
+                        day
+                    )
+                }
+
+                if (schoolStart == null || tbs == null || tbs!! < 0) {
+                    Log.i(TAG, "schoolStart and tbs may not be null")
+                } else {
+                    setAlarm(LocalDateTime.of(day, schoolStart).minusMinutes(tbs!!.toLong()), (day.dayOfMonth + day.monthValue*100 + day.year*10000))
+                }
+            }
+        }
+    }
+
+    private fun setAlarm(time: LocalDateTime, id: Int) {
         Log.i("RunningApp", "scheduling")
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
         alarmItem = AlarmItem(
-            id = 1,
-            time = LocalDateTime.now()
+            id,
+            time
         )
         alarmItem.let(scheduler::schedule)
     }

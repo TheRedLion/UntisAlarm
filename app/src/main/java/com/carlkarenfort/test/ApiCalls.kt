@@ -5,7 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.bytedream.untis4j.Session
 import java.io.IOException
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -13,6 +15,20 @@ import java.time.LocalTime
 class ApiCalls {
     //tag for logging text
     private val TAG = "ApiCalls"
+
+    //this function returns the next working day
+    fun getWorkingDay(count: Long): LocalDate {
+        val today = LocalDate.now()
+        var nextWorkingDay = today.plusDays(count)
+
+        // Check if the next day is a weekend (Saturday or Sunday)
+        while (nextWorkingDay.dayOfWeek == DayOfWeek.SATURDAY || nextWorkingDay.dayOfWeek == DayOfWeek.SUNDAY) {
+            nextWorkingDay = nextWorkingDay.plusDays(1)
+        }
+
+        return nextWorkingDay
+    }
+
 
     //this function takes login data and creates a session to verify that it is valid
     //returns true if data is valid
