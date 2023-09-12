@@ -1,5 +1,7 @@
 package com.carlkarenfort.test;
 
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.net.MalformedURLException;
@@ -8,10 +10,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class ExtractURLData extends AppCompatActivity {
+    private static final String TAG = "ExtractURLData";
 
     //return Server from inputted URL
     //return an empty string if none was found
     public static String returnServerFromURL(String urlStr) {
+        Log.i(TAG, "called returnServerFromURL");
         //take login url and extract the Server address
         try {
             URL url = new URL(urlStr);
@@ -30,6 +34,7 @@ public class ExtractURLData extends AppCompatActivity {
     //return School from inputted URL
     //return an empty string if none was found
     public static String returnSchoolFromURL(String urlStr) {
+        Log.i(TAG, "returnSchoolFromURL");
         try {
             URI uri = new URI(urlStr);
             String query = uri.getQuery();
@@ -38,6 +43,7 @@ public class ExtractURLData extends AppCompatActivity {
                 for (String param : params) {
                     String[] keyValue = param.split("=");
                     if (keyValue.length == 2 && keyValue[0].equals("school")) {
+                        Log.i(TAG, "found School " + keyValue[1]);
                         return keyValue[1];
                     }
                 }

@@ -14,7 +14,9 @@ import kotlinx.coroutines.runBlocking
 
 
 class WelcomeActivity : AppCompatActivity() {
+    //tag for logging
     private var TAG: String = "WelcomeActivity"
+
     private lateinit var foreName: EditText
     private lateinit var longName: EditText
     private lateinit var untisURL: EditText

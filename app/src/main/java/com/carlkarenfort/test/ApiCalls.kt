@@ -17,9 +17,9 @@ class ApiCalls {
     private val TAG = "ApiCalls"
 
     //this function returns the next working day
-    fun getWorkingDay(count: Long): LocalDate {
-        val today = LocalDate.now()
-        var nextWorkingDay = today.plusDays(count)
+    fun getNextWorkingDay(): LocalDate {
+        Log.i(TAG, "called getNextWorkingDay")
+        var nextWorkingDay = LocalDate.now()
 
         // Check if the next day is a weekend (Saturday or Sunday)
         while (nextWorkingDay.dayOfWeek == DayOfWeek.SATURDAY || nextWorkingDay.dayOfWeek == DayOfWeek.SUNDAY) {

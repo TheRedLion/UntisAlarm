@@ -21,13 +21,9 @@ class AndroidAlarmScheduler(
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        Log.i("AlarmScheduler", "Scheduled")
-        alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent);
-        Log.i("AlarmScheduler", "Scheduled")
-
+        Log.i("AlarmScheduler", "scheduling")
+        alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent)
     }
-
-
 
     override fun cancel(item: AlarmItem) {
 
