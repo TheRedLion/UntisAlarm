@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.os.StrictMode
 import android.util.Log
 import com.carlkarenfort.test.alarm.AlarmItem
 import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
@@ -14,6 +15,7 @@ import java.time.LocalTime
 
 class RunningApp: Application() {
     private val TAG = "RunningApp"
+    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
 
     override fun onCreate() {
         super.onCreate()
@@ -56,7 +58,9 @@ class RunningApp: Application() {
                 tbs = storeData.loadTBS()
             }
             Log.i(TAG, "getting schoolstart with id: $id")
-            if (loginDataNullable[0] != null || loginDataNullable[1] != null || loginDataNullable[2] != null || loginDataNullable[3] != null || id != null) {
+            Log.i(TAG, "tbs is $tbs")
+            if (loginDataNullable[0] != null && loginDataNullable[1] != null && loginDataNullable[2] != null && loginDataNullable[3] != null && id != null) {
+                StrictMode.setThreadPolicy(policy)
                 schoolStart = apiCalls.getSchoolStartForDay(
                     loginDataNullable[0]!!,
                     loginDataNullable[1]!!,

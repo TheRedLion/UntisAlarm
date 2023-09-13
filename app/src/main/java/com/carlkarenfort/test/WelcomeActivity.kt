@@ -96,9 +96,6 @@ class WelcomeActivity : AppCompatActivity() {
                         } else {
                             //id was found
 
-                            //temp
-                            //Log.i(TAG, untisID.toString())
-
                             //store data
                             val storeData = StoreData(applicationContext)
                             runBlocking {
@@ -108,6 +105,7 @@ class WelcomeActivity : AppCompatActivity() {
                                     untisServer,
                                     untisSchool
                                 )
+                                storeData.storeID(untisID)
                             }
 
 
