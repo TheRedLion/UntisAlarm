@@ -14,8 +14,11 @@ import java.time.LocalTime
 
 class RunningApp: Application() {
     private val TAG = "RunningApp"
+
     override fun onCreate() {
         super.onCreate()
+
+        Log.i(TAG, "in onCreate()")
 
         val channel = NotificationChannel(
             "main_channel",
@@ -28,7 +31,7 @@ class RunningApp: Application() {
         setAlarm()
     }
 
-    fun setAlarm() {
+    private fun setAlarm() {
         Log.i(TAG, "called setAlarm")
 
         //create store data instance
@@ -42,14 +45,18 @@ class RunningApp: Application() {
 
         if (switch == true) {
             val apiCalls = ApiCalls()
-            var schoolStart: LocalTime?
-            var tbs: Int?
-
+            var schoolStart: LocalTime? = null
             val day = apiCalls.getNextWorkingDay()
+            val loginDataNullable: Array<String?>
+            val id: Int?
+            var tbs: Int?
             runBlocking {
-                val loginDataNullable = storeData.loadLoginData()
-                val id = storeData.loadID()
+                loginDataNullable = storeData.loadLoginData()
+                id = storeData.loadID()
                 tbs = storeData.loadTBS()
+            }
+            Log.i(TAG, "getting schoolstart with id: $id")
+            if (loginDataNullable[0] != null || loginDataNullable[1] != null || loginDataNullable[2] != null || loginDataNullable[3] != null || id != null) {
                 schoolStart = apiCalls.getSchoolStartForDay(
                     loginDataNullable[0]!!,
                     loginDataNullable[1]!!,
@@ -58,7 +65,10 @@ class RunningApp: Application() {
                     id!!,
                     day
                 )
+            } else {
+                Log.i(TAG, "loaded data is null, can't get school start")
             }
+
 
             if (schoolStart == null || tbs == null || tbs!! < 0) {
                 Log.i(TAG, "schoolStart and tbs may not be null")
@@ -70,6 +80,16 @@ class RunningApp: Application() {
         }
     }
 
+    private fun cancelAlarm() {
+        Log.i("RunningApp", "cancelling")
+        val scheduler = AndroidAlarmScheduler(this)
+        var alarmItem: AlarmItem? = null
+        alarmItem = AlarmItem(
+            845746,
+            null
+        )
+        alarmItem.let(scheduler::schedule)
+    }
     private fun scheduleAlarm(time: LocalDateTime) {
         Log.i("RunningApp", "scheduling")
         val scheduler = AndroidAlarmScheduler(this)

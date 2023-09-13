@@ -13,39 +13,35 @@ import java.time.LocalDate
 import java.util.Calendar
 
 class AlarmReceiver: BroadcastReceiver() {
-    private val TAG = "AlarmReciever"
+    private val TAG = "AlarmReceiver"
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.i(TAG ,"called onRecieve()")
+        Log.i(TAG ,"called onReceive()")
 
         //get loginData and ID
         val storeData = StoreData(context!!) //TODO("remove !! and add error exeption")
-
         var id: Int?
         var loginData: Array<String?>
         runBlocking {
             id = storeData.loadID()
             loginData = storeData.loadLoginData()
         }
+
         if (!(id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null)) {
 
             val apiCalls = ApiCalls()
             val schoolStart = apiCalls.getSchoolStartForDay(loginData[0]!!, loginData[1]!!, loginData[2]!!, loginData[3]!!, id!!, LocalDate.now())
 
             val clock = AlarmClock()
-            val calendar = Calendar.getInstance()
-            if (context != null) {
+            if (schoolStart != null) {
                 clock.setAlarm(
-                    calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE) + 1,
+                    schoolStart.hour,
+                    schoolStart.minute,
                     context
                 )
-                Log.i("receiver", "I even reached this point but  no alarm set?")
-
+                Log.i(TAG, "set Alarm")
             } else {
-                Log.w("receiver", "couldnt start alarm due to missing context")
+                Log.i(TAG, "school start returned null")
             }
-            Log.i("receiver", "I even reached this point but  no alarm set? 2")
         }
-
     }
 }

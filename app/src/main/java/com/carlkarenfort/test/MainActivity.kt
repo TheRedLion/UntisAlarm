@@ -72,13 +72,6 @@ class MainActivity : AppCompatActivity() {
             0
         )
 
-        //start foreground activity
-        Log.i(TAG, "starting foreground acitvity")
-        Intent(applicationContext, RunningService::class.java).also {
-            it.action = RunningService.Actions.START.toString()
-            startService(it)
-        }
-
         //load time before school must stop main thread since it accesses DataStore
         var tbs: Int?
         runBlocking {
@@ -165,7 +158,21 @@ class MainActivity : AppCompatActivity() {
             runBlocking {
                 storeData.storeAlarmActive(isChecked)
             }
-            //update alarm preview and alarm tomorrow
+
+            //start foreground activity
+            if (isChecked) {
+                Log.i(TAG, "starting foreground activity")
+                Intent(applicationContext, RunningService::class.java).also {
+                    it.action = RunningService.Actions.START.toString()
+                    startService(it)
+                }
+            } else {
+                Log.i(TAG, "stopping foreground activity")
+                Intent(applicationContext, RunningService::class.java).also {
+                    it.action = RunningService.Actions.STOP.toString()
+                    startService(it)
+                }
+            }
         }
     }
 }

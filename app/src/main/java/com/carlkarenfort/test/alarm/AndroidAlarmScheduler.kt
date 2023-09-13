@@ -26,7 +26,6 @@ class AndroidAlarmScheduler(
     }
 
     override fun cancel(item: AlarmItem) {
-
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
