@@ -27,6 +27,7 @@ class RunningApp: Application() {
             "Webunitsalarm Notifications",
             NotificationManager.IMPORTANCE_HIGH
         )
+
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)

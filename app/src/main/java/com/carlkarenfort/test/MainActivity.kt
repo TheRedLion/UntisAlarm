@@ -13,7 +13,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -34,6 +39,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "creating Main Activity")
+
+        //request permission for notifications
+        Log.i(TAG, "requesting permission")
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            0
+        )
 
         //create store Data object to access user Data
         val storeData = StoreData(applicationContext)
@@ -64,14 +77,6 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
 
-        //request permission for notifications
-        Log.i(TAG, "requesting permission")
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-            0
-        )
-
         //load time before school must stop main thread since it accesses DataStore
         var tbs: Int?
         runBlocking {
@@ -82,11 +87,12 @@ class MainActivity : AppCompatActivity() {
         if (tbs == null) {
             //if not put 60 as default
             timeBeforeSchool.text = "60 min"
+
             //store 60 min in DataStore
-            //TODO: may be on different thread since it is only stoing data
-            runBlocking {
+            CoroutineScope(Dispatchers.IO).launch {
                 storeData.storeTBS(60)
             }
+
         } else {
             //else display loaded tbs
             timeBeforeSchool.text = tbs.toString() + " min"
@@ -112,29 +118,12 @@ class MainActivity : AppCompatActivity() {
             //update displayedTBS
             timeBeforeSchool.text = "$newTBS min"
             //store data
-            //TODO: store tbs data on different thread to reduce lag
-            runBlocking {
+            CoroutineScope(Dispatchers.IO).launch {
                 storeData.storeTBS(newTBS)
             }
 
             //clear field afterwards
             setTBS.setText("")
-
-
-
-            //temp code
-
-
-            /*
-            val scheduler = AndroidAlarmScheduler(this)
-            var alarmItem: AlarmItem? = null
-            alarmItem = AlarmItem(
-                id = 1,
-                time = LocalDateTime.of(2023,8,30,16,0,3)
-            )
-            alarmItem.let(scheduler::schedule)
-             */
-
         }
         // TODO: set alarm when button isn't clicked
 
