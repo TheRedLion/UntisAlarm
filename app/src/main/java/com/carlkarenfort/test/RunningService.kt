@@ -2,12 +2,19 @@ package com.carlkarenfort.test
 
 import android.content.Intent
 import android.os.IBinder
+import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.carlkarenfort.test.alarm.AlarmItem
+import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
+import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 
 class RunningService: android.app.Service() {
     private val TAG = "RunningService"
+    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -27,7 +34,23 @@ class RunningService: android.app.Service() {
             .setContentTitle("Webuntis Alarm Setter")
             .setContentText("some text")
             .build()
-        startForeground(1, notification)
+        startForeground(261353, notification)
+        scheduleAlarm()
+    }
+
+    private fun cancelAlarm() {
+        Log.i("RunningApp", "cancelling")
+        val scheduler = AndroidAlarmScheduler(this)
+        var alarmItem: AlarmItem? = null
+        alarmItem = AlarmItem(845746)
+        alarmItem.let(scheduler::schedule)
+    }
+    private fun scheduleAlarm() {
+        Log.i("RunningApp", "scheduling")
+        val scheduler = AndroidAlarmScheduler(this)
+        var alarmItem: AlarmItem? = null
+        alarmItem = AlarmItem(845746)
+        alarmItem.let(scheduler::schedule)
     }
 
     enum class Actions {

@@ -1,3 +1,4 @@
 local.properties
 *.lock
 *.bin
+*.gradle

@@ -2,6 +2,9 @@ package com.carlkarenfort.test
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -39,6 +42,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "creating Main Activity")
+
+        //create channel for foregroundactivity notification
+        val channel = NotificationChannel(
+            "main_channel",
+            "Webunitsalarm Notifications",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
 
         //request permission for notifications
         Log.i(TAG, "requesting permission")
@@ -144,7 +158,7 @@ class MainActivity : AppCompatActivity() {
         //create listener for switch
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
             //store new state
-            runBlocking {
+            CoroutineScope(Dispatchers.IO).launch {
                 storeData.storeAlarmActive(isChecked)
             }
 
