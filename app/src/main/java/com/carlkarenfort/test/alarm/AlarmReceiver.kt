@@ -57,6 +57,19 @@ class AlarmReceiver: BroadcastReceiver() {
             }
         }
     }
+    /*
+    TODO("implement new structure for onrecieve")
+
+    1.get alarmtime for next day
+    2.check if it changed
+        if so cancel alarm and set new
+    3.if 1 failed, set new AlarmManager for in a short amount of time
+        else get earlyest school start time and set new alarm for smthing like an hour before that
+
+    4. set alarm for after school to get schoolstart time for next day
+
+
+     */
 
     /*
     private fun setAlarm() {
