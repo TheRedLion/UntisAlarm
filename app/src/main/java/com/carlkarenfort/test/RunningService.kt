@@ -39,14 +39,13 @@ class RunningService: android.app.Service() {
     }
 
     private fun cancelAlarm() {
-        Log.i("RunningApp", "cancelling")
+        Log.i(TAG, "cancelling")
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
         alarmItem = AlarmItem(845746)
         alarmItem.let(scheduler::schedule)
     }
     private fun scheduleAlarm() {
-        Log.i("RunningApp", "scheduling")
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
         alarmItem = AlarmItem(845746)

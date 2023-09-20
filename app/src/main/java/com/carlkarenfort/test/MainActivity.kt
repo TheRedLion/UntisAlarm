@@ -138,6 +138,7 @@ class MainActivity : AppCompatActivity() {
 
             //clear field afterwards
             setTBS.setText("")
+
         }
         // TODO: set alarm when button isn't clicked
 

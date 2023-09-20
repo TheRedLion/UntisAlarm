@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.carlkarenfort.test.AlarmClock
 import java.time.ZoneOffset
 
 class AndroidAlarmScheduler(
@@ -13,7 +14,7 @@ class AndroidAlarmScheduler(
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val ALARM_REQUEST_CODE = 123
     override fun schedule(item: AlarmItem) {
-        Log.i("AlarmScheduler", "Scheduled")
+        Log.i("AlarmScheduler", "scheduled Alarm")
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -21,7 +22,6 @@ class AndroidAlarmScheduler(
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        Log.i("AlarmScheduler", "scheduling")
         alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 2000, pendingIntent)
     }
 

@@ -17,6 +17,7 @@ import java.util.Calendar
 
 class AlarmReceiver: BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
+    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.i(TAG ,"called onReceive()")
 
@@ -31,6 +32,8 @@ class AlarmReceiver: BroadcastReceiver() {
 
         if (!(id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null)) {
 
+            StrictMode.setThreadPolicy(policy)
+
             val apiCalls = ApiCalls()
             val schoolStart = apiCalls.getSchoolStartForDay(
                 loginData[0]!!,
@@ -44,7 +47,7 @@ class AlarmReceiver: BroadcastReceiver() {
             val clock = AlarmClock()
             if (schoolStart != null) {
                 clock.setAlarm(
-                    schoolStart.hour, //TODO("remove !! and add errror exeption")
+                    schoolStart.hour,
                     schoolStart.minute,
                     context
                 )
