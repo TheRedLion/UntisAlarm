@@ -37,16 +37,17 @@ class ApiCalls {
     }
 
     //this function returns the next working day
-    fun getNextWorkingDay(): LocalDate {
-        Log.i(TAG, "called getNextWorkingDay")
-        var nextWorkingDay = LocalDate.now()
+    fun getNextDay(): LocalDate {
+        Log.i(TAG, "called getNextDay()")
+        var nextDay = LocalDate.now()
+        nextDay = nextDay.plusDays(1)
 
         // Check if the next day is a weekend (Saturday or Sunday)
-        while (nextWorkingDay.dayOfWeek == DayOfWeek.SATURDAY || nextWorkingDay.dayOfWeek == DayOfWeek.SUNDAY) {
-            nextWorkingDay = nextWorkingDay.plusDays(1)
+        while (nextDay.dayOfWeek == DayOfWeek.SATURDAY || nextDay.dayOfWeek == DayOfWeek.SUNDAY) {
+            nextDay = nextDay.plusDays(1)
         }
 
-        return nextWorkingDay
+        return nextDay
     }
 
 

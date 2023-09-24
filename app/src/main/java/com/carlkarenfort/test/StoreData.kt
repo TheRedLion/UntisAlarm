@@ -19,11 +19,27 @@ class StoreData (private val context: Context) {
     private val schoolKey = stringPreferencesKey("school")
     private val timeBeforeSchoolKey = intPreferencesKey("tbs")
     private val alarmActiveKey = booleanPreferencesKey("alarm-active")
-
+    private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
+    private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
 
     suspend fun loadID(): Int? {
         val preferences = context.dataStore.data.first()
         return preferences[idKey]
+    }
+
+    suspend fun loadAlarmClock(): Array<Int?> {
+        val preferences = context.dataStore.data.first()
+        return arrayOf(
+            preferences[alarmClockHourKey],
+            preferences[alarmClockMinuteKey]
+        )
+    }
+
+    suspend fun storeAlarmClock(hour: Int, minute: Int) {
+        context.dataStore.edit { settings ->
+            settings[alarmClockHourKey] = hour
+            settings[alarmClockMinuteKey] = minute
+        }
     }
 
     suspend fun storeID(id: Int) {

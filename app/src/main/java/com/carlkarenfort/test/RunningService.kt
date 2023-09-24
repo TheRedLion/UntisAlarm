@@ -22,9 +22,15 @@ class RunningService: android.app.Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
             Actions.START.toString() -> start()
-            Actions.STOP.toString() -> stopSelf()
+            Actions.STOP.toString() -> stop()
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun stop() {
+        Log.i(TAG, "called stop()")
+        cancelAlarm()
+        stopSelf()
     }
 
     private fun start() {
@@ -43,8 +49,9 @@ class RunningService: android.app.Service() {
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
         alarmItem = AlarmItem(845746)
-        alarmItem.let(scheduler::schedule)
+        alarmItem.let(scheduler::cancel)
     }
+
     private fun scheduleAlarm() {
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
