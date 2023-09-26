@@ -12,7 +12,7 @@ class AndroidAlarmScheduler(
     private val context: Context
 ): AlarmScheduler {
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
-    private val ALARM_REQUEST_CODE = 123
+    private val ALARM_REQUEST_CODE = 73295871
     override fun schedule(item: AlarmItem) {
         Log.i("AlarmScheduler", "scheduled Alarm")
         val intent = Intent(context, AlarmReceiver::class.java)

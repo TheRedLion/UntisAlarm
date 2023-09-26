@@ -1,5 +1,7 @@
 package com.carlkarenfort.test.alarm
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,10 +11,15 @@ import com.carlkarenfort.test.AlarmClock
 import com.carlkarenfort.test.ApiCalls
 import com.carlkarenfort.test.StoreData
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 
 class AlarmReceiver: BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
     private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
+    private val ALARM_REQUEST_CODE = 73295871
+
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.i(TAG ,"called onReceive()")
 
@@ -69,18 +76,59 @@ class AlarmReceiver: BroadcastReceiver() {
 
                         if (schoolStart.hour == alarmClockHour && schoolStart.minute == alarmClockMinute) {
                             //alarm clock already set properly
+                            setNew("normal", context)
                         } else if (alarmClockHour == null || alarmClockMinute == null) {
                             //no alarm clock set, setting a new one
                             val clock = AlarmClock()
                             clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
+                            setNew("normal", context)
                         } else {
                             //alarm set improperly
                             val clock = AlarmClock()
                             clock.cancelAlarm(context)
                             clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
+                            setNew("normal", context)
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun setNew(reason: String, schoolStart: LocalTime, context: Context) {
+        when (reason) {
+            "noInternet" -> {
+
+            }
+
+            "normal" -> {
+                val alarmManager = context.getSystemService(AlarmManager::class.java)
+                val intent = Intent(context, AlarmReceiver::class.java)
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    ALARM_REQUEST_CODE,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+                if (LocalTime.now().isBefore(schoolStart.minusHours(3))) {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC,
+                        System.currentTimeMillis() + 900000,
+                        pendingIntent
+                    )
+                    Log.i(TAG, "set new Alarm for in 15 minutes")
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC,
+                        TODO("add time of 3h before alarmclock"),
+                        pendingIntent
+                    )
+                }
+
+            }
+
+            "error" -> {
+
             }
         }
     }
@@ -96,63 +144,5 @@ class AlarmReceiver: BroadcastReceiver() {
 
     4. set alarm for after alarmClock time to get schoolstart time for next day
 
-
      */
-
-    /*
-
-
-    */
-
-    /*
-    private fun setAlarm() {
-        Log.i(TAG, "called setAlarm")
-
-        //create store data instance
-        val storeData = StoreData(applicationContext)
-
-
-        var switch: Boolean?
-        runBlocking {
-            switch = storeData.loadAlarmActive()
-        }
-
-        if (switch == true) {
-            val apiCalls = ApiCalls()
-            var schoolStart: LocalTime? = null
-            val day = apiCalls.getNextWorkingDay()
-            val loginDataNullable: Array<String?>
-            val id: Int?
-            var tbs: Int?
-            runBlocking {
-                loginDataNullable = storeData.loadLoginData()
-                id = storeData.loadID()
-                tbs = storeData.loadTBS()
-            }
-            Log.i(TAG, "getting schoolstart with id: $id")
-            Log.i(TAG, "tbs is $tbs")
-            if (loginDataNullable[0] != null && loginDataNullable[1] != null && loginDataNullable[2] != null && loginDataNullable[3] != null && id != null) {
-                StrictMode.setThreadPolicy(policy)
-                schoolStart = apiCalls.getSchoolStartForDay(
-                    loginDataNullable[0]!!,
-                    loginDataNullable[1]!!,
-                    loginDataNullable[2]!!,
-                    loginDataNullable[3]!!,
-                    id!!,
-                    day
-                )
-            } else {
-                Log.i(TAG, "loaded data is null, can't get school start")
-            }
-
-
-            if (schoolStart == null || tbs == null || tbs!! < 0) {
-                Log.i(TAG, "schoolStart and tbs may not be null")
-            } else {
-                scheduleAlarm(LocalDateTime.of(day, schoolStart).minusMinutes(tbs!!.toLong()))
-            }
-        } else {
-            //switch is off
-        }
-    }*/
 }
