@@ -12,6 +12,7 @@ import com.carlkarenfort.test.ApiCalls
 import com.carlkarenfort.test.StoreData
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 
@@ -66,6 +67,7 @@ class AlarmReceiver: BroadcastReceiver() {
                         id!!,
                         apiCalls.getNextDay()
                     )
+                    Log.i(TAG, "Getting Schoolstart for day: ${apiCalls.getNextDay().toString()}. Is ${schoolStart.toString()}")
                     //debug: var schoolStart = LocalTime.of(7, 0)
 
                     if (schoolStart == null) {
@@ -76,18 +78,18 @@ class AlarmReceiver: BroadcastReceiver() {
 
                         if (schoolStart.hour == alarmClockHour && schoolStart.minute == alarmClockMinute) {
                             //alarm clock already set properly
-                            setNew("normal", context)
+                            setNew("normal", schoolStart, context)
                         } else if (alarmClockHour == null || alarmClockMinute == null) {
                             //no alarm clock set, setting a new one
                             val clock = AlarmClock()
                             clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
-                            setNew("normal", context)
+                            setNew("normal", schoolStart, context)
                         } else {
                             //alarm set improperly
                             val clock = AlarmClock()
                             clock.cancelAlarm(context)
                             clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
-                            setNew("normal", context)
+                            setNew("normal", schoolStart, context)
                         }
                     }
                 }
@@ -118,9 +120,14 @@ class AlarmReceiver: BroadcastReceiver() {
                     )
                     Log.i(TAG, "set new Alarm for in 15 minutes")
                 } else {
+                    val schoolStartDate = LocalDateTime.of(LocalDate.now(), schoolStart.minusHours(3))
+                    var alarmClockDay = LocalDate.now()
+                    if (schoolStart.isAfter(LocalTime.now())) {
+                        alarmClockDay = alarmClockDay.plusDays(1)
+                    }
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC,
-                        TODO("add time of 3h before alarmclock"),
+                        LocalDateTime.of(LocalDate.now(), schoolStart.minusMinutes(15)).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
                         pendingIntent
                     )
                 }

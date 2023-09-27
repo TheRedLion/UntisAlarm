@@ -161,8 +161,8 @@ class ApiCalls {
             )
             //get timetable from users id
             val timetable = session.getTimetableFromPersonId(
-                day,
-                day,
+                LocalDate.of(2023,9,5),
+                LocalDate.of(2023,9,5),
                 id
             )
             //create return variable
@@ -170,9 +170,13 @@ class ApiCalls {
 
             //iterate over every lesson and keep the highest
             for (i in timetable.indices) {
+                Log.i(TAG, timetable[i].teachers.toString())
                 val startTime = timetable[i].startTime ?: continue
                 if (firstLessonStartTime == null || startTime.isBefore(firstLessonStartTime)) {
-                    firstLessonStartTime = startTime
+                    if (timetable[i].originalTeachers.isEmpty()) {
+                        firstLessonStartTime = startTime
+                        Log.i(TAG, startTime.toString())
+                    }
                 }
             }
             return firstLessonStartTime

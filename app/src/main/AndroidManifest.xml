@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -38,7 +37,13 @@
             android:parentActivityName=".WelcomeActivity"
             android:theme="@style/Theme.AppCompat"
             android:screenOrientation="portrait" />
-        <receiver android:name=".alarm.AlarmReceiver"/>
+        <receiver
+            android:name=".alarm.AlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
         <service android:name=".RunningService"/>
     </application>
 
