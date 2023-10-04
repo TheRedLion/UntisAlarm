@@ -74,8 +74,9 @@ class ApiCalls {
                     )
                     //set return value to true after successful login
                     state = true
-                } catch (_: IOException) {
+                } catch (e: IOException) {
                     Log.i(TAG, "invalid credentials")
+                    error(e)
                 }
                 // TODO: Proper error messages, for example distinguish between when there is no server connection and invalid credentials
             }
@@ -158,13 +159,13 @@ class ApiCalls {
                 password,
                 server,
                 schoolName
-            )
+            ) ?: return null
             //get timetable from users id
             val timetable = session.getTimetableFromPersonId(
-                LocalDate.of(2023,9,5),
-                LocalDate.of(2023,9,5),
+                day,//LocalDate.of(2023,9,5),
+                day,//LocalDate.of(2023,9,5),
                 id
-            )
+            ) ?: return null
             //create return variable
             var firstLessonStartTime: LocalTime? = null
 

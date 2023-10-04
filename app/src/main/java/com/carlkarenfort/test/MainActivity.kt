@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "creating Main Activity")
 
-        //create channel for foregroundactivity notification
+        //create channel for foreground-activity notification
         val channel = NotificationChannel(
             "main_channel",
             "Webunitsalarm Notifications",
@@ -91,26 +91,47 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
 
-        //load time before school must stop main thread since it accesses DataStore
+        //load time before school and switch
         var tbs: Int?
+        var aaStateNullable: Boolean?
         runBlocking {
             tbs = storeData.loadTBS()
+            aaStateNullable = storeData.loadAlarmActive()
         }
 
         //check if tbs has not already been set
         if (tbs == null) {
             //if not put 60 as default
             timeBeforeSchool.text = "60 min"
-
             //store 60 min in DataStore
             CoroutineScope(Dispatchers.IO).launch {
                 storeData.storeTBS(60)
             }
-
         } else {
             //else display loaded tbs
             timeBeforeSchool.text = tbs.toString() + " min"
         }
+
+        //set switch
+        //convert Boolean? to Boolean
+        var aaState = false
+        if (aaStateNullable != null) {
+            aaState = aaStateNullable as Boolean
+        }
+        //set state of switch
+        toggleAlarm.isChecked = aaState
+
+        //start foreground acitivity if alarmActive is on, on new thread
+        if (aaState) {
+            CoroutineScope(Dispatchers.Default).launch {
+                Log.i(TAG, "starting foreground activity")
+                Intent(applicationContext, RunningService::class.java).also {
+                    it.action = RunningService.Actions.START.toString()
+                    startService(it)
+                }
+            }
+        }
+
 
         //listener for going to welcome Activity
         setNewUser.setOnClickListener { _ : View? ->
@@ -140,21 +161,6 @@ class MainActivity : AppCompatActivity() {
             setTBS.setText("")
 
         }
-        // TODO: set alarm when button isn't clicked
-
-        //initialize values
-        var aaStateNullable: Boolean?
-        var aaState = false
-        //load stored state of switch
-        runBlocking {
-            aaStateNullable = storeData.loadAlarmActive()
-        }
-        //convert Boolean? to Boolean
-        if (aaStateNullable != null) {
-            aaState = aaStateNullable as Boolean
-        }
-
-        toggleAlarm.isChecked = aaState
 
         //create listener for switch
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
@@ -165,16 +171,20 @@ class MainActivity : AppCompatActivity() {
 
             //start foreground activity
             if (isChecked) {
-                Log.i(TAG, "starting foreground activity")
-                Intent(applicationContext, RunningService::class.java).also {
-                    it.action = RunningService.Actions.START.toString()
-                    startService(it)
+                CoroutineScope(Dispatchers.Default).launch {
+                    Log.i(TAG, "starting foreground activity")
+                    Intent(applicationContext, RunningService::class.java).also {
+                        it.action = RunningService.Actions.START.toString()
+                        startService(it)
+                    }
                 }
             } else {
-                Log.i(TAG, "stopping foreground activity")
-                Intent(applicationContext, RunningService::class.java).also {
-                    it.action = RunningService.Actions.STOP.toString()
-                    startService(it)
+                CoroutineScope(Dispatchers.Default).launch {
+                    Log.i(TAG, "stopping foreground activity")
+                    Intent(applicationContext, RunningService::class.java).also {
+                        it.action = RunningService.Actions.STOP.toString()
+                        startService(it)
+                    }
                 }
             }
         }

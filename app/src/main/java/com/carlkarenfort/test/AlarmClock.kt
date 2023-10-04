@@ -6,6 +6,9 @@ import android.net.Uri
 import android.provider.AlarmClock
 import android.util.Log
 import androidx.core.content.ContextCompat.startActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AlarmClock {
     private val TAG = "AlarmClock"
@@ -18,6 +21,12 @@ class AlarmClock {
         intent.putExtra(AlarmClock.EXTRA_MESSAGE, "Alarm set by UntisAlarm.")
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
+
+        //store time alarm was set for
+        CoroutineScope(Dispatchers.IO).launch {
+            val storeData = StoreData(context)
+            storeData.storeAlarmClock(hour, minute)
+        }
     }
 
     fun cancelAlarm(context: Context) {
