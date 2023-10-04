@@ -131,8 +131,10 @@ class ApiCalls {
                             }
                         }
                     }
-                } catch (_: IOException) {
+                    session.logout()
+                } catch (e: IOException) {
                     Log.i(TAG, "invalid login credentials")
+                    e.printStackTrace()
                 }
             }
             job.join()
@@ -180,6 +182,7 @@ class ApiCalls {
                     }
                 }
             }
+            session.logout()
             return firstLessonStartTime
         } catch (e: IOException) {
             return null

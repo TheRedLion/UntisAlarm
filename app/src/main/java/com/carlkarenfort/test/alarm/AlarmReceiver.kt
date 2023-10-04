@@ -71,8 +71,11 @@ class AlarmReceiver: BroadcastReceiver() {
                     //debug: var schoolStart = LocalTime.of(7, 0)
 
                     if (schoolStart == null) {
-                        Log.i(TAG, "ApiCalls.getSchoolStartForDay returned null, ether there is no internet connectivity (maybe connected to a wifi network that is not online) or logindata was invalid")
-                        //TODO("add error exeption here")
+                        //probably holliday or something
+                        setNew("noAlarmToday", null, context)
+
+
+                        //Log.i(TAG, "ApiCalls.getSchoolStartForDay returned null, ether there is no internet connectivity (maybe connected to a wifi network that is not online) or logindata was invalid")
                     } else {
                         schoolStart = schoolStart.minusMinutes(tbs!!.toLong())
 
@@ -97,13 +100,9 @@ class AlarmReceiver: BroadcastReceiver() {
         }
     }
 
-    private fun setNew(reason: String, schoolStart: LocalTime, context: Context) {
+    private fun setNew(reason: String, schoolStart: LocalTime?, context: Context) {
         when (reason) {
-            "noInternet" -> {
-
-            }
-
-            "normal" -> {
+            "noAlarmToday" -> {
                 val alarmManager = context.getSystemService(AlarmManager::class.java)
                 val intent = Intent(context, AlarmReceiver::class.java)
                 val pendingIntent = PendingIntent.getBroadcast(
@@ -112,26 +111,47 @@ class AlarmReceiver: BroadcastReceiver() {
                     intent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
-                if (LocalTime.now().isBefore(schoolStart.minusHours(3))) {
-                    alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC,
-                        System.currentTimeMillis() + 900000,
-                        pendingIntent
-                    )
-                    Log.i(TAG, "set new Alarm for in 15 minutes")
-                } else {
-                    val schoolStartDate = LocalDateTime.of(LocalDate.now(), schoolStart.minusHours(3))
-                    var alarmClockDay = LocalDate.now()
-                    if (schoolStart.isAfter(LocalTime.now())) {
-                        alarmClockDay = alarmClockDay.plusDays(1)
-                    }
-                    alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC,
-                        LocalDateTime.of(LocalDate.now(), schoolStart.minusMinutes(15)).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                        pendingIntent
-                    )
-                }
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC,
+                    System.currentTimeMillis() + 10800000,
+                    pendingIntent
+                )
+            }
 
+            "normal" -> {
+                if (schoolStart != null) {
+                    val alarmManager = context.getSystemService(AlarmManager::class.java)
+                    val intent = Intent(context, AlarmReceiver::class.java)
+                    val pendingIntent = PendingIntent.getBroadcast(
+                        context,
+                        ALARM_REQUEST_CODE,
+                        intent,
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                    if (LocalTime.now().isBefore(schoolStart.minusHours(3))) {
+                        alarmManager.setAndAllowWhileIdle(
+                            AlarmManager.RTC,
+                            System.currentTimeMillis() + 900000,
+                            pendingIntent
+                        )
+                        Log.i(TAG, "set new Alarm for in 15 minutes")
+                    } else {
+                        val schoolStartDate =
+                            LocalDateTime.of(LocalDate.now(), schoolStart.minusHours(3))
+                        var alarmClockDay = LocalDate.now()
+                        if (schoolStart.isAfter(LocalTime.now())) {
+                            alarmClockDay = alarmClockDay.plusDays(1)
+                        }
+                        alarmManager.setAndAllowWhileIdle(
+                            AlarmManager.RTC,
+                            LocalDateTime.of(LocalDate.now(), schoolStart.minusMinutes(15))
+                                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                            pendingIntent
+                        )
+                    }
+                } else {
+                    //TODO("school start for normal returned normal, should not happen")
+                }
             }
 
             "error" -> {
