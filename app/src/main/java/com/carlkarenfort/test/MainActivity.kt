@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             "Webunitsalarm Notifications",
             NotificationManager.IMPORTANCE_DEFAULT
         )
-
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
@@ -91,12 +90,14 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
 
-        //load time before school and switch
+        //load time before school, alarmclocktime and switch
         var tbs: Int?
         var aaStateNullable: Boolean?
+        var alarmClock: Array<Int?>
         runBlocking {
             tbs = storeData.loadTBS()
             aaStateNullable = storeData.loadAlarmActive()
+            alarmClock = storeData.loadAlarmClock()
         }
 
         //check if tbs has not already been set
@@ -121,6 +122,9 @@ class MainActivity : AppCompatActivity() {
         //set state of switch
         toggleAlarm.isChecked = aaState
 
+        //set alarmPreview
+        alarmPreview.text = "${alarmClock[0]}:${alarmClock[1]}"
+
         //start foreground acitivity if alarmActive is on, on new thread
         if (aaState) {
             CoroutineScope(Dispatchers.Default).launch {
@@ -143,23 +147,41 @@ class MainActivity : AppCompatActivity() {
         updateTBS.setOnClickListener { _ : View? ->
             //get user inputted TBS as string
             val newTBSStr = setTBS.text.toString()
+
+            //clear field afterwards
+            setTBS.setText("")
+
+
             //convert to int
-            var newTBS = 0
+            var newTBS: Int? = null
             try {
                 newTBS = Integer.parseInt(newTBSStr)
             } catch (e: NumberFormatException) {
                 Toast.makeText(this, getString(R.string.please_only_enter_intergers), Toast.LENGTH_SHORT).show()
             }
-            //update displayedTBS
-            timeBeforeSchool.text = "$newTBS min"
-            //store data
-            CoroutineScope(Dispatchers.IO).launch {
-                storeData.storeTBS(newTBS)
+
+            //check that newTBS was an Int
+            if (newTBS != null) {
+                timeBeforeSchool.text = "$newTBS min"
+
+                //store data
+                CoroutineScope(Dispatchers.IO).launch {
+                    storeData.storeTBS(newTBS)
+                }
+
+                //restart foreground activity
+                CoroutineScope(Dispatchers.Default).launch {
+                    Intent(applicationContext, RunningService::class.java).also {
+                        it.action = RunningService.Actions.STOP.toString()
+                        startService(it)
+                    }
+
+                    Intent(applicationContext, RunningService::class.java).also {
+                        it.action = RunningService.Actions.START.toString()
+                        startService(it)
+                    }
+                }
             }
-
-            //clear field afterwards
-            setTBS.setText("")
-
         }
 
         //create listener for switch
