@@ -108,6 +108,15 @@ class ApiCalls {
                         server,
                         schoolName
                     )
+
+                    //test
+                    val map = mutableMapOf<String, Any>()
+                    map["id"] = 433
+                    val out = session.getCustomData("getStudent", map)
+
+                    Log.i(TAG, out.toString())
+
+                    //previous
                     Log.i(TAG, session.getCustomData("getStudents").toString())
                     Log.i(TAG, session.infos.toString())
 
@@ -119,16 +128,9 @@ class ApiCalls {
                     } else {
                         //parse to json
                         val resultArray = response.response.getJSONArray("result")
-
-                    val map = mutableMapOf<String, Any>()
-                    map["id"] = 433
-                    val out = session.getCustomData("getStudent", map)
-
-                    Log.i(TAG, out.toString())
-
+                    }
                 } catch (e: IOException) {
                     Log.i(TAG, "invalid login credentials")
-                    error(e)
                     e.printStackTrace()
                 }
             }
