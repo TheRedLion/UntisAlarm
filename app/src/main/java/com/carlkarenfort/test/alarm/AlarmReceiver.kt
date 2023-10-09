@@ -35,8 +35,7 @@ class AlarmReceiver: BroadcastReceiver() {
             if (!apiCalls.isOnline(context)) {
                 Log.i(TAG, "Phone has no internet connectivity")
             } else {
-                //phone has connectivity
-
+                //phone has connectivity:
                 //load relevant data from storeData
                 val storeData = StoreData(context)
                 var id: Int?

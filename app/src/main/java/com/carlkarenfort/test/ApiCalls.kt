@@ -9,6 +9,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
+import org.bytedream.untis4j.UntisUtils
+import org.json.JSONObject
 import java.io.IOException
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -131,9 +133,30 @@ class ApiCalls {
                             }
                         }
                     }
+
+                    /* WORKING ON:
+
+                    //Log.i(TAG, session.getCustomData("getStudents").toString())
+                    Log.i(TAG, session.infos.toString())
+
+
+                    val map: MutableMap<String?, Any?> = mutableMapOf()
+                    map["id"] = 436
+
+
+                    val afterPrams = processParams("getStudent", map)
+                    Log.i(TAG, afterPrams)
+                    Log.i(TAG, map.toString())
+                    val out = session.getCustomData("getStudent", map)
+
+                    Log.i(TAG, out.toString())
+
+                     */
+
+                    //logout
                     session.logout()
                 } catch (e: IOException) {
-                    Log.i(TAG, "invalid login credentials")
+                    Log.i(TAG, "error")
                     e.printStackTrace()
                 }
             }
@@ -144,7 +167,11 @@ class ApiCalls {
     //TODO: add proper error handeling to getID function
     //TODO: check out possibility of getting id from username and password id getID function
 
-
+    //temp
+    fun processParams(method: String, optionalParams: MutableMap<String?, Any?>): String {
+        val paramsJSONObject = JSONObject(optionalParams)
+        return "{\"id\":\"ID\",\"method\":\"$method\",\"jsonrpc\":\"2.0\",\"params\":$paramsJSONObject}"
+    }
 
     fun getSchoolStartForDay(
         username: String,
@@ -173,7 +200,7 @@ class ApiCalls {
 
             //iterate over every lesson and keep the highest
             for (i in timetable.indices) {
-                Log.i(TAG, timetable[i].teachers.toString())
+                //Log.i(TAG, timetable[i].teachers.toString())
                 val startTime = timetable[i].startTime ?: continue
                 if (firstLessonStartTime == null || startTime.isBefore(firstLessonStartTime)) {
                     if (timetable[i].originalTeachers.isEmpty()) {
