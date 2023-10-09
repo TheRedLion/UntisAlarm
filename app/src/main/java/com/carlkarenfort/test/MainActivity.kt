@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.StrictMode
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -22,6 +23,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             "Webunitsalarm Notifications",
             NotificationManager.IMPORTANCE_DEFAULT
         )
+
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
@@ -90,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
 
-        //load time before school, alarmclocktime and switch
+        //load time before school and switch
         var tbs: Int?
         var aaStateNullable: Boolean?
         var alarmClock: Array<Int?>
@@ -182,6 +185,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            //clear field afterwards
+            setTBS.setText("")
         }
 
         //create listener for switch
