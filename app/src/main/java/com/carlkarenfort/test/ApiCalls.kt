@@ -108,38 +108,24 @@ class ApiCalls {
                         server,
                         schoolName
                     )
+                    Log.i(TAG, session.getCustomData("getStudents").toString())
+                    Log.i(TAG, session.infos.toString())
 
-                    //get a list of all students and their IDs
-                    val response = session.getCustomData("getStudents")
-                    //check if request was wrong in some way
-                    if (response.isError) {
-                        Log.i(TAG, "invalid request")
-                    } else {
-                        //parse to json
-                        val resultArray = response.response.getJSONArray("result")
 
-                        //Iterate over every student and check if fore and long name match
-                        for (i in 0 until resultArray.length()) {
-                            val entry = resultArray.getJSONObject(i)
-                            val entryForeName = entry.getString("foreName")
-                            val entryLongName = entry.getString("longName")
+                    val map = mutableMapOf<String, Any>()
+                    map["id"] = 433
+                    val out = session.getCustomData("getStudent", map)
 
-                            // if so set return value as the current students id and stop loop
-                            if (entryForeName.contains(foreName) && entryLongName.contains(longName)) {
-                                id = entry.getInt("id")
-                                break
-                            }
-                        }
-                    }
-                } catch (_: IOException) {
+                    Log.i(TAG, out.toString())
+                } catch (e: IOException) {
                     Log.i(TAG, "invalid login credentials")
+                    error(e)
                 }
             }
             job.join()
         }
         return id
     }
-    //TODO: add proper error handeling to getID function
     //TODO: check out possibility of getting id from username and password id getID function
 
 
