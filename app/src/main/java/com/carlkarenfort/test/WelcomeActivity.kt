@@ -20,8 +20,6 @@ class WelcomeActivity : AppCompatActivity() {
     //tag for logging
     private var TAG: String = "WelcomeActivity"
 
-    private lateinit var foreName: EditText
-    private lateinit var longName: EditText
     private lateinit var untisURL: EditText
     private lateinit var untisPassword: EditText
     private lateinit var untisUserName: EditText
@@ -34,27 +32,19 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
-        foreName = findViewById(R.id.foreName)
-        longName = findViewById(R.id.longName)
         untisURL = findViewById(R.id.untisURL)
         untisUserName = findViewById(R.id.untisUsername)
         untisPassword = findViewById(R.id.untisPassword)
         runButton = findViewById(R.id.runButton)
 
         runButton.setOnClickListener { _ : View? ->
-            val apiCalls = ApiCalls()
+            val apiCalls = ApiCalls("","","","")
 
             if (!apiCalls.isOnline(this)) {
                 Toast.makeText(this, getString(R.string.you_are_offline), Toast.LENGTH_SHORT).show()
             } else {
                 //getID from foreName and longName
-                if (foreName.text.toString().isEmpty()) {
-                    //show warning
-                    Toast.makeText(this, getString(R.string.fore_name_empty), Toast.LENGTH_SHORT).show()
-                } else if (longName.text.toString().isEmpty()) {
-                    //show warning
-                    Toast.makeText(this, getString(R.string.last_name_empty), Toast.LENGTH_SHORT).show()
-                } else if (untisURL.text.toString().isEmpty()) {
+                if (untisURL.text.toString().isEmpty()) {
                     //show warning
                     Toast.makeText(this, getString(R.string.webuntis_url_empty), Toast.LENGTH_SHORT).show()
                 } else if (untisUserName.text.toString().isEmpty()) {
@@ -79,21 +69,15 @@ class WelcomeActivity : AppCompatActivity() {
                     } else {
                         //verify login data
                         //Log.i(TAG, "verifying login data")
-                        if (!apiCalls.verifyLoginData(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool)) {
+                        val apiCalls1 = ApiCalls(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool)
+                        if (!apiCalls1.verifyLoginData()) {
                             //Log.i(TAG, "invalid")
                             Toast.makeText(this, getString(R.string.invalid_login_data), Toast.LENGTH_SHORT).show()
                         } else {
                             //Log.i(TAG, "valid")
                             //get ID
                             StrictMode.setThreadPolicy(policy)
-                            val untisID = apiCalls.getID(
-                                untisUserName.text.toString(),
-                                untisPassword.text.toString(),
-                                untisServer,
-                                untisSchool,
-                                foreName.text.toString(),
-                                longName.text.toString()
-                            )
+                            val untisID = apiCalls1.getID()
 
 
                             //show warning if no ID was found

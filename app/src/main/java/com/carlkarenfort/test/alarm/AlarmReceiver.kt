@@ -30,7 +30,7 @@ class AlarmReceiver: BroadcastReceiver() {
             Log.i(TAG, "context from onReceieve is null")
             //TODO("not sure but might happen when foreground Activity has been stopped")
         } else {
-            val apiCalls = ApiCalls()
+            val apiCalls = ApiCalls("","","","")
 
             //check if phone has connectivity
             if (!apiCalls.isOnline(context)) {
@@ -60,14 +60,17 @@ class AlarmReceiver: BroadcastReceiver() {
                 } else {
                     //get schoolStart
                     StrictMode.setThreadPolicy(policy)
-                    var schoolStart = apiCalls.getSchoolStartForDay(
+                    val apiCalls1 = ApiCalls(
                         loginData[0]!!,
                         loginData[1]!!,
                         loginData[2]!!,
-                        loginData[3]!!,
+                        loginData[3]!!
+                    )
+                    var schoolStart = apiCalls1.getSchoolStartForDay(
                         id!!,
                         apiCalls.getNextDay()
                     )
+
                     Log.i(TAG, "Getting Schoolstart for day: ${apiCalls.getNextDay().toString()}. Is ${schoolStart.toString()}")
                     //debug: var schoolStart = LocalTime.of(7, 0)
 
@@ -75,8 +78,6 @@ class AlarmReceiver: BroadcastReceiver() {
                         //probably holliday or something
                         setNew("noAlarmToday", null, context)
 
-
-                        //Log.i(TAG, "ApiCalls.getSchoolStartForDay returned null, ether there is no internet connectivity (maybe connected to a wifi network that is not online) or logindata was invalid")
                     } else {
                         schoolStart = schoolStart.minusMinutes(tbs!!.toLong())
 
