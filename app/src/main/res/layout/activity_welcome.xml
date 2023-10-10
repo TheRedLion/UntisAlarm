@@ -6,35 +6,8 @@
     android:layout_height="match_parent">
 
   <!-- enter fore name -->
-  <EditText
-      android:id="@+id/foreName"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="200dp"
-      android:autofillHints="personName"
-      android:ems="15"
-      android:hint="@string/fore_name"
-      android:inputType="text"
-      android:textSize="20sp"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.5"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
 
   <!-- enter long name-->
-  <EditText
-      android:id="@+id/longName"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="20dp"
-      android:autofillHints="personFamilyName"
-      android:ems="15"
-      android:hint="@string/last_name"
-      android:inputType="text"
-      android:textSize="20sp"
-      app:layout_constraintEnd_toEndOf="@+id/foreName"
-      app:layout_constraintStart_toStartOf="@+id/foreName"
-      app:layout_constraintTop_toBottomOf="@+id/foreName" />
 
   <!-- enter webuntis user name -->
   <EditText
@@ -47,27 +20,27 @@
       android:hint="@string/webuntis_username"
       android:inputType="text"
       android:textSize="20sp"
-      app:layout_constraintEnd_toEndOf="@+id/longName"
-      app:layout_constraintHorizontal_bias="0.0"
-      app:layout_constraintStart_toStartOf="@+id/longName"
+      app:layout_constraintEnd_toEndOf="@+id/untisURL"
+      app:layout_constraintStart_toStartOf="@+id/untisURL"
       app:layout_constraintTop_toBottomOf="@+id/untisURL" />
 
   <!-- enter your schools webuntis url -->
+
+  <!-- enter your webuntis password -->
   <EditText
       android:id="@+id/untisURL"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginTop="20dp"
+      android:layout_marginTop="90dp"
       android:ems="15"
       android:hint="@string/webuntis_url"
       android:inputType="text"
       android:textSize="20sp"
-      app:layout_constraintEnd_toEndOf="@+id/longName"
-      app:layout_constraintHorizontal_bias="0.0"
-      app:layout_constraintStart_toStartOf="@+id/longName"
-      app:layout_constraintTop_toBottomOf="@+id/longName" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.5"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/encryptionWarning" />
 
-  <!-- enter your webuntis password -->
   <EditText
       android:id="@+id/untisPassword"
       android:layout_width="wrap_content"

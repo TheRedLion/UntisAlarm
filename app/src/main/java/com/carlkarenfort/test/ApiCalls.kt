@@ -8,18 +8,85 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.bytedream.untis4j.LoginException
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.UntisUtils
+import org.json.JSONException
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.DataOutputStream
 import java.io.IOException
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 
 
-class ApiCalls {
+class ApiCalls constructor(
+    usernameC: String,
+    passwordC: String,
+    serverC: String,
+    schoolNameC: String
+){
+
     //tag for logging text
     private val TAG = "ApiCalls"
+
+
+    private var username: String = ""
+    private var password: String = ""
+    private var server: String = ""
+    private var schoolName: String = ""
+
+    init {
+        username = usernameC
+        password = passwordC
+        server = serverC
+        schoolName = schoolNameC
+
+        Log.i(TAG, "created ApiCalls Object with login Data: $username, $password, $server, $schoolName.")
+    }
+
+    fun getSchools() {
+        //NEED A FUCKING ACESS TOKEN
+        val accessToken: String = ""
+
+        try {
+            val url = URL("https://api.webuntis.com/ims/oneroster/v1p1/schools")
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+            connection.setRequestProperty("Authorization", "Bearer $accessToken")
+
+            val responseCode = connection.responseCode
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val input = BufferedReader(InputStreamReader(connection.inputStream))
+                val response = StringBuilder()
+                var line: String?
+                while (input.readLine().also { line = it } != null) {
+                    response.append(line)
+                }
+                input.close()
+
+                // Parse and handle the JSON response here
+                val jsonResponse = response.toString()
+                // Log the response
+                Log.i(TAG, jsonResponse)
+            } else {
+                // Handle non-OK HTTP response (e.g., error response from the API)
+                Log.e(TAG, "HTTP Response Code: $responseCode")
+            }
+
+            connection.disconnect()
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., network errors)
+            Log.e(TAG, "Error: ${e.message}")
+        }
+
+    }
 
     fun isOnline(context: Context): Boolean {
         val connectivityManager =
@@ -57,12 +124,7 @@ class ApiCalls {
     //returns true if data is valid
     //returns false if data is invalid
     //returns null if there is no server connection
-    fun verifyLoginData(
-        username: String,
-        password: String,
-        server: String,
-        schoolName: String
-    ): Boolean {
+    fun verifyLoginData(): Boolean {
         var state = false
         //use run blocking, to stop main thread so API call can be made
         runBlocking {
@@ -89,14 +151,7 @@ class ApiCalls {
 
     //takes login data and name of user to determine the users webuntis ID
     //returns id of student or null if no student was found
-    fun getID(
-        username: String,
-        password: String,
-        server: String,
-        schoolName: String,
-        foreName: String,
-        longName: String
-    ): Int? {
+    fun getID(): Int? {
         var id: Int? = null
 
         //has to stop main thread since it is called during welcome activity
@@ -111,50 +166,9 @@ class ApiCalls {
                         schoolName
                     )
 
-                    //get a list of all students and their IDs
-                    val response = session.getCustomData("getStudents")
-                    //check if request was wrong in some way
-                    if (response.isError) {
-                        Log.i(TAG, "invalid request")
-                    } else {
-                        //parse to json
-                        val resultArray = response.response.getJSONArray("result")
+                    id = session.infos.personId
+                    Log.i(TAG, "person ID is : $id")
 
-                        //Iterate over every student and check if fore and long name match
-                        for (i in 0 until resultArray.length()) {
-                            val entry = resultArray.getJSONObject(i)
-                            val entryForeName = entry.getString("foreName")
-                            val entryLongName = entry.getString("longName")
-
-                            // if so set return value as the current students id and stop loop
-                            if (entryForeName.contains(foreName) && entryLongName.contains(longName)) {
-                                id = entry.getInt("id")
-                                break
-                            }
-                        }
-                    }
-
-                    /* WORKING ON:
-
-                    //Log.i(TAG, session.getCustomData("getStudents").toString())
-                    Log.i(TAG, session.infos.toString())
-
-
-                    val map: MutableMap<String?, Any?> = mutableMapOf()
-                    map["id"] = 436
-
-
-                    val afterPrams = processParams("getStudent", map)
-                    Log.i(TAG, afterPrams)
-                    Log.i(TAG, map.toString())
-                    val out = session.getCustomData("getStudent", map)
-
-                    Log.i(TAG, out.toString())
-
-                     */
-
-                    //logout
-                    session.logout()
                 } catch (e: IOException) {
                     Log.i(TAG, "error")
                     e.printStackTrace()
@@ -167,17 +181,9 @@ class ApiCalls {
     //TODO: add proper error handeling to getID function
     //TODO: check out possibility of getting id from username and password id getID function
 
-    //temp
-    fun processParams(method: String, optionalParams: MutableMap<String?, Any?>): String {
-        val paramsJSONObject = JSONObject(optionalParams)
-        return "{\"id\":\"ID\",\"method\":\"$method\",\"jsonrpc\":\"2.0\",\"params\":$paramsJSONObject}"
-    }
+
 
     fun getSchoolStartForDay(
-        username: String,
-        password: String,
-        server: String,
-        schoolName: String,
         id: Int,
         day: LocalDate
     ): LocalTime? {
@@ -200,7 +206,7 @@ class ApiCalls {
 
             //iterate over every lesson and keep the highest
             for (i in timetable.indices) {
-                //Log.i(TAG, timetable[i].teachers.toString())
+                Log.i(TAG, timetable[i].teachers.toString())
                 val startTime = timetable[i].startTime ?: continue
                 if (firstLessonStartTime == null || startTime.isBefore(firstLessonStartTime)) {
                     if (timetable[i].originalTeachers.isEmpty()) {
