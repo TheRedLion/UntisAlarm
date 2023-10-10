@@ -14,7 +14,7 @@ import java.time.LocalTime
 
 class RunningService: android.app.Service() {
     private val TAG = "RunningService"
-    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }

@@ -16,6 +16,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import kotlin.random.Random
 
 class AlarmReceiver: BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
@@ -53,9 +54,10 @@ class AlarmReceiver: BroadcastReceiver() {
                 val alarmClockHour = alarmClockArray[0]
                 val alarmClockMinute = alarmClockArray[1]
 
-
+                //check if any of the loaded data is null
                 if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
                     Log.i(TAG, "id, loginData or TBS from StoreData was null. THIS SHOULD NEVER HAPPEN")
+                    //TODO("send notification that user should login again")
                 } else {
                     //get schoolStart
                     StrictMode.setThreadPolicy(policy)
@@ -112,6 +114,8 @@ class AlarmReceiver: BroadcastReceiver() {
                     intent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
+
+                Log.i(TAG, "setting new Alarm")
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC,
                     System.currentTimeMillis() + 10800000,
@@ -143,9 +147,11 @@ class AlarmReceiver: BroadcastReceiver() {
                         if (schoolStart.isAfter(LocalTime.now())) {
                             alarmClockDay = alarmClockDay.plusDays(1)
                         }
+                        Log.i(TAG, "setting new Alarm 15 minutes before the alarm goes of at $schoolStart")
+
                         alarmManager.setAndAllowWhileIdle(
                             AlarmManager.RTC,
-                            LocalDateTime.of(LocalDate.now(), schoolStart.minusMinutes(15))
+                            LocalDateTime.of(alarmClockDay, schoolStart.minusMinutes(15))
                                 .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
                             pendingIntent
                         )

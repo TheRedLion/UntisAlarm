@@ -8,13 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.bytedream.untis4j.LoginException
 import org.bytedream.untis4j.Session
-import org.bytedream.untis4j.UntisUtils
-import org.json.JSONException
-import org.json.JSONObject
 import java.io.BufferedReader
-import java.io.DataOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -46,7 +41,7 @@ class ApiCalls constructor(
         server = serverC
         schoolName = schoolNameC
 
-        Log.i(TAG, "created ApiCalls Object with login Data: $username, $password, $server, $schoolName.")
+        //Log.i(TAG, "created ApiCalls Object with login Data: $username, $password, $server, $schoolName.")
     }
 
     fun getSchools() {
@@ -107,7 +102,7 @@ class ApiCalls constructor(
 
     //this function returns the next working day
     fun getNextDay(): LocalDate {
-        Log.i(TAG, "called getNextDay()")
+        //Log.i(TAG, "called getNextDay()")
         var nextDay = LocalDate.now()
         nextDay = nextDay.plusDays(1)
 
@@ -206,12 +201,12 @@ class ApiCalls constructor(
 
             //iterate over every lesson and keep the highest
             for (i in timetable.indices) {
-                Log.i(TAG, timetable[i].teachers.toString())
+                //Log.i(TAG, timetable[i].teachers.toString())
                 val startTime = timetable[i].startTime ?: continue
                 if (firstLessonStartTime == null || startTime.isBefore(firstLessonStartTime)) {
                     if (timetable[i].originalTeachers.isEmpty()) {
                         firstLessonStartTime = startTime
-                        Log.i(TAG, startTime.toString())
+                        //Log.i(TAG, startTime.toString())
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.carlkarenfort.test
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -19,11 +20,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import java.time.LocalDate
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -126,15 +124,35 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm.isChecked = aaState
 
         //set alarmPreview
+
+        //display 0 when it is null
+        if (alarmClock[0] == null || alarmClock[1] == null) {
+            alarmClock[0] = 0
+            alarmClock[1] = 0
+        }
         alarmPreview.text = "${alarmClock[0]}:${alarmClock[1]}"
 
         //start foreground acitivity if alarmActive is on, on new thread
+        Log.i(TAG, "check if foreground servive should be active")
         if (aaState) {
             CoroutineScope(Dispatchers.Default).launch {
-                Log.i(TAG, "starting foreground activity")
-                Intent(applicationContext, RunningService::class.java).also {
-                    it.action = RunningService.Actions.START.toString()
-                    startService(it)
+                val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                val serviceNameToCheck = "com.carlkarenfort.test"
+
+                val runningServices = manager.runningAppProcesses
+
+                Log.i(TAG, "check if foregroundservive is already running")
+                for (processInfo in runningServices) {
+                    for (serviceInfo in processInfo.pkgList) {
+                        Log.i(TAG, serviceInfo)
+                        if (serviceInfo == serviceNameToCheck) {
+                            Log.i(TAG, "starting foreground activity")
+                            Intent(applicationContext, RunningService::class.java).also {
+                                it.action = RunningService.Actions.START.toString()
+                                startService(it)
+                            }
+                        }
+                    }
                 }
             }
         }
