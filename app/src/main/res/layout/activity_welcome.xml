@@ -20,8 +20,9 @@
       android:hint="@string/webuntis_username"
       android:inputType="text"
       android:textSize="20sp"
-      app:layout_constraintTop_toBottomOf="@+id/untisURL"
-      tools:layout_editor_absoluteX="29dp" />
+      app:layout_constraintEnd_toEndOf="@+id/untisURL"
+      app:layout_constraintStart_toStartOf="@+id/untisURL"
+      app:layout_constraintTop_toBottomOf="@+id/untisURL" />
 
   <!-- enter your schools webuntis url -->
 
