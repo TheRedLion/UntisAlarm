@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         //must block main thread to access a DataStore
         runBlocking {
             //check if loginData is empty
-            if (storeData.loadLoginData()[0] == null) {
+            if (storeData.loadLoginData()[0] == null || storeData.loadID() == null) {
                 //go to welcome activity when not logged in
                 Log.i(TAG, "Not logged in tf")
                 intent = Intent(this@MainActivity, WelcomeActivity::class.java)

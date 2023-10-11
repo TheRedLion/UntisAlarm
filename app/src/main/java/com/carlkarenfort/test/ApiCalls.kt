@@ -9,9 +9,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
-import java.io.BufferedReader
+import java.io.BufferedInputStream
 import java.io.IOException
-import java.io.InputStreamReader
+import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.DayOfWeek
@@ -40,42 +40,40 @@ class ApiCalls constructor(
         password = passwordC
         server = serverC
         schoolName = schoolNameC
-
         //Log.i(TAG, "created ApiCalls Object with login Data: $username, $password, $server, $schoolName.")
     }
 
-    fun getSchools() {
-        //NEED A FUCKING ACESS TOKEN
-        val accessToken: String = ""
+    fun getSchools(searchString: String) {
+        val header = mapOf(
+            "Accept" to "application/json, text/plain, */*",
+            "Accept-Encoding" to "gzip, deflate, br",
+            "Accept-Language" to "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Content-Length" to "115",
+            "Content-Type" to "application/json",
+            "Origin" to "https://webuntis.com",
+            "Referer" to "https://webuntis.com",
+            "Sec-Ch-Ua-Mobile" to "?0",
+            "Sec-Fetch-Dest" to "empty",
+            "Sec-Fetch-Mode" to "cors",
+            "Sec-Fetch-Site" to "same-site"
+        )
 
-        try {
-            val url = URL("https://api.webuntis.com/ims/oneroster/v1p1/schools")
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-            connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
-            connection.setRequestProperty("Authorization", "Bearer $accessToken")
+        val data_t = mapOf(
+            "id" to "wu_schulsuche-1697008128606",
+            "method" to "searchSchool",
+            "params" to listOf(mapOf("search" to "werner von siemens")),
+            "jsonrpc" to "2.0"
+        )
 
-            val responseCode = connection.responseCode
 
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val input = BufferedReader(InputStreamReader(connection.inputStream))
-                val response = StringBuilder()
-                var line: String?
-                while (input.readLine().also { line = it } != null) {
-                    response.append(line)
-                }
-                input.close()
+        val response = post(
+            url = "https://mobile.webuntis.com/ms/schoolquery2",
+            headers = header,
+            json = data_t
+        )
 
-                // Parse and handle the JSON response here
-                val jsonResponse = response.toString()
-                // Log the response
-                Log.i(TAG, jsonResponse)
-            } else {
-                // Handle non-OK HTTP response (e.g., error response from the API)
-                Log.e(TAG, "HTTP Response Code: $responseCode")
-            }
-
-            connection.disconnect()
+        val jsonResponse = response.jsonObject
+        Log.i(TAG, jsonResponse)
         } catch (e: Exception) {
             // Handle exceptions (e.g., network errors)
             Log.e(TAG, "Error: ${e.message}")
@@ -110,7 +108,6 @@ class ApiCalls constructor(
         while (nextDay.dayOfWeek == DayOfWeek.SATURDAY || nextDay.dayOfWeek == DayOfWeek.SUNDAY) {
             nextDay = nextDay.plusDays(1)
         }
-
         return nextDay
     }
 
@@ -174,9 +171,6 @@ class ApiCalls constructor(
         return id
     }
     //TODO: add proper error handeling to getID function
-    //TODO: check out possibility of getting id from username and password id getID function
-
-
 
     fun getSchoolStartForDay(
         id: Int,

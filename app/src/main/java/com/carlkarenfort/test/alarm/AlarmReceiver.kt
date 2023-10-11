@@ -31,6 +31,7 @@ class AlarmReceiver: BroadcastReceiver() {
             Log.i(TAG, "context from onReceieve is null")
             //TODO("not sure but might happen when foreground Activity has been stopped")
         } else {
+            Log.i(TAG, "has context")
             val apiCalls = ApiCalls("","","","")
 
             //check if phone has connectivity
@@ -38,6 +39,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 Log.i(TAG, "Phone has no internet connectivity")
             } else {
                 //phone has connectivity:
+                Log.i(TAG, "phone has internet")
                 //load relevant data from storeData
                 val storeData = StoreData(context)
                 var id: Int?
@@ -59,6 +61,8 @@ class AlarmReceiver: BroadcastReceiver() {
                     Log.i(TAG, "id, loginData or TBS from StoreData was null. THIS SHOULD NEVER HAPPEN")
                     //TODO("send notification that user should login again")
                 } else {
+                    //none is null
+
                     //get schoolStart
                     StrictMode.setThreadPolicy(policy)
                     val apiCalls1 = ApiCalls(
@@ -141,18 +145,11 @@ class AlarmReceiver: BroadcastReceiver() {
                         )
                         Log.i(TAG, "set new Alarm for in 15 minutes")
                     } else {
-                        val schoolStartDate =
-                            LocalDateTime.of(LocalDate.now(), schoolStart.minusHours(3))
-                        var alarmClockDay = LocalDate.now()
-                        if (schoolStart.isAfter(LocalTime.now())) {
-                            alarmClockDay = alarmClockDay.plusDays(1)
-                        }
-                        Log.i(TAG, "setting new Alarm 15 minutes before the alarm goes of at $schoolStart")
+                        Log.i(TAG, "setting new Alarm for in 15 minutes to an hour.")
 
                         alarmManager.setAndAllowWhileIdle(
                             AlarmManager.RTC,
-                            LocalDateTime.of(alarmClockDay, schoolStart.minusMinutes(15))
-                                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                            System.currentTimeMillis() + 90000,
                             pendingIntent
                         )
                     }
