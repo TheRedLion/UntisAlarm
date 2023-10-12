@@ -15,7 +15,6 @@
     <string name="username_empty">Nutzername darf nicht leer sein.</string>
     <string name="password_empty">Passwort darf nicht leer sein.</string>
     <string name="invalid_url_format">Ungültiges URL format.</string>
-    <string name="no_matching_user">"Kein nutzer mit dem Namen gefunden. "</string>
     <string name="invalid_login_data">Falsche Login Dataen</string>
     <string name="please_only_enter_intergers">Bitte nur Ganzzahlige</string>
     <string name="not_loaded">Nicht geladen</string>

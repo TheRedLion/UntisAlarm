@@ -21,7 +21,7 @@ class UntisApiCalls constructor(
     //tag for logging text
     private val TAG = "UntisApiCalls"
 
-    val session: Session
+    private val session: Session
 
     init {
         try {

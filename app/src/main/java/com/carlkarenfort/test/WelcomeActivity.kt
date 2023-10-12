@@ -3,6 +3,7 @@ package com.carlkarenfort.test
 import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 
 class WelcomeActivity : AppCompatActivity() {
@@ -65,10 +67,19 @@ class WelcomeActivity : AppCompatActivity() {
                         Toast.makeText(this, getString(R.string.invalid_url_format), Toast.LENGTH_SHORT).show()
                     } else {
                         //verify login data
-                        //Log.i(TAG, "verifying login data")
-                        try
-                        val untisApiCalls = UntisApiCalls(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool)
-                        if (!untisApiCalls.verifyLoginData()) {
+                        var untisApiCalls: UntisApiCalls? = null
+                        try {
+                            untisApiCalls = UntisApiCalls(
+                                untisUserName.text.toString(),
+                                untisPassword.text.toString(),
+                                untisServer,
+                                untisSchool
+                            )
+                        } catch (e: IOException) {
+                            Log.i(TAG, "login failed")
+                        }
+
+                        if (untisApiCalls == null) {
                             //Log.i(TAG, "invalid")
                             Toast.makeText(this, getString(R.string.invalid_login_data), Toast.LENGTH_SHORT).show()
                         } else {
@@ -81,9 +92,10 @@ class WelcomeActivity : AppCompatActivity() {
                             //show warning if no ID was found
                             if (untisID == null) {
                                 //no match was found
-                                Toast.makeText(this, getString(R.string.no_matching_user), Toast.LENGTH_SHORT).show()
+                                Log.i(TAG, "error, user doen't have an ID???")
+                                //TODO("error handling???")
                             } else {
-                                //id was found
+                                //id exists
 
                                 //store data
                                 val storeData = StoreData(applicationContext)
