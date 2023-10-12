@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                 val policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
                 StrictMode.setThreadPolicy(policy)
                 val apiCalls = ApiCalls("","","","")
-                apiCalls.getSchools()
+                apiCalls.getSchools("werner von siemens")
             }
 
             //get user inputted TBS as string

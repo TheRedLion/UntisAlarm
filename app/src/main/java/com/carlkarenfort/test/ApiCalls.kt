@@ -8,10 +8,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.bytedream.untis4j.LoginException
 import org.bytedream.untis4j.Session
-import java.io.BufferedInputStream
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.DataOutputStream
 import java.io.IOException
-import java.io.InputStream
+import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.DayOfWeek
@@ -44,36 +48,65 @@ class ApiCalls constructor(
     }
 
     fun getSchools(searchString: String) {
-        val header = mapOf(
-            "Accept" to "application/json, text/plain, */*",
-            "Accept-Encoding" to "gzip, deflate, br",
-            "Accept-Language" to "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
-            "Content-Length" to "115",
-            "Content-Type" to "application/json",
-            "Origin" to "https://webuntis.com",
-            "Referer" to "https://webuntis.com",
-            "Sec-Ch-Ua-Mobile" to "?0",
-            "Sec-Fetch-Dest" to "empty",
-            "Sec-Fetch-Mode" to "cors",
-            "Sec-Fetch-Site" to "same-site"
-        )
-
-        val data_t = mapOf(
-            "id" to "wu_schulsuche-1697008128606",
-            "method" to "searchSchool",
-            "params" to listOf(mapOf("search" to "werner von siemens")),
-            "jsonrpc" to "2.0"
-        )
+        try {
+            val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
 
 
-        val response = post(
-            url = "https://mobile.webuntis.com/ms/schoolquery2",
-            headers = header,
-            json = data_t
-        )
+            val connection = url.openConnection() as HttpURLConnection
 
-        val jsonResponse = response.jsonObject
-        Log.i(TAG, jsonResponse)
+            val requestBody = """{"id": "wu_schulsuche-1697008128606", "method": "searchSchool", "params": [{"search": "$searchString"}], "jsonrpc": "2.0"}"""
+
+
+            connection.requestMethod = "POST"
+            connection.instanceFollowRedirects = true
+            connection.doOutput = true
+            connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+            connection.setRequestProperty("Accept", "application/json, text/plain, */*");
+            connection.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
+            connection.setRequestProperty("Accept-Language", "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7");
+            connection.setRequestProperty("Content-Length", "115");
+            connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            connection.setRequestProperty("Origin", "https://webuntis.com");
+            connection.setRequestProperty("Referer", "https://webuntis.com/");
+            connection.setRequestProperty("Sec-Ch-Ua-Mobile", "?0");
+            connection.setRequestProperty("Sec-Fetch-Dest", "empty");
+            connection.setRequestProperty("Sec-Fetch-Mode", "cors");
+            connection.setRequestProperty("Sec-Fetch-Site", "same-site");
+            val outputStream = DataOutputStream(connection.outputStream)
+            outputStream.writeBytes(requestBody)
+
+
+            val input: BufferedReader = try {
+                BufferedReader(InputStreamReader(connection.inputStream))
+            } catch (var15: NullPointerException) {
+                BufferedReader(InputStreamReader(connection.errorStream))
+            }
+
+            val stringBuilder = StringBuilder()
+
+            var line: String?
+            while (input.readLine().also { line = it } != null) {
+                stringBuilder.append(line)
+            }
+
+            val jsonObject: JSONObject
+            val result: JSONObject
+            try {
+                jsonObject = JSONObject(stringBuilder.toString())
+                if (jsonObject.has("error")) {
+                    result = jsonObject.getJSONObject("error")
+                    val var10002 = result.getInt("errorObject")
+                    throw LoginException(
+                        "The response contains an error (" + var10002 + "): " + result.getString(
+                            "message"
+                        )
+                    )
+                }
+            } catch (var16: JSONException) {
+                throw IOException("An unexpected exception occurred: $stringBuilder")
+            }
+
+            result = jsonObject.getJSONObject("result")
         } catch (e: Exception) {
             // Handle exceptions (e.g., network errors)
             Log.e(TAG, "Error: ${e.message}")
