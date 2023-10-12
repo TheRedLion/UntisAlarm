@@ -38,7 +38,7 @@ class RunningService: android.app.Service() {
         val notification = NotificationCompat.Builder(this, "main_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Webuntis Alarm Setter")
-            .setContentText("some text")
+            .setContentText(getString(R.string.foregroundService_notification))
             .build()
         startForeground(261353, notification)
         scheduleAlarm()

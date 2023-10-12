@@ -1,19 +1,16 @@
 package com.carlkarenfort.test
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 class WelcomeActivity : AppCompatActivity() {
@@ -38,9 +35,9 @@ class WelcomeActivity : AppCompatActivity() {
         runButton = findViewById(R.id.runButton)
 
         runButton.setOnClickListener { _ : View? ->
-            val apiCalls = ApiCalls("","","","")
+            val misc = Misc()
 
-            if (!apiCalls.isOnline(this)) {
+            if (!misc.isOnline(this)) {
                 Toast.makeText(this, getString(R.string.you_are_offline), Toast.LENGTH_SHORT).show()
             } else {
                 //getID from foreName and longName
@@ -69,15 +66,16 @@ class WelcomeActivity : AppCompatActivity() {
                     } else {
                         //verify login data
                         //Log.i(TAG, "verifying login data")
-                        val apiCalls1 = ApiCalls(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool)
-                        if (!apiCalls1.verifyLoginData()) {
+                        try
+                        val untisApiCalls = UntisApiCalls(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool)
+                        if (!untisApiCalls.verifyLoginData()) {
                             //Log.i(TAG, "invalid")
                             Toast.makeText(this, getString(R.string.invalid_login_data), Toast.LENGTH_SHORT).show()
                         } else {
                             //Log.i(TAG, "valid")
                             //get ID
                             StrictMode.setThreadPolicy(policy)
-                            val untisID = apiCalls1.getID()
+                            val untisID = untisApiCalls.getID()
 
 
                             //show warning if no ID was found

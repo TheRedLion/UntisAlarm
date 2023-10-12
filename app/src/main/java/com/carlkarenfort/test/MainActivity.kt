@@ -171,8 +171,8 @@ class MainActivity : AppCompatActivity() {
             runBlocking {
                 val policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
                 StrictMode.setThreadPolicy(policy)
-                val apiCalls = ApiCalls("","","","")
-                apiCalls.getSchools("werner von siemens")
+                val webApiCalls = WebApiCalls()
+                webApiCalls.getSchools("werner von siemens")
             }
 
             //get user inputted TBS as string
