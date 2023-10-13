@@ -1,6 +1,7 @@
 package com.carlkarenfort.test
 
 import android.util.Log
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -11,7 +12,7 @@ import java.nio.charset.StandardCharsets
 class WebApiCalls {
     private val TAG = "WebApiCalls"
 
-    fun getSchools(searchSchoolString: String) {
+    fun getSchools(searchSchoolString: String): Array<Array<String>>? {
         Log.i(TAG, "in getSchools")
 
         val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
@@ -53,11 +54,32 @@ class WebApiCalls {
             }
             reader.close()
 
+            val jsonResponse = response.toString()
+            val schoolData = parseSchoolData(jsonResponse)
+
+            connection.disconnect()
+
             println(response.toString())
+            return schoolData
         } else {
             println("Request failed with response code: $responseCode")
+            return null
         }
+    }
 
-        connection.disconnect()
+    private fun parseSchoolData(jsonResponse: String): Array<Array<String>> {
+        val json = JSONObject(jsonResponse)
+        val result = json.getJSONArray("result")
+        val schools = result.getJSONArray(0)
+        val schoolData = Array(schools.length()) { Array(4) { "" } }
+
+        for (i in 0 until schools.length()) {
+            val school = schools.getJSONObject(i)
+            schoolData[i][0] = school.optString("displayName")
+            schoolData[i][1] = school.optString("address")
+            schoolData[i][2] = school.optString("server")
+            schoolData[i][3] = school.optString("loginName")
+        }
+        return schoolData
     }
 }
