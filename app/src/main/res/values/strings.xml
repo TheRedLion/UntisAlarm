@@ -8,7 +8,7 @@
     <string name="webuntis_username">Webuntis Username</string>
     <string name="fore_name_empty">Fore Name may not be Empty!</string>
     <string name="last_name_empty">Last Name may not be Empty!</string>
-    <string name="webuntis_url_empty">Webuntis URL may not be Empty!</string>
+    <string name="webuntis_url_empty">School Name may not be empty</string>
     <string name="username_empty">Username may not be Empty!</string>
     <string name="password_empty">Password may not be Empty!</string>
     <string name="invalid_url_format">Invalid URL format!</string>

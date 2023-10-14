@@ -167,14 +167,6 @@ class MainActivity : AppCompatActivity() {
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
 
-            //temp
-            runBlocking {
-                val policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
-                StrictMode.setThreadPolicy(policy)
-                val webApiCalls = WebApiCalls()
-                webApiCalls.getSchools("BeskidenStr")
-            }
-
             //get user inputted TBS as string
             val newTBSStr = setTBS.text.toString()
 

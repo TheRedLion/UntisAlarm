@@ -11,7 +11,7 @@
     <string name="webuntis_username">Webuntis Nutzername</string>
     <string name="fore_name_empty">Vorname darf nicht leer sein.</string>
     <string name="last_name_empty">Nachname darf nicht leer sein.</string>
-    <string name="webuntis_url_empty">Webuntis URL darf nicht leer sein.</string>
+    <string name="webuntis_url_empty">Schul name darf nicht leer sein.</string>
     <string name="username_empty">Nutzername darf nicht leer sein.</string>
     <string name="password_empty">Passwort darf nicht leer sein.</string>
     <string name="invalid_url_format">Ungültiges URL format.</string>

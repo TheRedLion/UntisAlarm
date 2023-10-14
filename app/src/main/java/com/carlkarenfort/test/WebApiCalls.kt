@@ -69,17 +69,29 @@ class WebApiCalls {
 
     private fun parseSchoolData(jsonResponse: String): Array<Array<String>> {
         val json = JSONObject(jsonResponse)
-        val result = json.getJSONArray("result")
-        val schools = result.getJSONArray(0)
-        val schoolData = Array(schools.length()) { Array(4) { "" } }
 
-        for (i in 0 until schools.length()) {
-            val school = schools.getJSONObject(i)
-            schoolData[i][0] = school.optString("displayName")
-            schoolData[i][1] = school.optString("address")
-            schoolData[i][2] = school.optString("server")
-            schoolData[i][3] = school.optString("loginName")
+        if (json.has("result")) {
+            val result = json.getJSONObject("result")
+            if (result.length() > 0) {
+                val schools = result.getJSONArray("schools")
+                val schoolData = Array(schools.length()) { Array(4) { "" } }
+
+                for (i in 0 until schools.length()) {
+                    val school = schools.getJSONObject(i)
+                    schoolData[i][0] = school.optString("displayName")
+                    schoolData[i][1] = school.optString("address")
+                    schoolData[i][2] = school.optString("server")
+                    schoolData[i][3] = school.optString("loginName")
+                }
+
+                return schoolData
+            } else {
+                // Handle the case where "result" is an empty array
+                return emptyArray()
+            }
+        } else {
+            // Handle the case where "result" is missing in the JSON
+            return emptyArray()
         }
-        return schoolData
     }
 }
