@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -182,6 +183,18 @@ class MainActivity : AppCompatActivity() {
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
+            //temp
+            var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
+            val day = LocalDate.of(2023,10,11)
+            runBlocking {
+                val id = storeData.loadID()
+                val loginData = storeData.loadLoginData()
+                val apiCalls = UntisApiCalls(loginData[0]!!, loginData[1]!!, loginData[2]!!, loginData[3]!!)
+                apiCalls.timeTableTest(id!!, day)
+            }
+
+
 
             //get user inputted TBS as string
             val newTBSStr = setTBS.text.toString()
@@ -206,6 +219,10 @@ class MainActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.IO).launch {
                     storeData.storeTBS(newTBS)
                 }
+
+                //remove old alarm clock
+                val clock = AlarmClock()
+                clock.cancelAlarm(this)
 
                 //restart foreground activity
                 CoroutineScope(Dispatchers.Default).launch {

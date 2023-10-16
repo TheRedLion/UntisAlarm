@@ -82,8 +82,7 @@ class WelcomeActivity : AppCompatActivity() {
         })
 
 
-        autoCompleteTextView.setOnItemClickListener { adapter: AdapterView<*>, view: View, position: Int, id: Long ->
-            Toast.makeText(applicationContext, "sel pos: ${position}", Toast.LENGTH_SHORT).show()
+        autoCompleteTextView.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             schoolAdressDisplay.text = schools?.get(position)?.get(1)
             schoolName = schools?.get(position)?.get(3)
             server = schools?.get(position)?.get(2)

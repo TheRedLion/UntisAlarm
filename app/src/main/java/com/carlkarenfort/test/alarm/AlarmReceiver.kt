@@ -139,19 +139,18 @@ class AlarmReceiver: BroadcastReceiver() {
                         intent,
                         PendingIntent.FLAG_IMMUTABLE
                     )
-                    if (LocalTime.now().isBefore(schoolStart.minusHours(3))) {
+                    if (LocalTime.now().isBefore(schoolStart.minusHours(2))) {
+                        Log.i(TAG, "setting new Alarm for in 15 minutes to an hour.")
                         alarmManager.setAndAllowWhileIdle(
                             AlarmManager.RTC,
                             System.currentTimeMillis() + 900000,
                             pendingIntent
                         )
-                        Log.i(TAG, "set new Alarm for in 15 minutes")
                     } else {
-                        Log.i(TAG, "setting new Alarm for in 15 minutes to an hour.")
-
-                        alarmManager.setAndAllowWhileIdle(
+                        Log.i(TAG, "set new Alarm for in 15 minutes")
+                        alarmManager.setExactAndAllowWhileIdle(
                             AlarmManager.RTC,
-                            System.currentTimeMillis() + 90000,
+                            System.currentTimeMillis() + 900000,
                             pendingIntent
                         )
                     }

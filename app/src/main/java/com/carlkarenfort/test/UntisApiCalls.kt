@@ -67,8 +67,8 @@ class UntisApiCalls constructor(
         try {
             //get timetable from users id
             val timetable = session.getTimetableFromPersonId(
-                day,//LocalDate.of(2023,9,5),
-                day,//LocalDate.of(2023,9,5),
+                day,//LocalDate.of(2023,10,10),
+                day,//LocalDate.of(2023,10,10),
                 id
             ) ?: return null
             //create return variable
@@ -91,4 +91,18 @@ class UntisApiCalls constructor(
             return null
         }
     } //TODO: proper error exceptions in getSchoolStart
+
+    fun timeTableTest(id: Int, day: LocalDate) {
+        val timetable = session.getTimetableFromPersonId(
+            day,//LocalDate.of(2023,10,10),
+            day,//LocalDate.of(2023,10,10),
+            id
+        )
+
+        for (i in timetable.indices) {
+            Log.i(TAG, timetable[i].toString())
+            Log.i(TAG, "{subjects: ${timetable[i].subjects}, original subjects: ${timetable[i].originalSubjects}, teachers: ${timetable[i].teachers}, original teachers:${timetable[i].originalTeachers}, classes: ${timetable[i].classes}, original classes: ${timetable[i].originalClasses}, rooms: ${timetable[i].rooms}, original rooms: ${timetable[i].originalRooms}, activity type: ${timetable[i].activityType}, code: ${timetable[i].code}, timeuntiObject:${timetable[i].timeUnitObject}}")
+        }
+
+    }
 }
