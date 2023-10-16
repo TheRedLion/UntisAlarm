@@ -67,7 +67,10 @@ class WelcomeActivity : AppCompatActivity() {
                         val webApiCalls = WebApiCalls()
                         schools = webApiCalls.getSchools("$text")
                         if (schools != null) {
-                            val schoolNames = schools!!.map { it[0] }.toTypedArray()
+                            val schoolNames =
+                                schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
+
+                            Log.i(TAG, schoolNames.toString())
                             runOnUiThread {
                                 val arrayAdapter = ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
                                 // get reference to the autocomplete text view

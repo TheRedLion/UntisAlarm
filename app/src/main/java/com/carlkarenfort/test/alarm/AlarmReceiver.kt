@@ -1,15 +1,23 @@
 package com.carlkarenfort.test.alarm
 
+import android.Manifest
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.StrictMode
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.getSystemService
 import com.carlkarenfort.test.AlarmClock
 import com.carlkarenfort.test.MainActivity
 import com.carlkarenfort.test.Misc
+import com.carlkarenfort.test.R
 import com.carlkarenfort.test.UntisApiCalls
 import com.carlkarenfort.test.StoreData
 import kotlinx.coroutines.runBlocking
@@ -59,7 +67,22 @@ class AlarmReceiver: BroadcastReceiver() {
                 //check if any of the loaded data is null
                 if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
                     Log.i(TAG, "id, loginData or TBS from StoreData was null. THIS SHOULD NEVER HAPPEN")
-                    //TODO("send notification that user should login again")
+                    //TODO add notification if user was logged out
+                //warn user that he got logged out
+                    /*if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        //create notification
+                        val notification = NotificationCompat.Builder(context, "main_channel")
+                            .setSmallIcon(R.drawable.ic_launcher_foreground)
+                            .setContentTitle("Login again")
+                            .setContentText("Your Login Data is invalid, please login Again.")
+                            .build()
+
+                    }*/
+
                 } else {
                     //none of the loaded data is null
 

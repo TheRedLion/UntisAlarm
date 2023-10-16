@@ -3,7 +3,7 @@
     <string name="log_in">Log in</string>
     <string name="fore_name">Fore Name</string>
     <string name="last_name">Last Name</string>
-    <string name="webuntis_passowrd">Webuntis Passowrd</string>
+    <string name="webuntis_passowrd">Webuntis Password</string>
     <string name="encryption_warning">Passowords are not encrypted, your account may be compromised! Do not use this app as a teacher! Your Webuntis Password should not be used on any other platform!</string>
     <string name="webuntis_username">Webuntis Username</string>
     <string name="fore_name_empty">Fore Name may not be Empty!</string>
