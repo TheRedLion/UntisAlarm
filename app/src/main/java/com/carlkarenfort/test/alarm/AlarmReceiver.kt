@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.StrictMode
 import android.util.Log
 import com.carlkarenfort.test.AlarmClock
+import com.carlkarenfort.test.MainActivity
 import com.carlkarenfort.test.Misc
 import com.carlkarenfort.test.UntisApiCalls
 import com.carlkarenfort.test.StoreData
@@ -17,7 +18,7 @@ import java.time.LocalTime
 class AlarmReceiver: BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
     private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
-    private val ALARM_REQUEST_CODE = 73295871
+    private val alarmRequestCode = 73295871
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.i(TAG ,"called onReceive()")
@@ -97,11 +98,10 @@ class AlarmReceiver: BroadcastReceiver() {
                         } else {
                             //alarm set improperly
                             Log.i(TAG, "removing old and setting new alarm")
-
                             val clock = AlarmClock()
                             clock.cancelAlarm(context)
                             clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
-                            setNew("normal", schoolStart, context)
+                            val intent = Intent(context, MainActivity::class.java)
                         }
                     }
                 }
@@ -116,7 +116,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 val intent = Intent(context, AlarmReceiver::class.java)
                 val pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    ALARM_REQUEST_CODE,
+                    alarmRequestCode,
                     intent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
@@ -135,7 +135,7 @@ class AlarmReceiver: BroadcastReceiver() {
                     val intent = Intent(context, AlarmReceiver::class.java)
                     val pendingIntent = PendingIntent.getBroadcast(
                         context,
-                        ALARM_REQUEST_CODE,
+                        alarmRequestCode,
                         intent,
                         PendingIntent.FLAG_IMMUTABLE
                     )

@@ -29,6 +29,9 @@ class MainActivity : AppCompatActivity() {
     //tag for logs
     private var TAG = "MainActivity"
 
+    fun test() {
+
+    }
     //objects from layout
     private lateinit var setNewUser: Button
     private lateinit var timeBeforeSchool: TextView
@@ -123,14 +126,27 @@ class MainActivity : AppCompatActivity() {
         //set state of switch
         toggleAlarm.isChecked = aaState
 
-        //set alarmPreview
 
         //display 0 when it is null
         if (alarmClock[0] == null || alarmClock[1] == null) {
             alarmClock[0] = 0
             alarmClock[1] = 0
         }
-        alarmPreview.text = "${alarmClock[0]}:${alarmClock[1]}"
+
+        //make 1:3 to 01:03
+        val alarmClockStrHour = if (alarmClock[0]!! < 10) {
+            "0${alarmClock[0]}"
+        } else {
+            "${alarmClock[0]}"
+        }
+        val alarmClockStrMinute = if (alarmClock[1]!! < 10) {
+            "0${alarmClock[1]}"
+        } else {
+            "${alarmClock[1]}"
+        }
+
+        //set alarmPreview
+        alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
 
         //start foreground acitivity if alarmActive is on, on new thread
         Log.i(TAG, "check if foreground servive should be active")

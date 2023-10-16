@@ -1,6 +1,7 @@
 package com.carlkarenfort.test
 
 import android.content.Context
+import android.content.Intent
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -40,6 +41,11 @@ class StoreData (private val context: Context) {
             settings[alarmClockHourKey] = hour
             settings[alarmClockMinuteKey] = minute
         }
+
+        //update main activity
+        val intent = Intent(context, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
     }
 
     suspend fun storeID(id: Int) {

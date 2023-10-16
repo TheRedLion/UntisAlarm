@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +32,7 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var runButton: Button
     private lateinit var intent: Intent
     private lateinit var autoCompleteTextView: AutoCompleteTextView
-    private lateinit var schoolAdressDisplay: EditText
+    private lateinit var schoolAdressDisplay: TextView
 
     private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
 
@@ -83,7 +84,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         autoCompleteTextView.setOnItemClickListener { adapter: AdapterView<*>, view: View, position: Int, id: Long ->
             Toast.makeText(applicationContext, "sel pos: ${position}", Toast.LENGTH_SHORT).show()
-            schoolAdressDisplay.setText(schools?.get(position)?.get(1))
+            schoolAdressDisplay.text = schools?.get(position)?.get(1)
             schoolName = schools?.get(position)?.get(3)
             server = schools?.get(position)?.get(2)
         }
@@ -107,6 +108,7 @@ class WelcomeActivity : AppCompatActivity() {
             } else {
                 //verify login data
                 var untisApiCalls: UntisApiCalls? = null
+                StrictMode.setThreadPolicy(policy)
                 try {
                     untisApiCalls = UntisApiCalls(
                         untisUserName.text.toString(),
@@ -124,7 +126,6 @@ class WelcomeActivity : AppCompatActivity() {
                 } else {
                     //Log.i(TAG, "valid")
                     //get ID
-                    StrictMode.setThreadPolicy(policy)
                     val untisID = untisApiCalls.getID()
 
 
