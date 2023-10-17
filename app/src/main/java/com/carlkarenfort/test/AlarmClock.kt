@@ -13,21 +13,22 @@ import kotlinx.coroutines.launch
 class AlarmClock {
     private val TAG = "AlarmClock"
 
-    suspend fun setAlarm(hour: Int, minute: Int, context: Context) {
+    fun setAlarm(hour: Int, minute: Int, context: Context) {
         Log.i(TAG, "Setting an AlarmClock for $hour:$minute.")
-
-        val intent = Intent(context, RunningService::class.java)
-        intent.action = RunningService.Actions.START.toString()
+        val intent = Intent(AlarmClock.ACTION_SET_ALARM)
+        intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
+        intent.putExtra(AlarmClock.EXTRA_HOUR, hour)
+        intent.putExtra(AlarmClock.EXTRA_MINUTES, minute)
+        intent.putExtra(AlarmClock.EXTRA_MESSAGE, "Alarm set by UntisAlarm.")
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startService(intent)
-
-
+        Log.i(TAG, "Here 4")
+        context.startActivity(intent)
 
         //store time alarm was set for
-        CoroutineScope(Dispatchers.IO).launch {
+        /*CoroutineScope(Dispatchers.IO).launch {
             val storeData = StoreData(context)
             storeData.storeAlarmClock(hour, minute)
-        }
+        }*/
     }
 
     suspend fun cancelAlarm(context: Context) {

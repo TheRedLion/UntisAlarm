@@ -265,24 +265,20 @@ class MainActivity : AppCompatActivity() {
                 storeData.storeAlarmActive(isChecked)
             }
 
-            //start foreground activity
+            //start Scheduler
+            Log.i(TAG, "entered listener")
             if (isChecked) {
-                CoroutineScope(Dispatchers.Default).launch {
-                    Log.i(TAG, "starting foreground activity")
-                    aaState = isChecked
-
-                    val scheduler = AndroidAlarmScheduler(applicationContext)
-                    alarmItem.let(scheduler::schedule)
-                }
+                Log.i(TAG, "should schedule")
+                val scheduler = AndroidAlarmScheduler(this)
+                var alarmItem: AlarmItem = AlarmItem(845745)
+                alarmItem.let(scheduler::schedule)
             } else {
-                CoroutineScope(Dispatchers.Default).launch {
-                    aaState = isChecked
-                    Log.i(TAG, "stopping foreground activity")
-
-                    val scheduler = AndroidAlarmScheduler(applicationContext)
-                    alarmItem.let(scheduler::schedule)
-                }
+                Log.i(TAG, "cancelling")
+                val scheduler = AndroidAlarmScheduler(this)
+                var alarmItem: AlarmItem = AlarmItem(845746)
+                alarmItem.let(scheduler::cancel)
             }
+            // TODO: turn off scheduler
         }
     }
 }
