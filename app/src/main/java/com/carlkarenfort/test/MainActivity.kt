@@ -183,6 +183,7 @@ class MainActivity : AppCompatActivity() {
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
+            /*
             //temp
             var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
@@ -193,8 +194,7 @@ class MainActivity : AppCompatActivity() {
                 val apiCalls = UntisApiCalls(loginData[0]!!, loginData[1]!!, loginData[2]!!, loginData[3]!!)
                 apiCalls.timeTableTest(id!!, day)
             }
-
-
+             */
 
             //get user inputted TBS as string
             val newTBSStr = setTBS.text.toString()
@@ -224,16 +224,18 @@ class MainActivity : AppCompatActivity() {
                 val clock = AlarmClock()
                 clock.cancelAlarm(this)
 
-                //restart foreground activity
-                CoroutineScope(Dispatchers.Default).launch {
-                    Intent(applicationContext, RunningService::class.java).also {
-                        it.action = RunningService.Actions.STOP.toString()
-                        startService(it)
-                    }
+                //restart foreground activity if it should be active
+                if (aaState) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        Intent(applicationContext, RunningService::class.java).also {
+                            it.action = RunningService.Actions.STOP.toString()
+                            startService(it)
+                        }
 
-                    Intent(applicationContext, RunningService::class.java).also {
-                        it.action = RunningService.Actions.START.toString()
-                        startService(it)
+                        Intent(applicationContext, RunningService::class.java).also {
+                            it.action = RunningService.Actions.START.toString()
+                            startService(it)
+                        }
                     }
                 }
             }
@@ -252,6 +254,7 @@ class MainActivity : AppCompatActivity() {
             if (isChecked) {
                 CoroutineScope(Dispatchers.Default).launch {
                     Log.i(TAG, "starting foreground activity")
+                    aaState = isChecked
                     Intent(applicationContext, RunningService::class.java).also {
                         it.action = RunningService.Actions.START.toString()
                         startService(it)
@@ -259,6 +262,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 CoroutineScope(Dispatchers.Default).launch {
+                    aaState = isChecked
                     Log.i(TAG, "stopping foreground activity")
                     Intent(applicationContext, RunningService::class.java).also {
                         it.action = RunningService.Actions.STOP.toString()
