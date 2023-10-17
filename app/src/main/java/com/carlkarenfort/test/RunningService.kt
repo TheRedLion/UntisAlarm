@@ -29,7 +29,6 @@ class RunningService: android.app.Service() {
 
     private fun stop() {
         Log.i(TAG, "called stop()")
-        cancelAlarm()
         stopSelf()
     }
 
@@ -41,9 +40,10 @@ class RunningService: android.app.Service() {
             .setContentText(getString(R.string.foregroundService_notification))
             .build()
         startForeground(261353, notification)
-        scheduleAlarm()
     }
 
+
+    /*
     private fun cancelAlarm() {
         Log.i(TAG, "cancelling")
         val scheduler = AndroidAlarmScheduler(this)
@@ -51,13 +51,16 @@ class RunningService: android.app.Service() {
         alarmItem = AlarmItem(845746)
         alarmItem.let(scheduler::cancel)
     }
+     */
 
+    /*
     private fun scheduleAlarm() {
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
         alarmItem = AlarmItem(845746)
         alarmItem.let(scheduler::schedule)
     }
+     */
 
     enum class Actions {
         START, STOP

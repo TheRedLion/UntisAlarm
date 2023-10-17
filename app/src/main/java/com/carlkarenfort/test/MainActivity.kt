@@ -18,6 +18,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.carlkarenfort.test.alarm.AlarmItem
+import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "creating Main Activity")
 
-        //create channel for foreground-activity notification
+        //create channel for notifications
         val channel = NotificationChannel(
             "main_channel",
             "Webunitsalarm Notifications",
@@ -69,6 +71,9 @@ class MainActivity : AppCompatActivity() {
         //create store Data object to access user Data
         val storeData = StoreData(applicationContext)
 
+        //creating alarmitem for setting alarms
+        var alarmItem: AlarmItem? = null
+        alarmItem = AlarmItem(845746)
 
         //check if user has not logged in yet
         //if so directly go to WelcomeActivity (must be at the top so the rest of the activity does not have to be built)
@@ -149,7 +154,14 @@ class MainActivity : AppCompatActivity() {
         //set alarmPreview
         alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
 
-        //start foreground acitivity if alarmActive is on, on new thread
+        //start alarm receiever if alarmActive is on, on new thread
+        Log.i(TAG, "check if foreground servive should be active")
+        if (aaState) {
+            val scheduler = AndroidAlarmScheduler(this)
+            alarmItem.let(scheduler::schedule)
+        }
+
+        /*
         Log.i(TAG, "check if foreground servive should be active")
         if (aaState) {
             CoroutineScope(Dispatchers.Default).launch {
@@ -173,6 +185,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+         */
 
 
         //listener for going to welcome Activity
@@ -222,7 +235,9 @@ class MainActivity : AppCompatActivity() {
 
                 //remove old alarm clock
                 val clock = AlarmClock()
-                clock.cancelAlarm(this)
+                CoroutineScope(Dispatchers.IO).launch {
+                    clock.cancelAlarm(applicationContext)
+                }
 
                 //restart foreground activity if it should be active
                 if (aaState) {
@@ -255,19 +270,17 @@ class MainActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.Default).launch {
                     Log.i(TAG, "starting foreground activity")
                     aaState = isChecked
-                    Intent(applicationContext, RunningService::class.java).also {
-                        it.action = RunningService.Actions.START.toString()
-                        startService(it)
-                    }
+
+                    val scheduler = AndroidAlarmScheduler(applicationContext)
+                    alarmItem.let(scheduler::schedule)
                 }
             } else {
                 CoroutineScope(Dispatchers.Default).launch {
                     aaState = isChecked
                     Log.i(TAG, "stopping foreground activity")
-                    Intent(applicationContext, RunningService::class.java).also {
-                        it.action = RunningService.Actions.STOP.toString()
-                        startService(it)
-                    }
+
+                    val scheduler = AndroidAlarmScheduler(applicationContext)
+                    alarmItem.let(scheduler::schedule)
                 }
             }
         }

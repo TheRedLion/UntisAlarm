@@ -20,6 +20,9 @@ import com.carlkarenfort.test.Misc
 import com.carlkarenfort.test.R
 import com.carlkarenfort.test.UntisApiCalls
 import com.carlkarenfort.test.StoreData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
 
@@ -116,15 +119,26 @@ class AlarmReceiver: BroadcastReceiver() {
                             //no alarm clock set, setting a new one
                             Log.i(TAG, "no alarm clock set, setting a new one")
                             val clock = AlarmClock()
-                            clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
+                            CoroutineScope(Dispatchers.IO).launch {
+                                clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
+                            }
                             setNew("normal", schoolStart, context)
+
+                            //reset view in Main Activity
+                            //val intent = Intent(context, MainActivity::class.java)
+                            //context.startActivity(intent)
                         } else {
                             //alarm set improperly
                             Log.i(TAG, "removing old and setting new alarm")
                             val clock = AlarmClock()
-                            clock.cancelAlarm(context)
-                            clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
-                            val intent = Intent(context, MainActivity::class.java)
+                            CoroutineScope(Dispatchers.IO).launch {
+                                clock.cancelAlarm(context)
+                                clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
+                            }
+
+                            //reset view in Main Activity
+                            //val intent = Intent(context, MainActivity::class.java)
+                            //context.startActivity(intent)
                         }
                     }
                 }
