@@ -12,9 +12,31 @@ UntisAlarm is an Android application developed in Kotlin that helps you manage y
 - Smart alarm clock: Adjusts your wake-up time based on your schedule.
 - Supports Android API version 8.0 (Android 8.0 Oreo) and higher.
 
+## Installation (Release Version)
+
+To install the release version of UntisAlarm, follow these steps:
+
+1. Visit the [Releases](https://github.com/TheRedLion/UntisAlarm/releases) section of our GitHub repository.
+
+2. Download the latest release APK file from the available assets.
+
+3. Transfer the APK file to your Android device, if it's not already there.
+
+4. On your Android device, go to "Settings" > "Security" (or "Biometrics and Security" on some devices).
+
+5. Enable the "Install apps from unknown sources" option.
+
+6. Locate and tap on the downloaded APK file to begin the installation process.
+
+7. Follow the on-screen prompts to complete the installation.
+
+8. Once the installation is complete, you can open [name] from your app drawer.
+
+9. Set up your webUntis credentials in the app to fetch your timetable data.
+
 ## Getting Started
 
-To use UntisAlarm, follow these steps:
+To develop UntisAlarm, follow these steps:
 
 1. Clone this repository to your local machine.
 
@@ -23,7 +45,7 @@ git clone https://github.com/TheRedLion/UntisAlarm.git
 ```
 Open the project in Android Studio.
 
-Build and run the app on your Android device or emulator(We recommend android studio).
+Build and run the app on your Android device or emulator.
 
 Set up your webUntis credentials in the app to fetch your timetable data.
 
