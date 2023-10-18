@@ -36,16 +36,14 @@ class StoreData (private val context: Context) {
         )
     }
 
-    suspend fun storeAlarmClock(hour: Int, minute: Int) {
-        context.dataStore.edit { settings ->
-            settings[alarmClockHourKey] = hour
-            settings[alarmClockMinuteKey] = minute
-        }
+    suspend fun storeAlarmClock(hour: Int?, minute: Int?) {
+        val storeHour: Int = hour ?: 27
+        val storeMinute: Int = minute ?: 69
 
-        //update main activity
-        val intent = Intent(context, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
+        context.dataStore.edit { settings ->
+            settings[alarmClockHourKey] = storeHour
+            settings[alarmClockMinuteKey] = storeMinute
+        }
     }
 
     suspend fun storeID(id: Int) {

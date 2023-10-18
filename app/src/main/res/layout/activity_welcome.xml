@@ -14,17 +14,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
         android:autofillHints="username"
         android:ems="15"
         android:hint="@string/webuntis_username"
         android:inputType="text"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/untisPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.594"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/schoolAdressDisplay" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -32,20 +32,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="20dp"
         android:hint="@string/select_school"
+        app:layout_constraintBottom_toTopOf="@+id/schoolAdressDisplay"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/untisSchool">
+        app:layout_constraintStart_toStartOf="parent">
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:inputType="none"
-            />
+            android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
@@ -53,66 +52,55 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="233dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
         android:ems="15"
         android:hint="@string/webuntis_url"
         android:inputType="text"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/encryptionWarning" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/untisPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
         android:autofillHints="password"
         android:ems="15"
         android:hint="@string/webuntis_passowrd"
         android:inputType="textPassword"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/runButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.486"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/untisUsername" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/runButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginBottom="144dp"
         android:text="@string/log_in"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/untisPassword"
         app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="@+id/untisPassword"
-        app:layout_constraintTop_toBottomOf="@+id/untisPassword" />
-
-    <TextView
-        android:id="@+id/encryptionWarning"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="@string/encryption_warning"
-        android:textColor="#FF1200"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/untisPassword" />
 
     <TextView
         android:id="@+id/schoolAdressDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="176dp"
-        android:layout_marginTop="15dp"
         android:layout_marginEnd="177dp"
+        app:layout_constraintBottom_toTopOf="@+id/untisUsername"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

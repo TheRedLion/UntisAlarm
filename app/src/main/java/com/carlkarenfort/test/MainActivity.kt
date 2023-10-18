@@ -7,6 +7,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
@@ -29,6 +30,8 @@ import java.time.LocalDate
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
 class MainActivity : AppCompatActivity() {
+
+    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
     //tag for logs
     private var TAG = "MainActivity"
 
@@ -62,11 +65,13 @@ class MainActivity : AppCompatActivity() {
 
         //request permission for notifications
         Log.i(TAG, "requesting permission")
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-            0
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
 
         //create store Data object to access user Data
         val storeData = StoreData(applicationContext)
@@ -104,10 +109,14 @@ class MainActivity : AppCompatActivity() {
         var tbs: Int?
         var aaStateNullable: Boolean?
         var alarmClock: Array<Int?>
+        var loginData: Array<String?>
+        var id: Int?
         runBlocking {
             tbs = storeData.loadTBS()
             aaStateNullable = storeData.loadAlarmActive()
             alarmClock = storeData.loadAlarmClock()
+            loginData = storeData.loadLoginData()
+            id = storeData.loadID()
         }
 
         //check if tbs has not already been set
@@ -233,24 +242,38 @@ class MainActivity : AppCompatActivity() {
                     storeData.storeTBS(newTBS)
                 }
 
-                //remove old alarm clock
-                val clock = AlarmClock()
-                CoroutineScope(Dispatchers.IO).launch {
-                    clock.cancelAlarm(applicationContext)
-                }
 
-                //restart foreground activity if it should be active
+                //restart alarm
                 if (aaState) {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        Intent(applicationContext, RunningService::class.java).also {
-                            it.action = RunningService.Actions.STOP.toString()
-                            startService(it)
-                        }
+                    val scheduler = AndroidAlarmScheduler(this)
 
-                        Intent(applicationContext, RunningService::class.java).also {
-                            it.action = RunningService.Actions.START.toString()
-                            startService(it)
-                        }
+
+                    StrictMode.setThreadPolicy(policy)
+                    val untisApiCalls = UntisApiCalls(
+                        loginData[0]!!,
+                        loginData[1]!!,
+                        loginData[2]!!,
+                        loginData[3]!!
+                    )
+
+                    val misc = Misc()
+
+                    var schoolStart = untisApiCalls.getSchoolStartForDay(
+                        id!!,
+                        misc.getNextDay()
+                    )
+                    if (schoolStart != null) {
+                        schoolStart = schoolStart.minusMinutes(tbs!!.toLong())
+
+                        val alarmClock2 = AlarmClock()
+                        alarmClock2.cancelAlarm(this)
+                        alarmClock2.setAlarm(schoolStart, this)
+
+                        alarmItem.let(scheduler::cancel)
+                        alarmItem.let(scheduler::schedule)
+                    } else {
+                        alarmItem.let(scheduler::cancel)
+                        alarmItem.let(scheduler::schedule)
                     }
                 }
             }
@@ -270,15 +293,12 @@ class MainActivity : AppCompatActivity() {
             if (isChecked) {
                 Log.i(TAG, "should schedule")
                 val scheduler = AndroidAlarmScheduler(this)
-                var alarmItem: AlarmItem = AlarmItem(845745)
                 alarmItem.let(scheduler::schedule)
             } else {
                 Log.i(TAG, "cancelling")
                 val scheduler = AndroidAlarmScheduler(this)
-                var alarmItem: AlarmItem = AlarmItem(845746)
                 alarmItem.let(scheduler::cancel)
             }
-            // TODO: turn off scheduler
         }
     }
 }

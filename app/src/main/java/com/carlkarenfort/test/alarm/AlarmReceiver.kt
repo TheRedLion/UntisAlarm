@@ -7,10 +7,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 import com.carlkarenfort.test.AlarmClock
+import com.carlkarenfort.test.MainActivity
 import com.carlkarenfort.test.Misc
-import com.carlkarenfort.test.RunningService
 import com.carlkarenfort.test.StoreData
 import com.carlkarenfort.test.UntisApiCalls
 import kotlinx.coroutines.CoroutineScope
@@ -66,7 +65,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
                     Log.i(TAG, "id, loginData or TBS from StoreData was null. THIS SHOULD NEVER HAPPEN")
                     //TODO add notification if user was logged out
-                //warn user that he got logged out
+                    //warn user that he got logged out
                     /*if (ActivityCompat.checkSelfPermission(
                             context,
                             Manifest.permission.POST_NOTIFICATIONS
@@ -113,34 +112,20 @@ class AlarmReceiver: BroadcastReceiver() {
                         } else if (alarmClockHour == null || alarmClockMinute == null) {
                             //no alarm clock set, setting a new one
                             Log.i(TAG, "no alarm clock set, setting a new one")
-                            val intent2 = Intent(context, AlarmReceiver::class.java)
-                            intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                            val pendingIntent = PendingIntent.getBroadcast(context, 123, intent2,
-                                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                            var alarmMgr: AlarmManager? = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                            val calendar: Calendar = Calendar.getInstance().apply {
-                                timeInMillis = System.currentTimeMillis()
-                                set(Calendar.HOUR_OF_DAY, 8)
-                                set(Calendar.MINUTE, 30)
-                            }
-                            alarmMgr?.setAlarmClock(AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent), pendingIntent)
-                            // TODO: FÜR MORGEN CODE AUFRÄUMEN ALARMCLOCK IST EIG UNNÖTIG WIR KÖNNEN NATÖRLCI HDIE OBEREN 11 ZEILEN DA REIN SCHREIBEN. DAS KLAPPT NÄMLICH. VLLT
-                            // GEHT DAS AUCH IRGENDWIE CLEANER ABER SOLANGE ES KLAPPT.
-                            // HABEN UM ZU TESTEN VIELES GELÖSCHT WAS WIEDER HINMUSS
-                            // RUNNING APP IST UNNÖÄTIG RUNNING SERVICE IST UNNÖTIG
-                            // AHH SO EINE ZEIT VERSXCHWEQRNUGN
+
+                            val alarmClock = AlarmClock()
+                            alarmClock.setAlarm(schoolStart, context)
+
+                            setNew("normal", schoolStart, context)
                         } else {
                             //alarm set improperly
                             Log.i(TAG, "removing old and setting new alarm")
-                            val clock = AlarmClock()
-                            CoroutineScope(Dispatchers.IO).launch {
-                                clock.cancelAlarm(context)
-                                clock.setAlarm(schoolStart.hour, schoolStart.minute, context)
-                            }
 
-                            //reset view in Main Activity
-                            //val intent = Intent(context, MainActivity::class.java)
-                            //context.startActivity(intent)
+                            val alarmClock = AlarmClock()
+                            alarmClock.cancelAlarm(context)
+                            alarmClock.setAlarm(schoolStart, context)
+
+                            setNew("normal", schoolStart, context)
                         }
                     }
                 }
