@@ -58,7 +58,7 @@ class UntisApiCalls constructor(
         }
         return id
     }
-    //TODO: add proper error handeling to getID function
+    //TODO: add proper error handling to getID function
 
     fun getSchoolStartForDay(
         id: Int,
