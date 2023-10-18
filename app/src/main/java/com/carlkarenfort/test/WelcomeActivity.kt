@@ -1,6 +1,7 @@
 package com.carlkarenfort.test
 
 import android.content.Intent
+import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.Editable
@@ -85,7 +86,7 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         autoCompleteTextView.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
-            schoolAddressDisplay.text = schools?.get(position)?.get(1)
+            schoolAdressDisplay.text = schools?.get(position)?.get(1)
             schoolName = schools?.get(position)?.get(3)
             server = schools?.get(position)?.get(2)
         }
@@ -133,7 +134,7 @@ class WelcomeActivity : AppCompatActivity() {
                     //show warning if no ID was found
                     if (untisID == null) {
                         //no match was found
-                        Log.i(TAG, "error, user doesn't have an ID???")
+                        Log.i(TAG, "error, user doen't have an ID???")
                         //TODO("error handling???")
                     } else {
                         //id exists
