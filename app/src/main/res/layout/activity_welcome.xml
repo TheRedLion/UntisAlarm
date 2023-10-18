@@ -35,7 +35,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="20dp"
         android:hint="@string/select_school"
-        app:layout_constraintBottom_toTopOf="@+id/schoolAdressDisplay"
+        app:layout_constraintBottom_toTopOf="@+id/schoolAddressDisplay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -74,7 +74,7 @@
         android:layout_marginBottom="20dp"
         android:autofillHints="password"
         android:ems="15"
-        android:hint="@string/webuntis_passowrd"
+        android:hint="@string/webuntis_password"
         android:inputType="textPassword"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/runButton"
@@ -94,7 +94,7 @@
         app:layout_constraintStart_toStartOf="@+id/untisPassword" />
 
     <TextView
-        android:id="@+id/schoolAdressDisplay"
+        android:id="@+id/schoolAddressDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="176dp"

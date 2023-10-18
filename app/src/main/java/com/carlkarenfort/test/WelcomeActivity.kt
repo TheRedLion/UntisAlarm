@@ -1,7 +1,6 @@
 package com.carlkarenfort.test
 
 import android.content.Intent
-import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.Editable
@@ -32,7 +31,7 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var runButton: Button
     private lateinit var intent: Intent
     private lateinit var autoCompleteTextView: AutoCompleteTextView
-    private lateinit var schoolAdressDisplay: TextView
+    private lateinit var schoolAddressDisplay: TextView
 
     private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
 
@@ -47,7 +46,7 @@ class WelcomeActivity : AppCompatActivity() {
         untisPassword = findViewById(R.id.untisPassword)
         runButton = findViewById(R.id.runButton)
         autoCompleteTextView = findViewById(R.id.autoCompleteTextView)
-        schoolAdressDisplay = findViewById(R.id.schoolAdressDisplay)
+        schoolAddressDisplay = findViewById(R.id.schoolAddressDisplay)
 
         var schoolName: String? = null
         var server: String? = null
@@ -86,7 +85,7 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         autoCompleteTextView.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
-            schoolAdressDisplay.text = schools?.get(position)?.get(1)
+            schoolAddressDisplay.text = schools?.get(position)?.get(1)
             schoolName = schools?.get(position)?.get(3)
             server = schools?.get(position)?.get(2)
         }
@@ -134,7 +133,7 @@ class WelcomeActivity : AppCompatActivity() {
                     //show warning if no ID was found
                     if (untisID == null) {
                         //no match was found
-                        Log.i(TAG, "error, user doen't have an ID???")
+                        Log.i(TAG, "error, user doesn't have an ID???")
                         //TODO("error handling???")
                     } else {
                         //id exists

@@ -45,7 +45,7 @@
 
     <!-- enter a new TBS -->
 
-    <!-- comfirm the new TBS-->
+    <!-- confirm the new TBS-->
     <EditText
         android:id="@+id/setTBS"
         android:layout_width="200dp"

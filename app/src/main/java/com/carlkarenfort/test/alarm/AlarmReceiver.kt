@@ -30,7 +30,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
         //check if we have a context
         if (context == null) {
-            Log.i(TAG, "context from onReceieve is null")
+            Log.i(TAG, "context from onReceive is null")
             //TODO("not sure but might happen when foreground Activity has been stopped")
         } else {
             Log.i(TAG, "has context")
@@ -50,7 +50,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 var loginData: Array<String?>
                 var tbs: Int?
                 val alarmClockArray: Array<Int?>
-                //TODO("move alarm receiever from main thread")
+                //TODO("move alarm receiver from main thread")
                 runBlocking {
                     id = storeData.loadID()
                     loginData = storeData.loadLoginData()
@@ -100,7 +100,7 @@ class AlarmReceiver: BroadcastReceiver() {
                     //debug: var schoolStart = LocalTime.of(7, 0)
 
                     if (schoolStart == null) {
-                        //probably holliday or something
+                        //probably holiday or something
                         setNew("noAlarmToday", null, context)
                     } else {
                         schoolStart = schoolStart.minusMinutes(tbs!!.toLong())

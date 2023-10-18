@@ -3,8 +3,8 @@
     <string name="log_in">Log in</string>
     <string name="fore_name">Fore Name</string>
     <string name="last_name">Last Name</string>
-    <string name="webuntis_passowrd">Webuntis Password</string>
-    <string name="encryption_warning">Passowords are not encrypted, your account may be compromised! Do not use this app as a teacher! Your Webuntis Password should not be used on any other platform!</string>
+    <string name="webuntis_password">Webuntis Password</string>
+    <string name="encryption_warning">Passwords are not encrypted, your account may be compromised! Do not use this app as a teacher! Your Webuntis Password should not be used on any other platform!</string>
     <string name="webuntis_username">Webuntis Username</string>
     <string name="fore_name_empty">Fore Name may not be Empty!</string>
     <string name="last_name_empty">Last Name may not be Empty!</string>
@@ -15,12 +15,12 @@
     <string name="invalid_number">Please only enter valid numbers</string>
     <string name="app_name">Untis Alarm</string>
     <string name="invalid_login_data">Invalid Login Data!</string>
-    <string name="please_only_enter_intergers">Please only enter Intergers</string>
+    <string name="please_only_enter_integers">Please only enter Integers</string>
     <string name="not_loaded">not loaded</string>
     <string name="update">Update</string>
     <string name="time_before_school">Time Before School</string>
     <string name="you_are_offline">You are Offline!</string>
     <string name="foregroundService_notification">required for UntisAlarm to set and Update your Alarms</string>
-    <string name="webuntis_url" translatable="false">School name or Adress</string>
+    <string name="webuntis_url" translatable="false">School name or Address</string>
     <string name="select_school">Select School</string>
 </resources>
