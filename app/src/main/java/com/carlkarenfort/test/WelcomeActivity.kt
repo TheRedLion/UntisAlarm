@@ -1,7 +1,6 @@
 package com.carlkarenfort.test
 
 import android.content.Intent
-import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.Editable
@@ -47,7 +46,7 @@ class WelcomeActivity : AppCompatActivity() {
         untisPassword = findViewById(R.id.untisPassword)
         runButton = findViewById(R.id.runButton)
         autoCompleteTextView = findViewById(R.id.autoCompleteTextView)
-        schoolAdressDisplay = findViewById(R.id.schoolAdressDisplay)
+        schoolAdressDisplay = findViewById(R.id.schoolAddressDisplay)
 
         var schoolName: String? = null
         var server: String? = null

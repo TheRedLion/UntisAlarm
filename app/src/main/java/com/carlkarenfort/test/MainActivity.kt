@@ -2,7 +2,6 @@ package com.carlkarenfort.test
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -25,7 +24,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -33,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
     //tag for logs
-    private var TAG = "MainActivity"
+    private val TAG = "MainActivity"
 
     fun test() {
 
@@ -77,8 +75,7 @@ class MainActivity : AppCompatActivity() {
         val storeData = StoreData(applicationContext)
 
         //creating alarmitem for setting alarms
-        var alarmItem: AlarmItem? = null
-        alarmItem = AlarmItem(845746)
+        val alarmItem = AlarmItem(845746)
 
         //check if user has not logged in yet
         //if so directly go to WelcomeActivity (must be at the top so the rest of the activity does not have to be built)
@@ -163,15 +160,15 @@ class MainActivity : AppCompatActivity() {
         //set alarmPreview
         alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
 
-        //start alarm receiever if alarmActive is on, on new thread
-        Log.i(TAG, "check if foreground servive should be active")
+        //start alarm receiver if alarmActive is on, on new thread
+        Log.i(TAG, "check if foreground service should be active")
         if (aaState) {
             val scheduler = AndroidAlarmScheduler(this)
             alarmItem.let(scheduler::schedule)
         }
 
         /*
-        Log.i(TAG, "check if foreground servive should be active")
+        Log.i(TAG, "check if foreground service should be active")
         if (aaState) {
             CoroutineScope(Dispatchers.Default).launch {
                 val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -230,7 +227,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 newTBS = Integer.parseInt(newTBSStr)
             } catch (e: NumberFormatException) {
-                Toast.makeText(this, getString(R.string.please_only_enter_intergers), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.please_only_enter_integers), Toast.LENGTH_SHORT).show()
             }
 
             //check that newTBS was an Int
