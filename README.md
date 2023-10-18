@@ -19,7 +19,8 @@ To use UntisAlarm, follow these steps:
 1. Clone this repository to your local machine.
 
 ```shell
-git clone https://github.com/yourusername/[name].git
+git clone https://github.com/TheRedLion/UntisAlarm.git
+```
 Open the project in Android Studio.
 
 Build and run the app on your Android device or emulator(We recommend android studio).
