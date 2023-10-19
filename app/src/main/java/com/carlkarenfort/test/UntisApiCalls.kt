@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
+import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalTime
@@ -66,25 +67,33 @@ class UntisApiCalls constructor(
     ): LocalTime? {
         try {
             //get timetable from users id
-            val timetable = session.getTimetableFromPersonId(
-                day,//LocalDate.of(2023,10,10),
-                day,//LocalDate.of(2023,10,10),
+            val today = LocalDate.now()
+            val timetable: Timetable = session.getTimetableFromPersonId(
+                today,
+                today.plusDays(7),
                 id
             ) ?: return null
+            Log.i(TAG, timetable.toString())
             //create return variable
-            var firstLessonStartTime: LocalTime? = null
+            timetable.sortByStartTime()
+            var i: Int = 0
+            while (timetable[i].teachers.isEmpty()) {
+                i++
+            } // TODO: Andere Schulen
+            var firstLessonStartTime: LocalTime = timetable[i].startTime
 
             //iterate over every lesson and keep the highest
-            for (i in timetable.indices) {
+            /*for (i in timetable.indices) {
                 //Log.i(TAG, timetable[i].teachers.toString())
+                // if null continue
                 val startTime = timetable[i].startTime ?: continue
                 if (firstLessonStartTime == null || startTime.isBefore(firstLessonStartTime)) {
-                    if (timetable[i].originalTeachers.isEmpty()) {
+                    if (!timetable[i].originalTeachers.isEmpty()) {
                         firstLessonStartTime = startTime
                         //Log.i(TAG, startTime.toString())
                     }
                 }
-            }
+            }*/
             session.logout()
             return firstLessonStartTime
         } catch (e: IOException) {

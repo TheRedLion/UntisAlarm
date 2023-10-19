@@ -22,7 +22,7 @@ class AndroidAlarmScheduler(
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
     }
 
     override fun cancel(item: AlarmItem) {

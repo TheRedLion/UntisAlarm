@@ -31,7 +31,7 @@ class AlarmReceiver: BroadcastReceiver() {
         //check if we have a context
         if (context == null) {
             Log.i(TAG, "context from onReceive is null")
-            //TODO("not sure but might happen when foreground Activity has been stopped")
+            return
         } else {
             Log.i(TAG, "has context")
 

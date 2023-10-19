@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.carlkarenfort.test.alarm.AlarmItem
+import com.carlkarenfort.test.alarm.AlarmScheduler
 import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "creating Main Activity")
-
+        /*
         //create channel for notifications
         val channel = NotificationChannel(
             "main_channel",
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                 0
             )
         }
-
+        */
         //create store Data object to access user Data
         val storeData = StoreData(applicationContext)
 
@@ -101,6 +102,9 @@ class MainActivity : AppCompatActivity() {
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
+
+        //alarm scheduler
+        val scheduler = AndroidAlarmScheduler(this)
 
         //load time before school and switch
         var tbs: Int?
@@ -161,11 +165,11 @@ class MainActivity : AppCompatActivity() {
         alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
 
         //start alarm receiver if alarmActive is on, on new thread
-        Log.i(TAG, "check if foreground service should be active")
+        /* Log.i(TAG, "check if foreground service should be active")
         if (aaState) {
             val scheduler = AndroidAlarmScheduler(this)
             alarmItem.let(scheduler::schedule)
-        }
+        }*/
 
         /*
         Log.i(TAG, "check if foreground service should be active")
@@ -223,56 +227,26 @@ class MainActivity : AppCompatActivity() {
 
 
             //convert to int
-            var newTBS: Int? = null
+            val newTBS: Int
             try {
                 newTBS = Integer.parseInt(newTBSStr)
             } catch (e: NumberFormatException) {
                 Toast.makeText(this, getString(R.string.please_only_enter_integers), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            //check that newTBS was an Int
-            if (newTBS != null) {
-                timeBeforeSchool.text = "$newTBS min"
+            timeBeforeSchool.text = "$newTBS min"
 
-                //store data
-                CoroutineScope(Dispatchers.IO).launch {
-                    storeData.storeTBS(newTBS)
-                }
+            //store data
+            CoroutineScope(Dispatchers.IO).launch {
+                storeData.storeTBS(newTBS)
+            }
 
 
-                //restart alarm
-                if (aaState) {
-                    val scheduler = AndroidAlarmScheduler(this)
-
-
-                    StrictMode.setThreadPolicy(policy)
-                    val untisApiCalls = UntisApiCalls(
-                        loginData[0]!!,
-                        loginData[1]!!,
-                        loginData[2]!!,
-                        loginData[3]!!
-                    )
-
-                    val misc = Misc()
-
-                    var schoolStart = untisApiCalls.getSchoolStartForDay(
-                        id!!,
-                        misc.getNextDay()
-                    )
-                    if (schoolStart != null) {
-                        schoolStart = schoolStart.minusMinutes(tbs!!.toLong())
-
-                        val alarmClock2 = AlarmClock()
-                        alarmClock2.cancelAlarm(this)
-                        alarmClock2.setAlarm(schoolStart, this)
-
-                        alarmItem.let(scheduler::cancel)
-                        alarmItem.let(scheduler::schedule)
-                    } else {
-                        alarmItem.let(scheduler::cancel)
-                        alarmItem.let(scheduler::schedule)
-                    }
-                }
+            //restart alarm
+            if (aaState) {
+                alarmItem.let(scheduler::cancel)
+                alarmItem.let(scheduler::schedule)
             }
             //clear field afterwards
             setTBS.setText("")
@@ -289,11 +263,9 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "entered listener")
             if (isChecked) {
                 Log.i(TAG, "should schedule")
-                val scheduler = AndroidAlarmScheduler(this)
                 alarmItem.let(scheduler::schedule)
             } else {
                 Log.i(TAG, "cancelling")
-                val scheduler = AndroidAlarmScheduler(this)
                 alarmItem.let(scheduler::cancel)
             }
         }
