@@ -20,7 +20,7 @@ class UntisApiCalls constructor(
 ){
 
     //tag for logging text
-    private val TAG = "UntisApiCalls"
+    private val tag = "UntisApiCalls"
 
     private val session: Session
 
@@ -48,10 +48,10 @@ class UntisApiCalls constructor(
                 try {
                     //login to API
                     id = session.infos.personId
-                    Log.i(TAG, "person ID is : $id")
+                    Log.i(tag, "person ID is : $id")
 
                 } catch (e: IOException) {
-                    Log.i(TAG, "error")
+                    Log.i(tag, "error")
                     e.printStackTrace()
                 }
             }
@@ -75,20 +75,19 @@ class UntisApiCalls constructor(
             if (timetable.isEmpty()) {
                 return null
             }
-            Log.i(TAG, timetable.teachers.toString())
+            Log.i(tag, timetable.teachers.toString())
             //create return variable
             timetable.sortByDate()
             timetable.sortByStartTime()
-            Log.i(TAG, timetable.toString())
-            var i: Int = 0
+            Log.i(tag, timetable.toString())
             for (i in timetable){
             if (!i.teachers.isEmpty() && i.teachers != null) {
-                var firstLessonStartTime: LocalTime = i.startTime
+                val firstLessonStartTime: LocalTime = i.startTime
                 session.logout()
                 return firstLessonStartTime
             }}
             return null
-            // TODO: Andere Schulen
+            // TODO: Other Implementations
 
 
             //iterate over every lesson and keep the highest
@@ -105,22 +104,9 @@ class UntisApiCalls constructor(
             }*/
 
         } catch (e: IOException) {
-            Log.i(TAG,e.toString())
+            Log.i(tag,e.toString())
             return null
         }
     } //TODO: proper error exceptions in getSchoolStart
 
-    fun timeTableTest(id: Int, day: LocalDate) {
-        val timetable = session.getTimetableFromPersonId(
-            day,//LocalDate.of(2023,10,10),
-            day,//LocalDate.of(2023,10,10),
-            id
-        )
-
-        for (i in timetable.indices) {
-            Log.i(TAG, timetable[i].toString())
-            Log.i(TAG, "{subjects: ${timetable[i].subjects}, original subjects: ${timetable[i].originalSubjects}, teachers: ${timetable[i].teachers}, original teachers:${timetable[i].originalTeachers}, classes: ${timetable[i].classes}, original classes: ${timetable[i].originalClasses}, rooms: ${timetable[i].rooms}, original rooms: ${timetable[i].originalRooms}, activity type: ${timetable[i].activityType}, code: ${timetable[i].code}, timeuntiObject:${timetable[i].timeUnitObject}}")
-        }
-
-    }
 }

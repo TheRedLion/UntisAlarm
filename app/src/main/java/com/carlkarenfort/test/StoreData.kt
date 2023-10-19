@@ -1,7 +1,6 @@
 package com.carlkarenfort.test
 
 import android.content.Context
-import android.content.Intent
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey

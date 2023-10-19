@@ -6,14 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.carlkarenfort.test.AlarmClock
-import java.time.ZoneOffset
 
 class AndroidAlarmScheduler(
     private val context: Context
-): AlarmScheduler {
+) {
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val ALARM_REQUEST_CODE = 73295871
-    override fun schedule(item: AlarmItem) {
+     fun schedule(item: AlarmItem) {
         Log.i("AlarmScheduler", "scheduled Alarm")
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -25,7 +24,7 @@ class AndroidAlarmScheduler(
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
     }
 
-    override fun cancel(item: AlarmItem) {
+    fun cancel(item: AlarmItem) {
         AlarmClock().cancelAlarm(context)
         alarmManager.cancel(
             PendingIntent.getBroadcast(

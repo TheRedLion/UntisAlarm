@@ -6,4 +6,4 @@
     android:textStyle="bold"
     android:padding="14dp"
     android:layout_height="wrap_content"
-    android:text="TextView" />
+    android:text="@string/textview" />

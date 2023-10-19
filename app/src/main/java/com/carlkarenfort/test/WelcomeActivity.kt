@@ -1,7 +1,6 @@
 package com.carlkarenfort.test
 
 import android.content.Intent
-import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.Editable
@@ -24,7 +23,7 @@ import java.io.IOException
 
 class WelcomeActivity : AppCompatActivity() {
     //tag for logging
-    private var TAG: String = "WelcomeActivity"
+    private var tag: String = "WelcomeActivity"
 
     private lateinit var untisSchool: EditText
     private lateinit var untisPassword: EditText
@@ -40,7 +39,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i(TAG, "creating Welcome activitiy")
+        Log.i(tag, "creating Welcome activity")
         setContentView(R.layout.activity_welcome)
 
         untisSchool = findViewById(R.id.untisSchool)
@@ -71,7 +70,7 @@ class WelcomeActivity : AppCompatActivity() {
                             val schoolNames =
                                 schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
 
-                            Log.i(TAG, schoolNames.toString())
+                            Log.i(tag, schoolNames.toString())
                             runOnUiThread {
                                 val arrayAdapter = ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
                                 // get reference to the autocomplete text view
@@ -120,7 +119,7 @@ class WelcomeActivity : AppCompatActivity() {
                         schoolName!!
                     )
                 } catch (e: IOException) {
-                    Log.i(TAG, "login failed")
+                    Log.i(tag, "login failed")
                 }
 
                 if (untisApiCalls == null) {
@@ -135,7 +134,7 @@ class WelcomeActivity : AppCompatActivity() {
                     //show warning if no ID was found
                     if (untisID == null) {
                         //no match was found
-                        Log.i(TAG, "error, user doesn't have an ID???")
+                        Log.i(tag, "error, user doesn't have an ID???")
                         //TODO("error handling???")
                     } else {
                         //id exists

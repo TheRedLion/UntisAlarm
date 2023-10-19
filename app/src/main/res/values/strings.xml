@@ -23,4 +23,6 @@
     <string name="foregroundService_notification">required for UntisAlarm to set and Update your Alarms</string>
     <string name="webuntis_url" translatable="false">School name or Address</string>
     <string name="select_school">Select School</string>
+    <string name="_07_00">07:00</string>
+    <string name="textview">TextView</string>
 </resources>

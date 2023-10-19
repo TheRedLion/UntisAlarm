@@ -4,10 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.provider.AlarmClock
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import com.carlkarenfort.test.alarm.AlarmReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +14,7 @@ import java.time.LocalTime
 import java.util.Calendar
 
 class AlarmClock {
-    private val TAG = "AlarmClock"
+    private val tag = "AlarmClock"
 
     fun setAlarm(schoolStart: LocalTime, context: Context) {
         val intent2 = Intent(context, AlarmReceiver::class.java)
@@ -53,7 +50,7 @@ class AlarmClock {
     }
 
     fun cancelAlarm(context: Context) {
-        Log.i(TAG, "called")
+        Log.i(tag, "called")
         val intent2 = Intent(context, AlarmReceiver::class.java)
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 

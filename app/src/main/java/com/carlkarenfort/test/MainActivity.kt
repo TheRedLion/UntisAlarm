@@ -1,14 +1,8 @@
 package com.carlkarenfort.test
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -17,9 +11,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.carlkarenfort.test.alarm.AlarmItem
-import com.carlkarenfort.test.alarm.AlarmScheduler
 import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,13 +22,9 @@ import kotlinx.coroutines.runBlocking
 @SuppressLint("UseSwitchCompatOrMaterialCode")
 class MainActivity : AppCompatActivity() {
 
-    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
     //tag for logs
-    private val TAG = "MainActivity"
+    private val tag = "MainActivity"
 
-    fun test() {
-
-    }
     //objects from layout
     private lateinit var setNewUser: Button
     private lateinit var timeBeforeSchool: TextView
@@ -49,12 +37,12 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i(TAG, "creating Main Activity")
+        Log.i(tag, "creating Main Activity")
         /*
         //create channel for notifications
         val channel = NotificationChannel(
             "main_channel",
-            "Webunitsalarm Notifications",
+            "UntisAlarm Notifications",
             NotificationManager.IMPORTANCE_DEFAULT
         )
 
@@ -75,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         //create store Data object to access user Data
         val storeData = StoreData(applicationContext)
 
-        //creating alarmitem for setting alarms
+        //creating alarm item for setting alarms
         val alarmItem = AlarmItem(845746)
 
         //check if user has not logged in yet
@@ -85,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             //check if loginData is empty
             if (storeData.loadLoginData()[0] == null || storeData.loadID() == null) {
                 //go to welcome activity when not logged in
-                Log.i(TAG, "Not logged in tf")
+                Log.i(tag, "Not logged in tf")
                 intent = Intent(this@MainActivity, WelcomeActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -181,7 +169,7 @@ class MainActivity : AppCompatActivity() {
 
                 val runningServices = manager.runningAppProcesses
 
-                Log.i(TAG, "check if foregroundservive is already running")
+                Log.i(TAG, "check if foreground service is already running")
                 for (processInfo in runningServices) {
                     for (serviceInfo in processInfo.pkgList) {
                         Log.i(TAG, serviceInfo)
@@ -261,12 +249,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             //start Scheduler
-            Log.i(TAG, "entered listener")
+            Log.i(tag, "entered listener")
             if (isChecked) {
-                Log.i(TAG, "should schedule")
+                Log.i(tag, "should schedule")
                 alarmItem.let(scheduler::schedule)
             } else {
-                Log.i(TAG, "cancelling")
+                Log.i(tag, "cancelling")
                 alarmItem.let(scheduler::cancel)
             }
         }
