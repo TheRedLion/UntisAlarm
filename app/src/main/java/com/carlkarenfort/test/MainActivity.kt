@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "Not logged in tf")
                 intent = Intent(this@MainActivity, WelcomeActivity::class.java)
                 startActivity(intent)
+                finish()
             }
         }
 

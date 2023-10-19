@@ -62,17 +62,19 @@ class UntisApiCalls constructor(
     //TODO: add proper error handling to getID function
 
     fun getSchoolStartForDay(
-        id: Int,
-        day: LocalDate
+        id: Int
     ): LocalTime? {
         try {
             //get timetable from users id
             val today = LocalDate.now()
             val timetable: Timetable = session.getTimetableFromPersonId(
                 today,
-                today.plusDays(365),
+                today.plusDays(7),
                 id
             )
+            if (timetable.isEmpty()) {
+                return null
+            }
             Log.i(TAG, timetable.teachers.toString())
             //create return variable
             timetable.sortByDate()

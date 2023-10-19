@@ -23,7 +23,8 @@ class AlarmClock {
         val intent2 = Intent(context, AlarmReceiver::class.java)
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
-        val pendingIntent = PendingIntent.getBroadcast(context, 123, intent2, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -52,10 +53,11 @@ class AlarmClock {
     }
 
     fun cancelAlarm(context: Context) {
+        Log.i(TAG, "called")
         val intent2 = Intent(context, AlarmReceiver::class.java)
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
-        val pendingIntent = PendingIntent.getBroadcast(context, 124, intent2,
+        val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2,
             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

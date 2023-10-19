@@ -20,18 +20,19 @@ class AndroidAlarmScheduler(
             context,
             ALARM_REQUEST_CODE,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
     }
 
     override fun cancel(item: AlarmItem) {
+        AlarmClock().cancelAlarm(context)
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                item.id.hashCode(),
+                ALARM_REQUEST_CODE,
                 Intent(context, AlarmReceiver::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
     }

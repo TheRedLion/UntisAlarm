@@ -5,19 +5,15 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.BatteryManager
 import android.os.StrictMode
 import android.util.Log
 import com.carlkarenfort.test.AlarmClock
-import com.carlkarenfort.test.MainActivity
 import com.carlkarenfort.test.Misc
 import com.carlkarenfort.test.StoreData
 import com.carlkarenfort.test.UntisApiCalls
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
-import java.util.Calendar
 
 
 class AlarmReceiver: BroadcastReceiver() {
@@ -27,7 +23,6 @@ class AlarmReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.i(TAG ,"called onReceive()")
-
         //check if we have a context
         if (context == null) {
             Log.i(TAG, "context from onReceive is null")
@@ -93,7 +88,6 @@ class AlarmReceiver: BroadcastReceiver() {
                     )
                     var schoolStart = untisApiCalls.getSchoolStartForDay(
                         id!!,
-                        misc.getNextDay()
                     )
 
                     Log.i(TAG, "Getting Schoolstart for day: ${misc.getNextDay()}. Is ${schoolStart.toString()}")
@@ -167,14 +161,14 @@ class AlarmReceiver: BroadcastReceiver() {
                         Log.i(TAG, "setting new Alarm for in 15 minutes to an hour.")
                         alarmManager.setAndAllowWhileIdle(
                             AlarmManager.RTC,
-                            System.currentTimeMillis() + 900000,
+                            System.currentTimeMillis() + 90000,
                             pendingIntent
                         )
                     } else {
                         Log.i(TAG, "set new Alarm for in 15 minutes")
                         alarmManager.setExactAndAllowWhileIdle(
                             AlarmManager.RTC,
-                            System.currentTimeMillis() + 900000,
+                            System.currentTimeMillis() + 90000,
                             pendingIntent
                         )
                     }

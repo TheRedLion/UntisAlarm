@@ -40,6 +40,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i(TAG, "creating Welcome activitiy")
         setContentView(R.layout.activity_welcome)
 
         untisSchool = findViewById(R.id.untisSchool)
