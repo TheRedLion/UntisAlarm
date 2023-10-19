@@ -70,17 +70,24 @@ class UntisApiCalls constructor(
             val today = LocalDate.now()
             val timetable: Timetable = session.getTimetableFromPersonId(
                 today,
-                today.plusDays(7),
+                today.plusDays(365),
                 id
-            ) ?: return null
-            Log.i(TAG, timetable.toString())
+            )
+            Log.i(TAG, timetable.teachers.toString())
             //create return variable
+            timetable.sortByDate()
             timetable.sortByStartTime()
+            Log.i(TAG, timetable.toString())
             var i: Int = 0
-            while (timetable[i].teachers.isEmpty()) {
-                i++
-            } // TODO: Andere Schulen
-            var firstLessonStartTime: LocalTime = timetable[i].startTime
+            for (i in timetable){
+            if (!i.teachers.isEmpty() && i.teachers != null) {
+                var firstLessonStartTime: LocalTime = i.startTime
+                session.logout()
+                return firstLessonStartTime
+            }}
+            return null
+            // TODO: Andere Schulen
+
 
             //iterate over every lesson and keep the highest
             /*for (i in timetable.indices) {
@@ -94,9 +101,9 @@ class UntisApiCalls constructor(
                     }
                 }
             }*/
-            session.logout()
-            return firstLessonStartTime
+
         } catch (e: IOException) {
+            Log.i(TAG,e.toString())
             return null
         }
     } //TODO: proper error exceptions in getSchoolStart
