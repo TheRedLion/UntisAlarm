@@ -56,7 +56,7 @@ class AlarmClock {
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
         val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_IMMUTABLE)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
