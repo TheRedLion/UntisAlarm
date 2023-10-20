@@ -68,7 +68,7 @@ class UntisApiCalls constructor(
             //get timetable from users id
             val today = LocalDate.now()
             val timetable: Timetable = session.getTimetableFromPersonId(
-                today,
+                today.minusDays(1),
                 today.plusDays(7),
                 id
             )

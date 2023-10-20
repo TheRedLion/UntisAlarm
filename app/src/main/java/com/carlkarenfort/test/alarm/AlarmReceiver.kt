@@ -5,8 +5,10 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.StrictMode
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.carlkarenfort.test.AlarmClock
 import com.carlkarenfort.test.Misc
 import com.carlkarenfort.test.StoreData
@@ -20,6 +22,7 @@ class AlarmReceiver: BroadcastReceiver() {
     private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
     private val alarmRequestCode = 73295871
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.i(tag ,"called onReceive()")
         //check if we have a context
