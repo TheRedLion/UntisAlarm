@@ -160,14 +160,14 @@ class AlarmReceiver: BroadcastReceiver() {
                         Log.i(tag, "setting new Alarm for in 15 minutes to an hour.")
                         alarmManager.setAndAllowWhileIdle(
                             AlarmManager.RTC,
-                            System.currentTimeMillis() + 90000,
+                            System.currentTimeMillis() + 900000,
                             pendingIntent
                         )
                     } else {
                         Log.i(tag, "set new Alarm for in 15 minutes")
                         alarmManager.setExactAndAllowWhileIdle(
                             AlarmManager.RTC,
-                            System.currentTimeMillis() + 90000,
+                            System.currentTimeMillis() + 900000,
                             pendingIntent
                         )
                     }

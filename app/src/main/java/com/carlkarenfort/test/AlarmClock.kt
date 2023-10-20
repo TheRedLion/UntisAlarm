@@ -17,11 +17,12 @@ class AlarmClock {
     private val tag = "AlarmClock"
 
     fun setAlarm(schoolStart: LocalTime, context: Context) {
-        val intent2 = Intent(context, AlarmReceiver::class.java)
+        Log.i(tag, "called setalarm")
+        val intent2 = Intent(context, MainActivity::class.java)
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
         val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+             PendingIntent.FLAG_IMMUTABLE)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -44,9 +45,9 @@ class AlarmClock {
         }
 
         //update main activity
-        val intent3 = Intent(context, MainActivity::class.java)
+        /*val intent3 = Intent(context, MainActivity::class.java)
         intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent3)
+        context.startActivity(intent3)*/
     }
 
     fun cancelAlarm(context: Context) {

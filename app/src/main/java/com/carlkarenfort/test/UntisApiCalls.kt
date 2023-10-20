@@ -73,6 +73,7 @@ class UntisApiCalls constructor(
                 id
             )
             if (timetable.isEmpty()) {
+                Log.i("Untis api calls", "WHAT THE FUCK")
                 return null
             }
             Log.i(tag, timetable.teachers.toString())
@@ -81,11 +82,12 @@ class UntisApiCalls constructor(
             timetable.sortByStartTime()
             Log.i(tag, timetable.toString())
             for (i in timetable){
-            if (!i.teachers.isEmpty() && i.teachers != null) {
-                val firstLessonStartTime: LocalTime = i.startTime
-                session.logout()
-                return firstLessonStartTime
-            }}
+                if (!i.teachers.isEmpty() && i.teachers != null) {
+                    val firstLessonStartTime: LocalTime = i.startTime
+                    session.logout()
+                    return firstLessonStartTime
+                }
+            }
             return null
             // TODO: Other Implementations
 
