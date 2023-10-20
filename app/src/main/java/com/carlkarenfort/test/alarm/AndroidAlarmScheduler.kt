@@ -22,6 +22,7 @@ class AndroidAlarmScheduler(
             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
+
     }
 
     fun cancel(item: AlarmItem) {
