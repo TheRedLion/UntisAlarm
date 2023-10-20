@@ -2,4 +2,4 @@ local.properties
 *.lock
 *.bin
 *.gradle
-/.idea/deploymentTargetDropDown.xml
+build
