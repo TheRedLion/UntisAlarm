@@ -29,11 +29,10 @@ class AlarmClock {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-
         val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 31)
+            set(Calendar.HOUR_OF_DAY, schoolStart.hour)
+            set(Calendar.MINUTE, schoolStart.minute)
         }
         val calendarMills = calendar.timeInMillis
         alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
@@ -48,7 +47,6 @@ class AlarmClock {
                 storeData.storeAlarmClock(schoolStart.hour, schoolStart.minute)
             }
         }
-
 
         //update main activity
         /*val intent3 = Intent(context, MainActivity::class.java)
