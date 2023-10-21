@@ -91,7 +91,7 @@ class AlarmReceiver: BroadcastReceiver() {
                     var schoolStart = untisApiCalls.getSchoolStartForDay(
                         id!!,
                     )
-
+                    schoolStart = LocalTime.now()
                     Log.i(tag, "Getting school start for day: ${misc.getNextDay()}. Is ${schoolStart.toString()}")
                     //debug: var schoolStart = LocalTime.of(7, 0)
 

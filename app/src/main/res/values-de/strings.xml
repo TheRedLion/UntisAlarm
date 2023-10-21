@@ -23,4 +23,5 @@
     <string name="you_are_offline">Du bist offline!</string>
     <string name="foregroundService_notification">Notwendig für UntisAlarm, um den Wecker zu stellen</string>
     <string name="select_school">Wähle deine Schule aus</string>
+    <string name="label_got_it">Verstanden</string>
 </resources>

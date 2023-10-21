@@ -7,6 +7,8 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.alarm.AlarmClockReceiver
 import com.carlkarenfort.test.alarm.AlarmReceiver
 import kotlinx.coroutines.CoroutineScope
@@ -25,14 +27,21 @@ class AlarmClock {
 
         val intent2 = Intent(context, AlarmClockReceiver::class.java)
 
-        val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (alarmManager.canScheduleExactAlarms()) {
+            Log.i(tag, "what the fuck is happening")
+            if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                Log.i(tag, "this is normal")
+            }
+        }
 
         val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, schoolStart.hour)
-            set(Calendar.MINUTE, schoolStart.minute)
+            set(Calendar.HOUR_OF_DAY, 16)
+            set(Calendar.MINUTE, 11)
+            set(Calendar.SECOND, 0)
         }
         val calendarMills = calendar.timeInMillis
         alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
@@ -60,7 +69,7 @@ class AlarmClock {
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
         val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2,
-            PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 

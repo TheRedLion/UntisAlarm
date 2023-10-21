@@ -18,6 +18,7 @@
     <string name="please_only_enter_integers">Please only enter Integers</string>
     <string name="not_loaded">not loaded</string>
     <string name="update">Update</string>
+    <string name="label_got_it">Got it!</string>
     <string name="time_before_school">Time Before School</string>
     <string name="you_are_offline">You are Offline!</string>
     <string name="foregroundService_notification">required for UntisAlarm to set and Update your Alarms</string>
