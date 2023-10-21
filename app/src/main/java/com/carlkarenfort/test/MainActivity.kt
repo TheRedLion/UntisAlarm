@@ -83,15 +83,12 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        //create store Data object to access user Data
-        val storeData = StoreData(applicationContext)
 
-        //creating alarm item for setting alarms
-        val alarmItem = AlarmItem(845746)
-
-        //check if user has not logged in yet
-        //if so directly go to WelcomeActivity
+        //check if user has not logged in yet if so directly go to WelcomeActivity
         CoroutineScope(Dispatchers.Default).launch {
+            //create store Data object to access user Data
+            val storeData = StoreData(applicationContext)
+
             //check if loginData is empty
             if (storeData.loadLoginData()[0] == null || storeData.loadID() == null) {
                 //go to welcome activity when not logged in
@@ -104,6 +101,8 @@ class MainActivity : AppCompatActivity() {
 
         //load all text on UI
         CoroutineScope(Dispatchers.IO).launch {
+            //create store Data object to access user Data
+            val storeData = StoreData(applicationContext)
 
             //load from storedata
             val tbs: Int? = storeData.loadTBS()
@@ -173,6 +172,12 @@ class MainActivity : AppCompatActivity() {
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
+            //create store Data object to access user Data
+            val storeData = StoreData(applicationContext)
+
+            //creating alarm item for setting alarms
+            val alarmItem = AlarmItem(845746)
+
             //alarm scheduler
             val scheduler = AndroidAlarmScheduler(this)
 
@@ -218,6 +223,12 @@ class MainActivity : AppCompatActivity() {
 
         //create listener for switch
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
+            //create store Data object to access user Data
+            val storeData = StoreData(applicationContext)
+
+            //creating alarm item for setting alarms
+            val alarmItem = AlarmItem(845746)
+
             //alarm scheduler
             val scheduler = AndroidAlarmScheduler(this)
 

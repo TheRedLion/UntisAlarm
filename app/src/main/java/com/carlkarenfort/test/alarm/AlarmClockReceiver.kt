@@ -71,8 +71,6 @@ class AlarmClockReceiver: BroadcastReceiver() {
         val title = "Title"
 
         CoroutineScope(Dispatchers.Default).launch {
-
-
             val content = "I dont know what this is "
 
             val builder = NotificationCompat.Builder(context, channelId)

@@ -55,11 +55,14 @@ class WebApiCalls {
             reader.close()
 
             val jsonResponse = response.toString()
+
+            if (jsonResponse == "{\"id\":\"wu_schulsuche-1697008128606\",\"error\":{\"code\":-6003,\"message\":\"too many results\"},\"jsonrpc\":\"2.0\"}") {
+                return arrayOf(arrayOf("too many results"))
+            }
             val schoolData = parseSchoolData(jsonResponse)
 
             connection.disconnect()
 
-            println(response.toString())
             return schoolData
         } else {
             println("Request failed with response code: $responseCode")

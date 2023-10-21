@@ -92,7 +92,7 @@ class AlarmReceiver: BroadcastReceiver() {
                         id!!,
                     )
                     schoolStart = LocalTime.now()
-                    Log.i(TAG, "Getting school start for day: ${misc.getNextDay()}. Is ${schoolStart.toString()}")
+                    Log.i(TAG, "Getting school start for day: ${misc.getNextDay()}. Is $schoolStart")
                     //debug: var schoolStart = LocalTime.of(7, 0)
 
                     if (schoolStart == null) {

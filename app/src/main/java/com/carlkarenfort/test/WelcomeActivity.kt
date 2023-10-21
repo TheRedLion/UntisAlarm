@@ -66,17 +66,30 @@ class WelcomeActivity : AppCompatActivity() {
                     CoroutineScope(Dispatchers.IO).launch {
                         val webApiCalls = WebApiCalls()
                         schools = webApiCalls.getSchools("$text")
-                        if (schools != null) {
-                            val schoolNames =
-                                schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
 
-                            Log.i(TAG, schoolNames.toString())
-                            runOnUiThread {
-                                val arrayAdapter = ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
-                                // get reference to the autocomplete text view
-                                val autocompleteTV = findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-                                // set adapter to the autocomplete tv on the main thread
-                                autocompleteTV.setAdapter(arrayAdapter)
+                        Log.i(TAG, schools.toString())
+
+                        if (schools != null) {
+                            Log.i(TAG, "schools is not null")
+
+                            //check if there are too many results
+                            if (schools!![0][0] == "too many results") {
+                                runOnUiThread {
+                                    autoCompleteTextView.hint = "Too many results"
+                                }
+                            } else {
+                                //there are not
+                                val schoolNames =
+                                    schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
+
+                                Log.i(TAG, schoolNames.toString())
+                                runOnUiThread {
+                                    val arrayAdapter = ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
+                                    // get reference to the autocomplete text view
+                                    val autocompleteTV = autoCompleteTextView
+                                    // set adapter to the autocomplete tv on the main thread
+                                    autocompleteTV.setAdapter(arrayAdapter)
+                                }
                             }
                         }
                     }
@@ -134,8 +147,7 @@ class WelcomeActivity : AppCompatActivity() {
                     //show warning if no ID was found
                     if (untisID == null) {
                         //no match was found
-                        Log.i(TAG, "error, user doesn't have an ID???")
-                        //TODO("error handling???")
+                        Toast.makeText(this, getString(R.string.no_id_found), Toast.LENGTH_SHORT).show()
                     } else {
                         //id exists
 
