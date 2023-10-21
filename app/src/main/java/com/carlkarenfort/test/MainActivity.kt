@@ -112,15 +112,20 @@ class MainActivity : AppCompatActivity() {
 
             //check if tbs has not already been set
             if (tbs == null) {
-                //if not put 60 as default
-                timeBeforeSchool.text = "60 min"
+                runOnUiThread {
+                    //if not put 60 as default
+                    timeBeforeSchool.text = "60 min"
+                }
+
                 //store 60 min in DataStore
                 CoroutineScope(Dispatchers.IO).launch {
                     storeData.storeTBS(60)
                 }
             } else {
                 //else display loaded tbs
-                timeBeforeSchool.text = tbs.toString() + " min"
+                runOnUiThread {
+                    timeBeforeSchool.text = tbs.toString() + " min"
+                }
             }
 
             //display 0 when it is null
@@ -142,7 +147,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             //set alarmPreview
-            alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
+            runOnUiThread {
+                alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
+            }
 
             //set switch
             //convert Boolean? to Boolean
