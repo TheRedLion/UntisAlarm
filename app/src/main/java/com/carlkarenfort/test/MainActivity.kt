@@ -29,7 +29,7 @@ import kotlinx.coroutines.runBlocking
 class MainActivity : AppCompatActivity() {
 
     //tag for logs
-    private val tag = "MainActivity"
+    private val TAG = "MainActivity"
 
     //objects from layout
     private lateinit var setNewUser: Button
@@ -43,7 +43,24 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i(tag, "creating Main Activity")
+        Log.i(TAG, "creating Main Activity")
+
+        //use proper layout
+        setContentView(R.layout.activity_main)
+
+        //get objects from activity_main
+        setNewUser = findViewById(R.id.addNewUser)
+        timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
+        setTBS = findViewById(R.id.setTBS)
+        updateTBS = findViewById(R.id.updateTBS)
+        alarmPreview = findViewById(R.id.alarmPreview)
+        toggleAlarm = findViewById(R.id.toggleAlarm)
+        tempDisplay = findViewById(R.id.tempDisplay)
+
+
+        //make sure button is not clicked until properly set
+        toggleAlarm.isClickable = false
+
 
         //create channel for notifications
         val channel = NotificationChannel(
@@ -57,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         notificationManager.createNotificationChannel(channel)
 
         //request permission for notifications
-        Log.i(tag, "requesting permission")
+        Log.i(TAG, "requesting permission")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
                 this,
@@ -73,125 +90,73 @@ class MainActivity : AppCompatActivity() {
         val alarmItem = AlarmItem(845746)
 
         //check if user has not logged in yet
-        //if so directly go to WelcomeActivity (must be at the top so the rest of the activity does not have to be built)
-        //must block main thread to access a DataStore
-        runBlocking {
+        //if so directly go to WelcomeActivity
+        CoroutineScope(Dispatchers.Default).launch {
             //check if loginData is empty
             if (storeData.loadLoginData()[0] == null || storeData.loadID() == null) {
                 //go to welcome activity when not logged in
-                Log.i(tag, "Not logged in tf")
+                Log.i(TAG, "Not logged in tf")
                 intent = Intent(this@MainActivity, WelcomeActivity::class.java)
                 startActivity(intent)
                 finish()
             }
         }
 
-        //use proper layout
-        setContentView(R.layout.activity_main)
+        //load all text on UI
+        CoroutineScope(Dispatchers.IO).launch {
 
-        //get objects from activity_main
-        setNewUser = findViewById(R.id.addNewUser)
-        timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
-        setTBS = findViewById(R.id.setTBS)
-        updateTBS = findViewById(R.id.updateTBS)
-        alarmPreview = findViewById(R.id.alarmPreview)
-        toggleAlarm = findViewById(R.id.toggleAlarm)
-        tempDisplay = findViewById(R.id.tempDisplay)
+            //load from storedata
+            val tbs: Int? = storeData.loadTBS()
+            val aaStateNullable: Boolean? = storeData.loadAlarmActive()
+            val alarmClock: Array<Int?> = storeData.loadAlarmClock()
 
-        //alarm scheduler
-        val scheduler = AndroidAlarmScheduler(this)
-
-        //load time before school and switch
-        var tbs: Int?
-        var aaStateNullable: Boolean?
-        var alarmClock: Array<Int?>
-        var loginData: Array<String?>
-        var id: Int?
-        runBlocking {
-            tbs = storeData.loadTBS()
-            aaStateNullable = storeData.loadAlarmActive()
-            alarmClock = storeData.loadAlarmClock()
-            loginData = storeData.loadLoginData()
-            id = storeData.loadID()
-        }
-
-        //check if tbs has not already been set
-        if (tbs == null) {
-            //if not put 60 as default
-            timeBeforeSchool.text = "60 min"
-            //store 60 min in DataStore
-            CoroutineScope(Dispatchers.IO).launch {
-                storeData.storeTBS(60)
-            }
-        } else {
-            //else display loaded tbs
-            timeBeforeSchool.text = tbs.toString() + " min"
-        }
-
-        //set switch
-        //convert Boolean? to Boolean
-        var aaState = false
-        if (aaStateNullable != null) {
-            aaState = aaStateNullable as Boolean
-        }
-        //set state of switch
-        toggleAlarm.isChecked = aaState
-
-
-        //display 0 when it is null
-        if (alarmClock[0] == null || alarmClock[1] == null) {
-            alarmClock[0] = 0
-            alarmClock[1] = 0
-        }
-
-        //make 1:3 to 01:03
-        val alarmClockStrHour = if (alarmClock[0]!! < 10) {
-            "0${alarmClock[0]}"
-        } else {
-            "${alarmClock[0]}"
-        }
-        val alarmClockStrMinute = if (alarmClock[1]!! < 10) {
-            "0${alarmClock[1]}"
-        } else {
-            "${alarmClock[1]}"
-        }
-
-        //set alarmPreview
-        alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
-
-        //start alarm receiver if alarmActive is on, on new thread
-        /* Log.i(TAG, "check if foreground service should be active")
-        if (aaState) {
-            val scheduler = AndroidAlarmScheduler(this)
-            alarmItem.let(scheduler::schedule)
-        }*/
-
-        /*
-        Log.i(TAG, "check if foreground service should be active")
-        if (aaState) {
-            CoroutineScope(Dispatchers.Default).launch {
-                val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-                val serviceNameToCheck = "com.carlkarenfort.test"
-
-                val runningServices = manager.runningAppProcesses
-
-                Log.i(TAG, "check if foreground service is already running")
-                for (processInfo in runningServices) {
-                    for (serviceInfo in processInfo.pkgList) {
-                        Log.i(TAG, serviceInfo)
-                        if (serviceInfo == serviceNameToCheck) {
-                            Log.i(TAG, "starting foreground activity")
-                            Intent(applicationContext, RunningService::class.java).also {
-                                it.action = RunningService.Actions.START.toString()
-                                startService(it)
-                            }
-                        }
-                    }
+            //check if tbs has not already been set
+            if (tbs == null) {
+                //if not put 60 as default
+                timeBeforeSchool.text = "60 min"
+                //store 60 min in DataStore
+                CoroutineScope(Dispatchers.IO).launch {
+                    storeData.storeTBS(60)
                 }
+            } else {
+                //else display loaded tbs
+                timeBeforeSchool.text = tbs.toString() + " min"
+            }
+
+            //display 0 when it is null
+            if (alarmClock[0] == null || alarmClock[1] == null) {
+                alarmClock[0] = 0
+                alarmClock[1] = 0
+            }
+
+            //make 1:3 to 01:03
+            val alarmClockStrHour = if (alarmClock[0]!! < 10) {
+                "0${alarmClock[0]}"
+            } else {
+                "${alarmClock[0]}"
+            }
+            val alarmClockStrMinute = if (alarmClock[1]!! < 10) {
+                "0${alarmClock[1]}"
+            } else {
+                "${alarmClock[1]}"
+            }
+
+            //set alarmPreview
+            alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
+
+            //set switch
+            //convert Boolean? to Boolean
+            var aaState = false
+            if (aaStateNullable != null) {
+                aaState = aaStateNullable
+            }
+
+            //set state of switch and make clickable
+            runOnUiThread {
+                toggleAlarm.isChecked = aaState
+                toggleAlarm.isClickable = true
             }
         }
-         */
-
 
         //listener for going to welcome Activity
         setNewUser.setOnClickListener { _ : View? ->
@@ -201,18 +166,8 @@ class MainActivity : AppCompatActivity() {
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
-            /*
-            //temp
-            var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
-            StrictMode.setThreadPolicy(policy)
-            val day = LocalDate.of(2023,10,11)
-            runBlocking {
-                val id = storeData.loadID()
-                val loginData = storeData.loadLoginData()
-                val apiCalls = UntisApiCalls(loginData[0]!!, loginData[1]!!, loginData[2]!!, loginData[3]!!)
-                apiCalls.timeTableTest(id!!, day)
-            }
-             */
+            //alarm scheduler
+            val scheduler = AndroidAlarmScheduler(this)
 
             //get user inputted TBS as string
             val newTBSStr = setTBS.text.toString()
@@ -239,9 +194,16 @@ class MainActivity : AppCompatActivity() {
 
 
             //restart alarm
-            if (aaState) {
-                alarmItem.let(scheduler::cancel)
-                alarmItem.let(scheduler::schedule)
+            CoroutineScope(Dispatchers.Default).launch {
+                val aaStateNullable: Boolean? = storeData.loadAlarmActive()
+                var aaState = false
+                if (aaStateNullable != null) {
+                    aaState = aaStateNullable as Boolean
+                }
+                if (aaState) {
+                    alarmItem.let(scheduler::cancel)
+                    alarmItem.let(scheduler::schedule)
+                }
             }
             //clear field afterwards
             setTBS.setText("")
@@ -249,18 +211,21 @@ class MainActivity : AppCompatActivity() {
 
         //create listener for switch
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
+            //alarm scheduler
+            val scheduler = AndroidAlarmScheduler(this)
+
             //store new state
             CoroutineScope(Dispatchers.IO).launch {
                 storeData.storeAlarmActive(isChecked)
             }
 
             //start Scheduler
-            Log.i(tag, "entered listener")
+            Log.i(TAG, "entered listener")
             if (isChecked) {
-                Log.i(tag, "should schedule")
+                Log.i(TAG, "should schedule")
                 alarmItem.let(scheduler::schedule)
             } else {
-                Log.i(tag, "cancelling")
+                Log.i(TAG, "cancelling")
                 alarmItem.let(scheduler::cancel)
             }
         }

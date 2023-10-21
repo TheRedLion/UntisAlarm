@@ -10,10 +10,10 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 
 class WebApiCalls {
-    private val tag = "WebApiCalls"
+    private val TAG = "WebApiCalls"
 
     fun getSchools(searchSchoolString: String): Array<Array<String>>? {
-        Log.i(tag, "in getSchools")
+        Log.i(TAG, "in getSchools")
 
         val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
         val connection = url.openConnection() as HttpURLConnection

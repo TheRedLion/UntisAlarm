@@ -29,6 +29,9 @@ class StoreData (private val context: Context) {
 
     suspend fun loadAlarmClock(): Array<Int?> {
         val preferences = context.dataStore.data.first()
+        if (preferences[alarmClockHourKey] == 27 || preferences[alarmClockMinuteKey] == 69) {
+            return arrayOf(null, null)
+        }
         return arrayOf(
             preferences[alarmClockHourKey],
             preferences[alarmClockMinuteKey]

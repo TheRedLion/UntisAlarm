@@ -20,7 +20,7 @@ class UntisApiCalls constructor(
 ){
 
     //tag for logging text
-    private val tag = "UntisApiCalls"
+    private val TAG = "UntisApiCalls"
 
     private val session: Session
 
@@ -48,10 +48,8 @@ class UntisApiCalls constructor(
                 try {
                     //login to API
                     id = session.infos.personId
-                    Log.i(tag, "person ID is : $id")
-
                 } catch (e: IOException) {
-                    Log.i(tag, "error")
+                    Log.i(TAG, "error")
                     e.printStackTrace()
                 }
             }
@@ -76,11 +74,11 @@ class UntisApiCalls constructor(
                 Log.i("Untis api calls", "WHAT THE FUCK")
                 return null
             }
-            Log.i(tag, timetable.teachers.toString())
+            Log.i(TAG, timetable.toString())
             //create return variable
             timetable.sortByDate()
             timetable.sortByStartTime()
-            Log.i(tag, timetable.toString())
+            Log.i(TAG, timetable.toString())
             for (i in timetable){
                 if (!i.teachers.isEmpty() && i.teachers != null) {
                     val firstLessonStartTime: LocalTime = i.startTime
@@ -106,7 +104,7 @@ class UntisApiCalls constructor(
             }*/
 
         } catch (e: IOException) {
-            Log.i(tag,e.toString())
+            Log.i(TAG,e.toString())
             return null
         }
     } //TODO: proper error exceptions in getSchoolStart

@@ -18,28 +18,28 @@ import java.time.LocalTime
 
 
 class AlarmReceiver: BroadcastReceiver() {
-    private val tag = "AlarmReceiver"
+    private val TAG = "AlarmReceiver"
     private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
     private val alarmRequestCode = 73295871
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.i(tag ,"called onReceive()")
+        Log.i(TAG ,"called onReceive()")
         //check if we have a context
         if (context == null) {
-            Log.i(tag, "context from onReceive is null")
+            Log.i(TAG, "context from onReceive is null")
             return
         } else {
-            Log.i(tag, "has context")
+            Log.i(TAG, "has context")
 
             val misc = Misc()
 
             //check if phone has connectivity
             if (!misc.isOnline(context)) {
-                Log.i(tag, "Phone has no internet connectivity")
+                Log.i(TAG, "Phone has no internet connectivity")
             } else {
                 //phone has connectivity:
-                Log.i(tag, "phone has internet")
+                Log.i(TAG, "phone has internet")
 
                 //load relevant data from storeData
                 val storeData = StoreData(context)
@@ -60,7 +60,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
                 //check if any of the loaded data is null
                 if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
-                    Log.i(tag, "id, loginData or TBS from StoreData was null. THIS SHOULD NEVER HAPPEN")
+                    Log.i(TAG, "id, loginData or TBS from StoreData was null. THIS SHOULD NEVER HAPPEN")
                     //TODO add notification if user was logged out
                     //warn user that he got logged out
                     /*if (ActivityCompat.checkSelfPermission(
@@ -92,7 +92,7 @@ class AlarmReceiver: BroadcastReceiver() {
                         id!!,
                     )
                     schoolStart = LocalTime.now()
-                    Log.i(tag, "Getting school start for day: ${misc.getNextDay()}. Is ${schoolStart.toString()}")
+                    Log.i(TAG, "Getting school start for day: ${misc.getNextDay()}. Is ${schoolStart.toString()}")
                     //debug: var schoolStart = LocalTime.of(7, 0)
 
                     if (schoolStart == null) {
@@ -103,11 +103,11 @@ class AlarmReceiver: BroadcastReceiver() {
 
                         if (schoolStart.hour == alarmClockHour && schoolStart.minute == alarmClockMinute) {
                             //alarm clock already set properly
-                            Log.i(tag, "alarm clock set properly")
+                            Log.i(TAG, "alarm clock set properly")
                             setNew("normal", schoolStart, context)
                         } else if (alarmClockHour == null || alarmClockMinute == null) {
                             //no alarm clock set, setting a new one
-                            Log.i(tag, "no alarm clock set, setting a new one")
+                            Log.i(TAG, "no alarm clock set, setting a new one")
 
                             val alarmClock = AlarmClock()
                             alarmClock.setAlarm(schoolStart, context)
@@ -115,7 +115,7 @@ class AlarmReceiver: BroadcastReceiver() {
                             setNew("normal", schoolStart, context)
                         } else {
                             //alarm set improperly
-                            Log.i(tag, "removing old and setting new alarm")
+                            Log.i(TAG, "removing old and setting new alarm")
 
                             val alarmClock = AlarmClock()
                             alarmClock.cancelAlarm(context)
@@ -141,7 +141,7 @@ class AlarmReceiver: BroadcastReceiver() {
                     PendingIntent.FLAG_IMMUTABLE
                 )
 
-                Log.i(tag, "setting new Alarm")
+                Log.i(TAG, "setting new Alarm")
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC,
                     System.currentTimeMillis() + 10800000,
@@ -160,14 +160,14 @@ class AlarmReceiver: BroadcastReceiver() {
                         PendingIntent.FLAG_IMMUTABLE
                     )
                     if (LocalTime.now().isBefore(schoolStart.minusHours(2))) {
-                        Log.i(tag, "setting new Alarm for in 15 minutes to an hour.")
+                        Log.i(TAG, "setting new Alarm for in 15 minutes to an hour.")
                         alarmManager.setAndAllowWhileIdle(
                             AlarmManager.RTC,
                             System.currentTimeMillis() + 900000,
                             pendingIntent
                         )
                     } else {
-                        Log.i(tag, "set new Alarm for in 15 minutes")
+                        Log.i(TAG, "set new Alarm for in 15 minutes")
                         alarmManager.setExactAndAllowWhileIdle(
                             AlarmManager.RTC,
                             System.currentTimeMillis() + 900000,

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.alarm.AlarmClockReceiver
 import com.carlkarenfort.test.alarm.AlarmReceiver
@@ -19,11 +18,11 @@ import java.time.LocalTime
 import java.util.Calendar
 
 class AlarmClock {
-    private val tag = "AlarmClock"
+    private val TAG = "AlarmClock"
 
     @RequiresApi(Build.VERSION_CODES.S)
     fun setAlarm(schoolStart: LocalTime, context: Context) {
-        Log.i(tag, "called setalarm")
+        Log.i(TAG, "called setalarm")
 
         val intent2 = Intent(context, AlarmClockReceiver::class.java)
 
@@ -31,9 +30,9 @@ class AlarmClock {
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (alarmManager.canScheduleExactAlarms()) {
-            Log.i(tag, "what the fuck is happening")
+            Log.i(TAG, "what the fuck is happening")
             if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-                Log.i(tag, "this is normal")
+                Log.i(TAG, "this is normal")
             }
         }
 
@@ -64,7 +63,7 @@ class AlarmClock {
     }
 
     fun cancelAlarm(context: Context) {
-        Log.i(tag, "called")
+        Log.i(TAG, "called")
         val intent2 = Intent(context, AlarmReceiver::class.java)
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 

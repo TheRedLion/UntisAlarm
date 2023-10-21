@@ -8,9 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.RingtoneManager
 import android.os.Build
-import android.os.StrictMode
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.ActivityCompat
@@ -24,10 +22,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlarmClockReceiver: BroadcastReceiver() {
-    private val tag = "AlarmClockReceiver"
+    private val TAG = "AlarmClockReceiver"
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.i(tag, "atleast you called alarmClockReceiver")
+        Log.i(TAG, "atleast you called alarmClockReceiver")
         if (context == null) {
             return
         }
