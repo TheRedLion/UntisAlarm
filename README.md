@@ -1,5 +1,7 @@
 # UntisAlarm
 
+![Project Logo](project_logo.png)
+
 ## Introduction
 
 UntisAlarm is an Android application developed in Kotlin that helps you manage your timetable and ensures you wake up at the right time based on your daily schedule. It is currently in the alpha state and supports webUntis for fetching timetable data. In the future, we aim to expand our support for other timetable programs.
