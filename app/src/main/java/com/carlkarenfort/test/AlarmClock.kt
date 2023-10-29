@@ -42,21 +42,19 @@ class AlarmClock {
             set(Calendar.MINUTE, 11)
             set(Calendar.SECOND, 0)
         }
+
         val calendarMills = calendar.timeInMillis
         alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
 
         val nextAlarmClock: AlarmManager.AlarmClockInfo = alarmManager.nextAlarmClock
 
-        //store alarmClock time
         // this check is necessary because android automatically cancels alarms that happen in the past (back to the future vibes)
         if (nextAlarmClock.triggerTime > System.currentTimeMillis()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val storeData = StoreData(context)
-                storeData.storeAlarmClock(schoolStart.hour, schoolStart.minute)
-            }
+            val storeData = StoreData(context)
+            storeData.storeAlarmClock(schoolStart.hour, schoolStart.minute)
         }
 
-        //update main activity
+        //don't know a different way to update the alarmPreview in main activity
         /*val intent3 = Intent(context, MainActivity::class.java)
         intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent3)*/
@@ -74,11 +72,7 @@ class AlarmClock {
 
         alarmManager.cancel(pendingIntent)
 
-        //store alarmClock time
-        CoroutineScope(Dispatchers.IO).launch {
-            val storeData = StoreData(context)
-            storeData.storeAlarmClock(null, null)
-        }
-
+        val storeData = StoreData(context)
+        storeData.storeAlarmClock(null, null)
     }
 }

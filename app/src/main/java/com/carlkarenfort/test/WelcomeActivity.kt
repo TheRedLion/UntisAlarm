@@ -22,7 +22,7 @@ import java.io.IOException
 
 
 class WelcomeActivity : AppCompatActivity() {
-    //tag for logging
+
     private var TAG: String = "WelcomeActivity"
 
     private lateinit var untisSchool: EditText
@@ -53,7 +53,6 @@ class WelcomeActivity : AppCompatActivity() {
         var schoolName: String? = null
         var server: String? = null
 
-        val misc = Misc()
 
         untisSchool.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -62,8 +61,8 @@ class WelcomeActivity : AppCompatActivity() {
 
             override fun afterTextChanged(text: Editable?) {
                 Log.i(TAG, "text changed")
-                //check wether phone is online
-                if (!misc.isOnline(applicationContext)) {
+
+                if (!Misc.isOnline(applicationContext)) {
                     Toast.makeText(
                         applicationContext,
                         getString(R.string.you_are_offline),
@@ -120,24 +119,24 @@ class WelcomeActivity : AppCompatActivity() {
 
         runButton.setOnClickListener { _: View? ->
 
-            //check if phone is online
-            if (!misc.isOnline(this)) {
+            if (!Misc.isOnline(this)) {
                 Toast.makeText(this, getString(R.string.you_are_offline), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            //check if all fields have been filled
             if (untisSchool.text.toString().isEmpty()) {
                 //show warning
                 Toast.makeText(this, getString(R.string.webuntis_url_empty), Toast.LENGTH_SHORT)
                     .show()
                 return@setOnClickListener
             }
+
             if (untisUserName.text.toString().isEmpty()) {
                 //show warning
                 Toast.makeText(this, getString(R.string.username_empty), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             if (untisPassword.text.toString().isEmpty()) {
                 //show warning
                 Toast.makeText(this, getString(R.string.password_empty), Toast.LENGTH_SHORT).show()
@@ -165,40 +164,28 @@ class WelcomeActivity : AppCompatActivity() {
             }
 
             if (untisApiCalls == null) {
-                //Log.i(TAG, "invalid")
                 Toast.makeText(this, getString(R.string.invalid_login_data), Toast.LENGTH_SHORT)
                     .show()
                 return@setOnClickListener
             }
 
-            //Log.i(TAG, "valid")
-
-            //get ID
             val untisID = untisApiCalls.getID()
 
-            //show warning if no ID was found
             if (untisID == null) {
                 //no match was found
                 Toast.makeText(this, getString(R.string.no_id_found), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            //id exists
 
-            //store data
             val storeData = StoreData(applicationContext)
-            CoroutineScope(Dispatchers.IO).launch {
-                storeData.storeLoginData(
-                    untisUserName.text.toString(),
-                    untisPassword.text.toString(),
-                    server!!,
-                    schoolName!!
-                )
-                storeData.storeID(untisID)
-            }
+            storeData.storeLoginData(
+                untisUserName.text.toString(),
+                untisPassword.text.toString(),
+                server!!,
+                schoolName!!
+            )
+            storeData.storeID(untisID)
 
-            //Log.i(TAG, apiCalls.getSchoolStartForDay(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool, untisID, LocalDate.of(2023,6,20)).toString())
-
-            //go to MainActivity
             intent = Intent(this@WelcomeActivity, MainActivity::class.java)
             startActivity(intent)
         }

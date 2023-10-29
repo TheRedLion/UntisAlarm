@@ -35,22 +35,18 @@ class AlarmReceiver: BroadcastReceiver() {
         }
         Log.i(TAG, "has context")
 
-        val misc = Misc()
-
-        //check if phone has connectivity
-        if (!misc.isOnline(context)) {
+        if (!Misc.isOnline(context)) {
             Log.i(TAG, "Phone has no internet connectivity")
             return
         }
-        //phone has connectivity:
         Log.i(TAG, "phone has internet")
 
-        //load relevant data from storeData
         val storeData = StoreData(context)
         var id: Int?
         var loginData: Array<String?>
         var tbs: Int?
         val alarmClockArray: Array<Int?>
+
         //TODO("move alarm receiver from main thread")
         runBlocking {
             id = storeData.loadID()
@@ -63,7 +59,6 @@ class AlarmReceiver: BroadcastReceiver() {
         val alarmClockMinute = alarmClockArray[1]
         Log.i(TAG, "loaded data from StoreData")
 
-        //check if any of the loaded data is null
         if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
             //TODO: warn user that he got logged out
             return
@@ -82,7 +77,7 @@ class AlarmReceiver: BroadcastReceiver() {
             id!!,
         )
 
-        Log.i(TAG, "Getting school start for day: ${misc.getNextDay()}. Is $schoolStart")
+        Log.i(TAG, "Getting school start for day: ${Misc.getNextDay()}. Is $schoolStart")
         //debug: var schoolStart = LocalTime.of(7, 0)
 
         if (schoolStart == null) {

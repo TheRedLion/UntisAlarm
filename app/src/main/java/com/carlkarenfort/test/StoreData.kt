@@ -8,10 +8,16 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userData")
-class StoreData (private val context: Context) {
+class StoreData (
+    private val context: Context
+) {
     private val idKey = intPreferencesKey("id")
     private val usernameKey = stringPreferencesKey("username")
     private val passwordKey = stringPreferencesKey("password")
@@ -29,29 +35,16 @@ class StoreData (private val context: Context) {
 
     suspend fun loadAlarmClock(): Array<Int?> {
         val preferences = context.dataStore.data.first()
+
+        //for explanation look ar storeAlarmClock()
         if (preferences[alarmClockHourKey] == 27 || preferences[alarmClockMinuteKey] == 69) {
             return arrayOf(null, null)
         }
+
         return arrayOf(
             preferences[alarmClockHourKey],
             preferences[alarmClockMinuteKey]
         )
-    }
-
-    suspend fun storeAlarmClock(hour: Int?, minute: Int?) {
-        val storeHour: Int = hour ?: 27
-        val storeMinute: Int = minute ?: 69
-
-        context.dataStore.edit { settings ->
-            settings[alarmClockHourKey] = storeHour
-            settings[alarmClockMinuteKey] = storeMinute
-        }
-    }
-
-    suspend fun storeID(id: Int) {
-        context.dataStore.edit { settings ->
-            settings[idKey] = id
-        }
     }
 
     suspend fun loadLoginData(): Array<String?> {
@@ -64,24 +57,9 @@ class StoreData (private val context: Context) {
         )
     }
 
-    suspend fun storeLoginData(username: String, password: String, server: String, school: String) {
-        context.dataStore.edit { settings ->
-            settings[usernameKey] = username
-            settings[passwordKey] = password
-            settings[serverKey] = server
-            settings[schoolKey] = school
-        }
-    }
-
     suspend fun loadTBS(): Int? {
         val preferences = context.dataStore.data.first()
         return preferences[timeBeforeSchoolKey]
-    }
-
-    suspend fun storeTBS(timeBeforeSchool: Int) {
-        context.dataStore.edit { settings ->
-            settings[timeBeforeSchoolKey] = timeBeforeSchool
-        }
     }
 
     suspend fun loadAlarmActive(): Boolean? {
@@ -89,9 +67,63 @@ class StoreData (private val context: Context) {
         return preferences[alarmActiveKey]
     }
 
-    suspend fun storeAlarmActive(aa: Boolean) {
-        context.dataStore.edit { settings ->
-            settings[alarmActiveKey] = aa
+    fun storeAlarmClock(hour: Int?, minute: Int?) {
+        if (hour != null) {
+            if (hour < 0 || hour > 23) {
+                throw Exception("Hour must be 0..23")
+            }
+        }
+
+        if (minute != null) {
+            if (minute < 0 || minute > 60) {
+                throw Exception("Hour must be 0..60")
+            }
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            //I am storing 27:69 because you can't store null, the load function returns null if 27:69 was stored
+            val storeHour: Int = hour ?: 27
+            val storeMinute: Int = minute ?: 69
+
+            context.dataStore.edit { settings ->
+                settings[alarmClockHourKey] = storeHour
+                settings[alarmClockMinuteKey] = storeMinute
+            }
+        }
+    }
+
+    fun storeID(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[idKey] = id
+            }
+        }
+    }
+
+    fun storeLoginData(username: String, password: String, server: String, school: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[usernameKey] = username
+                settings[passwordKey] = password
+                settings[serverKey] = server
+                settings[schoolKey] = school
+            }
+        }
+    }
+
+    fun storeTBS(timeBeforeSchool: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[timeBeforeSchoolKey] = timeBeforeSchool
+            }
+        }
+    }
+
+    fun storeAlarmActive(aa: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[alarmActiveKey] = aa
+            }
         }
     }
 

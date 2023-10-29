@@ -19,7 +19,6 @@ class UntisApiCalls constructor(
     schoolName: String
 ){
 
-    //tag for logging text
     private val TAG = "UntisApiCalls"
 
     private val session: Session
@@ -60,15 +59,13 @@ class UntisApiCalls constructor(
         id: Int
     ): LocalTime? {
         try {
-            //get timetable from users id
             val today = LocalDate.now()
             val timetable: Timetable = session.getTimetableFromPersonId(
-                today.minusDays(10),
-                today.plusDays(10),
+                today,
+                today,
                 id
             )
 
-            //check if timetable is empty
             if (timetable.isEmpty()) {
                 Log.i(TAG, "timetable is empty")
                 return null
@@ -76,7 +73,6 @@ class UntisApiCalls constructor(
 
             Log.i(TAG, timetable.toString())
 
-            //create return variable
             timetable.sortByDate()
             timetable.sortByStartTime()
             Log.i(TAG, timetable.toString())
@@ -89,21 +85,6 @@ class UntisApiCalls constructor(
             }
             return null
             // TODO: Other Implementations
-
-
-            //iterate over every lesson and keep the highest
-            /*for (i in timetable.indices) {
-                //Log.i(TAG, timetable[i].teachers.toString())
-                // if null continue
-                val startTime = timetable[i].startTime ?: continue
-                if (firstLessonStartTime == null || startTime.isBefore(firstLessonStartTime)) {
-                    if (!timetable[i].originalTeachers.isEmpty()) {
-                        firstLessonStartTime = startTime
-                        //Log.i(TAG, startTime.toString())
-                    }
-                }
-            }*/
-
         } catch (e: IOException) {
             Log.i(TAG,e.toString())
             return null

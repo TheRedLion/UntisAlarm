@@ -29,10 +29,8 @@ import java.time.LocalTime
 @SuppressLint("UseSwitchCompatOrMaterialCode")
 class MainActivity : AppCompatActivity() {
 
-    //tag for logs
     private val TAG = "MainActivity"
 
-    //objects from layout
     private lateinit var setNewUser: Button
     private lateinit var timeBeforeSchool: TextView
     private lateinit var setTBS: EditText
@@ -46,10 +44,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.i(TAG, "creating Main Activity")
 
-        //use proper layout
         setContentView(R.layout.activity_main)
 
-        //get objects from activity_main
         setNewUser = findViewById(R.id.addNewUser)
         timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
         setTBS = findViewById(R.id.setTBS)
@@ -58,12 +54,8 @@ class MainActivity : AppCompatActivity() {
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
 
-
-        //make sure button is not clicked until properly set
         toggleAlarm.isClickable = false
 
-
-        //create channel for notifications
         val channel = NotificationChannel(
             "main_channel",
             "UntisAlarm Notifications",
@@ -73,8 +65,7 @@ class MainActivity : AppCompatActivity() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 
-        //request permission for notifications
-        Log.i(TAG, "requesting permission")
+        //Log.i(TAG, "requesting permission")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
                 this,
@@ -83,13 +74,9 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-
-        //check if user has not logged in yet if so directly go to WelcomeActivity
         CoroutineScope(Dispatchers.Default).launch {
-            //create store Data object to access user Data
             val storeData = StoreData(applicationContext)
 
-            //check if loginData is empty
             if (storeData.loadLoginData()[0] == null || storeData.loadID() == null) {
                 //go to welcome activity when not logged in
                 Log.i(TAG, "Not logged in tf")
@@ -99,41 +86,32 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //load all text on UI
         CoroutineScope(Dispatchers.IO).launch {
-            //create store Data object to access user Data
             val storeData = StoreData(applicationContext)
 
-            //load from storedata
             val tbs: Int? = storeData.loadTBS()
             val aaStateNullable: Boolean? = storeData.loadAlarmActive()
             val alarmClock: Array<Int?> = storeData.loadAlarmClock()
 
-            //check if tbs has not already been set
             if (tbs == null) {
+                //60 minutes is the default value for tbs
                 runOnUiThread {
-                    //if not put 60 as default
                     timeBeforeSchool.text = "60 min"
                 }
 
-                //store 60 min in DataStore
-                CoroutineScope(Dispatchers.IO).launch {
-                    storeData.storeTBS(60)
-                }
+                storeData.storeTBS(60)
             } else {
-                //else display loaded tbs
                 runOnUiThread {
-                    timeBeforeSchool.text = "$tbs min"
+                    timeBeforeSchool.text = "$tbs ${getString(R.string.short_minute)}"
                 }
             }
 
-            //display 0 when it is null
             if (alarmClock[0] == null || alarmClock[1] == null) {
                 alarmClock[0] = 0
                 alarmClock[1] = 0
             }
 
-            //make 1:3 to 01:03
+            //display time correctly for example make 1:3 to 01:03
             val alarmClockStrHour = if (alarmClock[0]!! < 10) {
                 "0${alarmClock[0]}"
             } else {
@@ -145,54 +123,41 @@ class MainActivity : AppCompatActivity() {
                 "${alarmClock[1]}"
             }
 
-            //set alarmPreview
             runOnUiThread {
                 alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
             }
 
-            //set switch
-            //convert Boolean? to Boolean
             var aaState = false
             if (aaStateNullable != null) {
                 aaState = aaStateNullable
             }
 
-            //set state of switch and make clickable
             runOnUiThread {
                 toggleAlarm.isChecked = aaState
                 toggleAlarm.isClickable = true
             }
         }
 
-        //listener for going to welcome Activity
         setNewUser.setOnClickListener { _ : View? ->
             intent = Intent(this@MainActivity, WelcomeActivity::class.java)
             startActivity(intent)
         }
 
-        //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
             //temp
             //val alarmClock = AlarmClock()
             //alarmClock.setAlarm(LocalTime.now(), )
 
-            //create store Data object to access user Data
             val storeData = StoreData(applicationContext)
 
-            //creating alarm item for setting alarms
             val alarmItem = AlarmItem(845746)
 
-            //alarm scheduler
             val scheduler = AndroidAlarmScheduler(this)
 
-            //get user inputted TBS as string
             val newTBSStr = setTBS.text.toString()
 
-            //clear field afterwards
             setTBS.setText("")
 
-
-            //convert to int
             val newTBS: Int
             try {
                 newTBS = Integer.parseInt(newTBSStr)
@@ -201,15 +166,10 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            timeBeforeSchool.text = "$newTBS min"
+            timeBeforeSchool.text = "$newTBS ${getString(R.string.short_minute)}"
 
-            //store data
-            CoroutineScope(Dispatchers.IO).launch {
-                storeData.storeTBS(newTBS)
-            }
+            storeData.storeTBS(newTBS)
 
-
-            //restart alarm
             CoroutineScope(Dispatchers.Default).launch {
                 val aaStateNullable: Boolean? = storeData.loadAlarmActive()
                 var aaState = false
@@ -221,27 +181,20 @@ class MainActivity : AppCompatActivity() {
                     alarmItem.let(scheduler::schedule)
                 }
             }
-            //clear field afterwards
+
             setTBS.setText("")
         }
 
         //create listener for switch
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
-            //create store Data object to access user Data
             val storeData = StoreData(applicationContext)
 
-            //creating alarm item for setting alarms
             val alarmItem = AlarmItem(845746)
 
-            //alarm scheduler
             val scheduler = AndroidAlarmScheduler(this)
 
-            //store new state
-            CoroutineScope(Dispatchers.IO).launch {
-                storeData.storeAlarmActive(isChecked)
-            }
+            storeData.storeAlarmActive(isChecked)
 
-            //start Scheduler
             Log.i(TAG, "entered listener")
             if (isChecked) {
                 Log.i(TAG, "should schedule")
