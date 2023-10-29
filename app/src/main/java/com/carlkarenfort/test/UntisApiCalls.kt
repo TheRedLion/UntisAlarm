@@ -33,7 +33,7 @@ class UntisApiCalls constructor(
                 schoolName
             )
         } catch (e: IOException) {
-            throw e // does that cancel the object creation?
+            throw e // TODO: does that cancel the object creation?
         }
     }
 
@@ -44,20 +44,17 @@ class UntisApiCalls constructor(
 
         //has to stop main thread since it is called during welcome activity
         runBlocking {
-            val job: Job = launch(context = Dispatchers.Default) {
-                try {
-                    //login to API
-                    id = session.infos.personId
-                } catch (e: IOException) {
-                    Log.i(TAG, "error")
-                    e.printStackTrace()
-                }
+            try {
+                //login to API
+                id = session.infos.personId
+            } catch (e: IOException) {
+                Log.i(TAG, "error")
+                e.printStackTrace()
+                return@runBlocking
             }
-            job.join()
         }
         return id
     }
-    //TODO: add proper error handling to getID function
 
     fun getSchoolStartForDay(
         id: Int
@@ -70,11 +67,15 @@ class UntisApiCalls constructor(
                 today.plusDays(10),
                 id
             )
+
+            //check if timetable is empty
             if (timetable.isEmpty()) {
-                Log.i("Untis api calls", "WHAT THE FUCK")
+                Log.i(TAG, "timetable is empty")
                 return null
             }
+
             Log.i(TAG, timetable.toString())
+
             //create return variable
             timetable.sortByDate()
             timetable.sortByStartTime()
@@ -107,6 +108,5 @@ class UntisApiCalls constructor(
             Log.i(TAG,e.toString())
             return null
         }
-    } //TODO: proper error exceptions in getSchoolStart
-
+    }
 }

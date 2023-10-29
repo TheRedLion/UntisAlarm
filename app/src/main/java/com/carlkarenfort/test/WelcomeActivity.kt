@@ -33,7 +33,8 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var schoolAddressDisplay: TextView
 
-    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
+    private var policy: StrictMode.ThreadPolicy =
+        StrictMode.ThreadPolicy.Builder().permitAll().build()
 
     private var schools: Array<Array<String>>? = null
 
@@ -54,44 +55,56 @@ class WelcomeActivity : AppCompatActivity() {
 
         val misc = Misc()
 
-        untisSchool.addTextChangedListener(object: TextWatcher{
+        untisSchool.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(text: Editable?) {
+                Log.i(TAG, "text changed")
+                //check wether phone is online
                 if (!misc.isOnline(applicationContext)) {
-                    Toast.makeText(applicationContext, getString(R.string.you_are_offline), Toast.LENGTH_SHORT).show()
-                } else {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val webApiCalls = WebApiCalls()
-                        schools = webApiCalls.getSchools("$text")
+                    Toast.makeText(
+                        applicationContext,
+                        getString(R.string.you_are_offline),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
 
-                        Log.i(TAG, schools.toString())
+                //phone is online
+                CoroutineScope(Dispatchers.IO).launch {
+                    Log.i(TAG, "started coroutine")
+                    val webApiCalls = WebApiCalls()
+                    schools = webApiCalls.getSchools("$text")
+                    Log.i(TAG, schools.toString())
 
-                        if (schools != null) {
-                            Log.i(TAG, "schools is not null")
+                    if (schools == null) {
+                        return@launch
+                    }
+                    Log.i(TAG, "schools is not null")
 
-                            //check if there are too many results
-                            if (schools!![0][0] == "too many results") {
-                                runOnUiThread {
-                                    autoCompleteTextView.hint = "Too many results"
-                                }
-                            } else {
-                                //there are not
-                                val schoolNames =
-                                    schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
-
-                                Log.i(TAG, schoolNames.toString())
-                                runOnUiThread {
-                                    val arrayAdapter = ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
-                                    // get reference to the autocomplete text view
-                                    val autocompleteTV = autoCompleteTextView
-                                    // set adapter to the autocomplete tv on the main thread
-                                    autocompleteTV.setAdapter(arrayAdapter)
-                                }
-                            }
+                    //check if there are too many results
+                    if (schools!![0][0] == "too many results") {
+                        Log.i(TAG, "too many results")
+                        runOnUiThread {
+                            Log.i(TAG, "in main coroutine")
+                            autoCompleteTextView.hint = "Too many results"
                         }
+                        return@launch
+                    }
+                    //there are not
+                    val schoolNames =
+                        schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
+
+                    Log.i(TAG, schoolNames.toString())
+                    runOnUiThread {
+                        val arrayAdapter =
+                            ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
+                        // get reference to the autocomplete text view
+                        val autocompleteTV = autoCompleteTextView
+                        // set adapter to the autocomplete tv on the main thread
+                        autocompleteTV.setAdapter(arrayAdapter)
                     }
                 }
             }
@@ -105,72 +118,89 @@ class WelcomeActivity : AppCompatActivity() {
         }
 
 
-        runButton.setOnClickListener { _ : View? ->
+        runButton.setOnClickListener { _: View? ->
 
+            //check if phone is online
             if (!misc.isOnline(this)) {
                 Toast.makeText(this, getString(R.string.you_are_offline), Toast.LENGTH_SHORT).show()
-            } else if (untisSchool.text.toString().isEmpty()) {
+                return@setOnClickListener
+            }
+
+            //check if all fields have been filled
+            if (untisSchool.text.toString().isEmpty()) {
                 //show warning
-                Toast.makeText(this, getString(R.string.webuntis_url_empty), Toast.LENGTH_SHORT).show()
-            } else if (untisUserName.text.toString().isEmpty()) {
+                Toast.makeText(this, getString(R.string.webuntis_url_empty), Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+            if (untisUserName.text.toString().isEmpty()) {
                 //show warning
                 Toast.makeText(this, getString(R.string.username_empty), Toast.LENGTH_SHORT).show()
-            } else if (untisPassword.text.toString().isEmpty()) {
+                return@setOnClickListener
+            }
+            if (untisPassword.text.toString().isEmpty()) {
                 //show warning
                 Toast.makeText(this, getString(R.string.password_empty), Toast.LENGTH_SHORT).show()
-            } else if (schoolName == null || server == null) {
-                Toast.makeText(this, "No school selected", Toast.LENGTH_SHORT).show()
-            } else {
-                //verify login data
-                var untisApiCalls: UntisApiCalls? = null
-                StrictMode.setThreadPolicy(policy)
-                try {
-                    untisApiCalls = UntisApiCalls(
-                        untisUserName.text.toString(),
-                        untisPassword.text.toString(),
-                        server!!,
-                        schoolName!!
-                    )
-                } catch (e: IOException) {
-                    Log.i(TAG, "login failed")
-                }
-
-                if (untisApiCalls == null) {
-                    //Log.i(TAG, "invalid")
-                    Toast.makeText(this, getString(R.string.invalid_login_data), Toast.LENGTH_SHORT).show()
-                } else {
-                    //Log.i(TAG, "valid")
-                    //get ID
-                    val untisID = untisApiCalls.getID()
-
-
-                    //show warning if no ID was found
-                    if (untisID == null) {
-                        //no match was found
-                        Toast.makeText(this, getString(R.string.no_id_found), Toast.LENGTH_SHORT).show()
-                    } else {
-                        //id exists
-
-                        //store data
-                        val storeData = StoreData(applicationContext)
-                        CoroutineScope(Dispatchers.IO).launch {
-                            storeData.storeLoginData(
-                                untisUserName.text.toString(),
-                                untisPassword.text.toString(),
-                                server!!,
-                                schoolName!!
-                            )
-                            storeData.storeID(untisID)
-                        }
-
-
-                        //Log.i(TAG, apiCalls.getSchoolStartForDay(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool, untisID, LocalDate.of(2023,6,20)).toString())
-                        //go to MainActivity
-                        intent = Intent(this@WelcomeActivity, MainActivity::class.java)
-                        startActivity(intent)
-                    }
-                }
+                return@setOnClickListener
             }
+
+            //check if school was selected
+            if (schoolName == null || server == null) {
+                Toast.makeText(this, "No school selected", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            //verify login data
+            var untisApiCalls: UntisApiCalls? = null
+            StrictMode.setThreadPolicy(policy)
+            try {
+                untisApiCalls = UntisApiCalls(
+                    untisUserName.text.toString(),
+                    untisPassword.text.toString(),
+                    server!!,
+                    schoolName!!
+                )
+            } catch (e: IOException) {
+                Log.i(TAG, "login failed")
+            }
+
+            if (untisApiCalls == null) {
+                //Log.i(TAG, "invalid")
+                Toast.makeText(this, getString(R.string.invalid_login_data), Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+
+            //Log.i(TAG, "valid")
+
+            //get ID
+            val untisID = untisApiCalls.getID()
+
+            //show warning if no ID was found
+            if (untisID == null) {
+                //no match was found
+                Toast.makeText(this, getString(R.string.no_id_found), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            //id exists
+
+            //store data
+            val storeData = StoreData(applicationContext)
+            CoroutineScope(Dispatchers.IO).launch {
+                storeData.storeLoginData(
+                    untisUserName.text.toString(),
+                    untisPassword.text.toString(),
+                    server!!,
+                    schoolName!!
+                )
+                storeData.storeID(untisID)
+            }
+
+            //Log.i(TAG, apiCalls.getSchoolStartForDay(untisUserName.text.toString(), untisPassword.text.toString(), untisServer, untisSchool, untisID, LocalDate.of(2023,6,20)).toString())
+
+            //go to MainActivity
+            intent = Intent(this@WelcomeActivity, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 }

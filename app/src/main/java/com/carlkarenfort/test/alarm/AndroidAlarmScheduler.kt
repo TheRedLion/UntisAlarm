@@ -13,7 +13,7 @@ class AndroidAlarmScheduler(
     private val TAG = "AlarmScheduler"
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val ALARM_REQUEST_CODE = 73295871
-     fun schedule(item: AlarmItem) {
+     fun schedule(alarmItem: AlarmItem) {
         Log.i(TAG, "scheduled Alarm")
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -26,7 +26,7 @@ class AndroidAlarmScheduler(
 
     }
 
-    fun cancel(item: AlarmItem) {
+    fun cancel(alarmItem: AlarmItem) {
         AlarmClock().cancelAlarm(context)
         alarmManager.cancel(
             PendingIntent.getBroadcast(

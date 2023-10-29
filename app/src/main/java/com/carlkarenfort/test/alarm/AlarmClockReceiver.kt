@@ -25,10 +25,13 @@ class AlarmClockReceiver: BroadcastReceiver() {
     private val TAG = "AlarmClockReceiver"
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.i(TAG, "atleast you called alarmClockReceiver")
+        Log.i(TAG, "at least you called alarmClockReceiver")
+
+        //check if context is null
         if (context == null) {
             return
         }
+
         val vibration = FiredHourVibration(context)
         val mainActivityIntent = Intent(context, MainActivity::class.java)
 
@@ -49,24 +52,21 @@ class AlarmClockReceiver: BroadcastReceiver() {
         var channelId = "channelId"
         val channelName = "channelName"
 
-        if (Build.VERSION.SDK_INT >= 26) {
+        val ex = notificationManagerCompat.getNotificationChannel(channelId)
 
-            val ex = notificationManagerCompat.getNotificationChannel(channelId)
-
-            ex?.let {
-                notificationManagerCompat.deleteNotificationChannel(it.id)
-                channelId += "${System.currentTimeMillis()}"
-            }
-
-            val notificationChannel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationChannel.description = "Hour"
-
-            notificationManagerCompat.createNotificationChannel(notificationChannel)
+        ex?.let {
+            notificationManagerCompat.deleteNotificationChannel(it.id)
+            channelId += "${System.currentTimeMillis()}"
         }
+
+        val notificationChannel = NotificationChannel(
+            channelId,
+            channelName,
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationChannel.description = "Hour"
+
+        notificationManagerCompat.createNotificationChannel(notificationChannel)
 
         val title = "Title"
 

@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalTime
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -69,8 +70,7 @@ class MainActivity : AppCompatActivity() {
             NotificationManager.IMPORTANCE_DEFAULT
         )
 
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 
         //request permission for notifications
@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 //else display loaded tbs
                 runOnUiThread {
-                    timeBeforeSchool.text = tbs.toString() + " min"
+                    timeBeforeSchool.text = "$tbs min"
                 }
             }
 
@@ -172,6 +172,10 @@ class MainActivity : AppCompatActivity() {
 
         //listener for updating TBS
         updateTBS.setOnClickListener { _ : View? ->
+            //temp
+            //val alarmClock = AlarmClock()
+            //alarmClock.setAlarm(LocalTime.now(), )
+
             //create store Data object to access user Data
             val storeData = StoreData(applicationContext)
 
@@ -210,7 +214,7 @@ class MainActivity : AppCompatActivity() {
                 val aaStateNullable: Boolean? = storeData.loadAlarmActive()
                 var aaState = false
                 if (aaStateNullable != null) {
-                    aaState = aaStateNullable as Boolean
+                    aaState = aaStateNullable
                 }
                 if (aaState) {
                     alarmItem.let(scheduler::cancel)

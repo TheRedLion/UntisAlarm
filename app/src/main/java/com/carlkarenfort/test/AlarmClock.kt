@@ -75,7 +75,7 @@ class AlarmClock {
         alarmManager.cancel(pendingIntent)
 
         //store alarmClock time
-        runBlocking {
+        CoroutineScope(Dispatchers.IO).launch {
             val storeData = StoreData(context)
             storeData.storeAlarmClock(null, null)
         }

@@ -9,8 +9,10 @@ import android.os.Build
 import android.os.StrictMode
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.AlarmClock
 import com.carlkarenfort.test.Misc
+import com.carlkarenfort.test.R
 import com.carlkarenfort.test.StoreData
 import com.carlkarenfort.test.UntisApiCalls
 import kotlinx.coroutines.runBlocking
@@ -25,107 +27,95 @@ class AlarmReceiver: BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.i(TAG ,"called onReceive()")
+
         //check if we have a context
         if (context == null) {
-            Log.i(TAG, "context from onReceive is null")
+            Log.i(TAG, "context from onReceive is null, cancelling onReceive")
             return
+        }
+        Log.i(TAG, "has context")
+
+        val misc = Misc()
+
+        //check if phone has connectivity
+        if (!misc.isOnline(context)) {
+            Log.i(TAG, "Phone has no internet connectivity")
+            return
+        }
+        //phone has connectivity:
+        Log.i(TAG, "phone has internet")
+
+        //load relevant data from storeData
+        val storeData = StoreData(context)
+        var id: Int?
+        var loginData: Array<String?>
+        var tbs: Int?
+        val alarmClockArray: Array<Int?>
+        //TODO("move alarm receiver from main thread")
+        runBlocking {
+            id = storeData.loadID()
+            loginData = storeData.loadLoginData()
+            tbs = storeData.loadTBS()
+            alarmClockArray = storeData.loadAlarmClock()
+            //debug: alarmClockArray = arrayOf(6, 43)
+        }
+        val alarmClockHour = alarmClockArray[0]
+        val alarmClockMinute = alarmClockArray[1]
+        Log.i(TAG, "loaded data from StoreData")
+
+        //check if any of the loaded data is null
+        if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
+            //TODO: warn user that he got logged out
+            return
+        }
+        //none of the loaded data is null
+
+        //get schoolStart
+        StrictMode.setThreadPolicy(policy)
+        val untisApiCalls = UntisApiCalls(
+            loginData[0]!!,
+            loginData[1]!!,
+            loginData[2]!!,
+            loginData[3]!!
+        )
+        val schoolStart = untisApiCalls.getSchoolStartForDay(
+            id!!,
+        )
+
+        Log.i(TAG, "Getting school start for day: ${misc.getNextDay()}. Is $schoolStart")
+        //debug: var schoolStart = LocalTime.of(7, 0)
+
+        if (schoolStart == null) {
+            //probably holiday or something
+            setNew("noAlarmToday", null, context)
+            return
+        }
+        //there is school that day
+
+        //calculate alarmclock time
+        val alarmClockTime = schoolStart.minusMinutes(tbs!!.toLong())
+
+        if (alarmClockTime.hour == alarmClockHour && alarmClockTime.minute == alarmClockMinute) {
+            //alarm clock already set properly
+            Log.i(TAG, "alarm clock set properly")
+            setNew("normal", alarmClockTime, context)
+        } else if (alarmClockHour == null || alarmClockMinute == null) {
+            //no alarm clock set, setting a new one
+            Log.i(TAG, "no alarm clock set, setting a new one")
+
+            val alarmClock = AlarmClock()
+            alarmClock.setAlarm(alarmClockTime, context)
+
+            setNew("normal", schoolStart, context)
         } else {
-            Log.i(TAG, "has context")
+            //alarm set improperly
+            Log.i(TAG, "removing old and setting new alarm")
 
-            val misc = Misc()
+            val alarmClock = AlarmClock()
+            alarmClock.cancelAlarm(context)
+            alarmClock.setAlarm(alarmClockTime, context)
 
-            //check if phone has connectivity
-            if (!misc.isOnline(context)) {
-                Log.i(TAG, "Phone has no internet connectivity")
-            } else {
-                //phone has connectivity:
-                Log.i(TAG, "phone has internet")
-
-                //load relevant data from storeData
-                val storeData = StoreData(context)
-                var id: Int?
-                var loginData: Array<String?>
-                var tbs: Int?
-                val alarmClockArray: Array<Int?>
-                //TODO("move alarm receiver from main thread")
-                runBlocking {
-                    id = storeData.loadID()
-                    loginData = storeData.loadLoginData()
-                    tbs = storeData.loadTBS()
-                    alarmClockArray = storeData.loadAlarmClock()
-                    //debug: alarmClockArray = arrayOf(6, 43)
-                }
-                val alarmClockHour = alarmClockArray[0]
-                val alarmClockMinute = alarmClockArray[1]
-
-                //check if any of the loaded data is null
-                if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
-                    Log.i(TAG, "id, loginData or TBS from StoreData was null. THIS SHOULD NEVER HAPPEN")
-                    //TODO add notification if user was logged out
-                    //warn user that he got logged out
-                    /*if (ActivityCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.POST_NOTIFICATIONS
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        //create notification
-                        val notification = NotificationCompat.Builder(context, "main_channel")
-                            .setSmallIcon(R.drawable.ic_launcher_foreground)
-                            .setContentTitle("Login again")
-                            .setContentText("Your Login Data is invalid, please login Again.")
-                            .build()
-
-                    }*/
-
-                } else {
-                    //none of the loaded data is null
-
-                    //get schoolStart
-                    StrictMode.setThreadPolicy(policy)
-                    val untisApiCalls = UntisApiCalls(
-                        loginData[0]!!,
-                        loginData[1]!!,
-                        loginData[2]!!,
-                        loginData[3]!!
-                    )
-                    var schoolStart = untisApiCalls.getSchoolStartForDay(
-                        id!!,
-                    )
-                    schoolStart = LocalTime.now()
-                    Log.i(TAG, "Getting school start for day: ${misc.getNextDay()}. Is $schoolStart")
-                    //debug: var schoolStart = LocalTime.of(7, 0)
-
-                    if (schoolStart == null) {
-                        //probably holiday or something
-                        setNew("noAlarmToday", null, context)
-                    } else {
-                        schoolStart = schoolStart.minusMinutes(tbs!!.toLong())
-
-                        if (schoolStart.hour == alarmClockHour && schoolStart.minute == alarmClockMinute) {
-                            //alarm clock already set properly
-                            Log.i(TAG, "alarm clock set properly")
-                            setNew("normal", schoolStart, context)
-                        } else if (alarmClockHour == null || alarmClockMinute == null) {
-                            //no alarm clock set, setting a new one
-                            Log.i(TAG, "no alarm clock set, setting a new one")
-
-                            val alarmClock = AlarmClock()
-                            alarmClock.setAlarm(schoolStart, context)
-
-                            setNew("normal", schoolStart, context)
-                        } else {
-                            //alarm set improperly
-                            Log.i(TAG, "removing old and setting new alarm")
-
-                            val alarmClock = AlarmClock()
-                            alarmClock.cancelAlarm(context)
-                            alarmClock.setAlarm(schoolStart, context)
-
-                            setNew("normal", schoolStart, context)
-                        }
-                    }
-                }
-            }
+            setNew("normal", schoolStart, context)
         }
     }
 
@@ -175,7 +165,8 @@ class AlarmReceiver: BroadcastReceiver() {
                         )
                     }
                 } else {
-                    //TODO("school start for normal returned normal, should not happen")
+                    //school start was null so do error stuff
+                    setNew("error", null, context)
                 }
             }
 
