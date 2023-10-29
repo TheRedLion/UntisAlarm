@@ -1,6 +1,6 @@
 # UntisAlarm
 
-![Project Logo](app/src/main/ic_launcher-playstore.png)
+![Project Logo](project_logo.png)
 
 ## Introduction
 
