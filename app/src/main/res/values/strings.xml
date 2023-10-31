@@ -28,4 +28,6 @@
     <string name="textview">TextView</string>
     <string name="no_id_found">There is no ID for your User, if this happens repeatedly, contact an admin.</string>
     <string name="short_minute">min</string>
+    <string name="snooze">Snooze</string>
+    <string name="dismiss_alarm">Dismiss</string>
 </resources>

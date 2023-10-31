@@ -1,6 +1,7 @@
 package eu.karenfort.main.helper
 
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,11 +14,22 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.text.SpannableString
+import android.text.format.DateFormat
+import android.text.style.RelativeSizeSpan
 import android.widget.Toast
+import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationCompat
+import com.carlkarenfort.test.R
+import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
+import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.alarmClock.AlarmClock
+import eu.karenfort.main.alarmClock.AlarmClockReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
+import eu.karenfort.main.alarmClock.SnoozeService
+import kotlinx.coroutines.runBlocking
+import kotlin.time.Duration.Companion.minutes
 
 fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isScreenOn
 
@@ -58,12 +70,12 @@ fun Context.showErrorToast(msg: String, length: Int = Toast.LENGTH_LONG) {
 fun Context.showErrorToast(exception: Exception, length: Int = Toast.LENGTH_LONG) {
     showErrorToast(exception.toString(), length)
 }
-fun Context.getHideAlarmPendingIntent(alarm: AlarmClock, channelId: String): PendingIntent {
+fun Context.getHideAlarmPendingIntent(channelId: String): PendingIntent {
     val intent = Intent(this, HideAlarmReceiver::class.java).apply {
-        putExtra(ALARM_ID, alarm.id)
+        putExtra(ALARM_ID, ALARM_CLOCK_ID)
         putExtra(ALARM_NOTIFICATION_CHANNEL_ID, channelId)
     }
-    return PendingIntent.getBroadcast(this, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    return PendingIntent.getBroadcast(this, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }
 fun Context.getLaunchIntent() = packageManager.getLaunchIntentForPackage("eu.karenfort.main")
 
@@ -74,12 +86,19 @@ fun Context.grantReadUriPermission(uriString: String) {
     } catch (ignored: Exception) {
     }
 }
-fun Context.getAlarmNotification(pendingIntent: PendingIntent, alarm: AlarmClock): Notification {
-    val soundUri = alarm.soundUri
+fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
+    var soundUri: String
+    var vibrate: Boolean
+    runBlocking {
+        val storeData = StoreData(applicationContext)
+        soundUri = storeData.loadSound()[1] ?: SILENT
+        vibrate = storeData.loadVibrate() ?: false
+
+    }
     if (soundUri != SILENT) {
         grantReadUriPermission(soundUri)
     }
-    val channelId = "simple_alarm_channel_${soundUri}_${alarm.vibrate}"
+    val channelId = "simple_alarm_channel_${soundUri}_${vibrate}"
     val label = "Alarm"
 
     if (isOreoPlus()) {
@@ -97,13 +116,13 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent, alarm: AlarmClock
             enableLights(true)
             // todo: Proper black and light mode / preferences preferably in a new settings activity
             lightColor = 0
-            enableVibration(alarm.vibrate)
+            enableVibration(vibrate)
             setSound(Uri.parse(soundUri), audioAttributes)
             notificationManager.createNotificationChannel(this)
         }
     }
 
-    val dismissIntent = getHideAlarmPendingIntent(alarm, channelId)
+    val dismissIntent = getHideAlarmPendingIntent(channelId)
     val builder = NotificationCompat.Builder(this)
         .setContentTitle(label)
         .setContentText(getFormattedTime(getPassedSeconds(), false, false))
@@ -114,11 +133,11 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent, alarm: AlarmClock
         .setAutoCancel(true)
         .setChannelId(channelId)
         .addAction(
-            com.simplemobiletools.commons.R.drawable.ic_snooze_vector,
-            getString(com.simplemobiletools.commons.R.string.snooze),
-            getSnoozePendingIntent(alarm)
+            R.drawable.ic_snooze_vector,
+            getString(R.string.snooze),
+            getSnoozePendingIntent()
         )
-        .addAction(com.simplemobiletools.commons.R.drawable.ic_cross_vector, getString(com.simplemobiletools.commons.R.string.dismiss), dismissIntent)
+        .addAction(R.drawable.ic_cross_vector, getString(R.string.dismiss_alarm), dismissIntent)
         .setDeleteIntent(dismissIntent)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
@@ -126,7 +145,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent, alarm: AlarmClock
         builder.setSound(Uri.parse(soundUri), AudioManager.STREAM_ALARM)
     }
 
-    if (alarm.vibrate) {
+    if (vibrate) {
         val vibrateArray = LongArray(2) { 500 }
         builder.setVibrate(vibrateArray)
     }
@@ -145,15 +164,76 @@ fun Context.hideNotification(id: Int) {
     val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     manager.cancel(id)
 }
-fun Context.showAlarmNotification(alarm: AlarmClock) {
+fun Context.showAlarmNotification() {
     val pendingIntent = getOpenAlarmTabIntent()
-    val notification = getAlarmNotification(pendingIntent, alarm)
+    val notification = getAlarmNotification(pendingIntent)
     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     try {
-        notificationManager.notify(alarm.id, notification)
+        notificationManager.notify(ALARM_CLOCK_ID, notification)
     } catch (e: Exception) {
         showErrorToast(e)
     }
+}
+
+fun Context.getFormattedTime(passedSeconds: Int, showSeconds: Boolean, makeAmPmSmaller: Boolean): SpannableString {
+    val use24HourFormat = DateFormat.is24HourFormat(this)
+    val hours = (passedSeconds / 3600) % 24
+    val minutes = (passedSeconds / 60) % 60
+    val seconds = passedSeconds % 60
+
+    return if (use24HourFormat) {
+        val formattedTime = formatTime(showSeconds, use24HourFormat, hours, minutes, seconds)
+        SpannableString(formattedTime)
+    } else {
+        val formattedTime = formatTo12HourFormat(showSeconds, hours, minutes, seconds)
+        val spannableTime = SpannableString(formattedTime)
+        val amPmMultiplier = if (makeAmPmSmaller) 0.4f else 1f
+        spannableTime.setSpan(RelativeSizeSpan(amPmMultiplier), spannableTime.length - 3, spannableTime.length, 0)
+        spannableTime
+    }
+}
+
+fun Context.formatTo12HourFormat(showSeconds: Boolean, hours: Int, minutes: Int, seconds: Int): String {
+    val appendable = if (hours >= 12) "pm" else "am"
+    val newHours = if (hours == 0 || hours == 12) 12 else hours % 12
+    return "${formatTime(showSeconds, false, newHours, minutes, seconds)} $appendable"
+}
+
+fun Context.getSnoozePendingIntent(): PendingIntent {
+    val intent = Intent(this, SnoozeService::class.java).setAction("Snooze")
+    intent.putExtra(ALARM_ID, ALARM_CLOCK_ID)
+    return PendingIntent.getService(this, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+}
+
+fun Context.setupAlarmClock(triggerInSeconds: Int) {
+    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val targetMS = System.currentTimeMillis() + triggerInSeconds * 1000
+    try {
+        AlarmManagerCompat.setAlarmClock(alarmManager, targetMS, getOpenAlarmTabIntent(), getAlarmIntent())
+
+        // show a notification to allow dismissing the alarm 10 minutes before it actually triggers
+        val dismissalTriggerTime = if (targetMS - System.currentTimeMillis() < 10.minutes.inWholeMilliseconds) {
+            System.currentTimeMillis() + 500
+        } else {
+            targetMS - 10.minutes.inWholeMilliseconds
+        }
+        AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, 0, dismissalTriggerTime, getEarlyAlarmDismissalIntent())
+    } catch (e: Exception) {
+        showErrorToast(e)
+    }
+}
+
+fun Context.getAlarmIntent(): PendingIntent {
+    val intent = Intent(this, AlarmClockReceiver::class.java)
+    intent.putExtra(ALARM_ID, ALARM_CLOCK_ID)
+    return PendingIntent.getBroadcast(this, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+}
+
+fun Context.getEarlyAlarmDismissalIntent(): PendingIntent {
+    val intent = Intent(this, EarlyAlarmDismissalReceiver::class.java).apply {
+        putExtra(ALARM_ID, ALARM_CLOCK_ID)
+    }
+    return PendingIntent.getBroadcast(this, EARLY_ALARM_DISMISSAL_INTENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }
 
 val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

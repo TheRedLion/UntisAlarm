@@ -334,7 +334,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/alarm/baseline_alarm_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/alarm_off/baseline_alarm_off_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -345,7 +345,7 @@
                         <option name="values">
                           <map>
                             <entry key="opacityPercent" value="0" />
-                            <entry key="outputName" value="alarm" />
+                            <entry key="outputName" value="ic_cross_vecot" />
                             <entry key="sourceFile" value="C:\Users\Karen\AndroidStudioProjects\UntisAlarm" />
                           </map>
                         </option>

@@ -79,7 +79,7 @@
         android:id="@+id/snooze_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Snooze"
+        android:text="@string/snooze"
         android:textColor="@color/white"
 
         app:layout_constraintEnd_toStartOf="@+id/reminder_draggable"

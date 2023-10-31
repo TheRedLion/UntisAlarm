@@ -94,14 +94,12 @@ class AlarmReceiver: BroadcastReceiver() {
             Log.i(TAG, "alarm clock set properly")
             setNew("normal", alarmClockTime, context)
         } else {
-            // todo: use proper values for now test values
-            val alarmClock = AlarmClock(true, "default", "default")
             if (alarmClockHour == null || alarmClockMinute == null) {
                 //no alarm clock set, setting a new one
                 Log.i(TAG, "no alarm clock set, setting a new one")
 
-                alarmClock.setAlarm(alarmClockTime, context)
-                context.showAlarmNotification(alarmClock)
+                AlarmClock.setAlarm(alarmClockTime, context)
+                context.showAlarmNotification()
 
 
                 setNew("normal", schoolStart, context)
@@ -109,9 +107,9 @@ class AlarmReceiver: BroadcastReceiver() {
                 //alarm set improperly
                 Log.i(TAG, "removing old and setting new alarm")
 
-                alarmClock.cancelAlarm(context)
-                alarmClock.setAlarm(alarmClockTime, context)
-                context.showAlarmNotification(alarmClock)
+                AlarmClock.cancelAlarm(context)
+                AlarmClock.setAlarm(alarmClockTime, context)
+                context.showAlarmNotification()
 
                 setNew("normal", schoolStart, context)
             }

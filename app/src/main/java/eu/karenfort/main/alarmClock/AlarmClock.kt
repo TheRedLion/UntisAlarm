@@ -15,25 +15,24 @@ import java.util.Calendar
 
 import androidx.annotation.Keep
 import androidx.versionedparcelable.VersionedParcelize
+import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_ID
 import java.io.Serializable
 
 
 class AlarmClock () {
     private val TAG = "AlarmClock"
-    val id = 543
     val label = "UntisAlarm"
 
     companion object {
         private val TAG = "AlarmClock"
-        val id = 543
         @RequiresApi(Build.VERSION_CODES.S)
         fun setAlarm(schoolStart: LocalTime, context: Context) {
             Log.i(TAG, "called setalarm")
 
             val intent2 = Intent(context, AlarmClockReceiver::class.java)
             intent2.putExtra(ALARM_ID, this as Serializable)
-            val pendingIntent = PendingIntent.getBroadcast(context, id, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (alarmManager.canScheduleExactAlarms()) {
@@ -72,7 +71,7 @@ class AlarmClock () {
             val intent2 = Intent(context, AlarmReceiver::class.java)
             intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
-            val pendingIntent = PendingIntent.getBroadcast(context, id, intent2,
+            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
