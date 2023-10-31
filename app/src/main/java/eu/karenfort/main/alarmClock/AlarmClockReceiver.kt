@@ -28,7 +28,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
     private val TAG = "AlarmClockReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
-        val alarmClock = intent.getSerializableExtra(ALARM_ID, AlarmClock::class.java) as AlarmClock
+        val alarmClock = AlarmClock()//intent.getSerializableExtra(ALARM_ID, AlarmClock::class.java) as AlarmClock
 
         // No early notification for now
         // todo: maybe add early notifs in the future
@@ -36,7 +36,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
 
         if (context.isScreenOn()) {
             context.showAlarmNotification(alarmClock)
-            Handler(Looper.myLooper()!!).postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(alarmClock.id)
             }, 10000)
         } else {

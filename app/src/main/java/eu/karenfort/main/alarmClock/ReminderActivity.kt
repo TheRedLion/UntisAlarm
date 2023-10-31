@@ -15,8 +15,18 @@ import android.provider.AlarmClock
 import android.view.MotionEvent
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AppCompatActivity
+import com.carlkarenfort.test.R
+import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.ALARM_ID
+import eu.karenfort.main.helper.ALARM_NOTIF_ID
+import eu.karenfort.main.helper.SILENT
+import eu.karenfort.main.helper.isOreoMr1Plus
+import eu.karenfort.main.helper.isOreoPlus
+import eu.karenfort.main.helper.notificationManager
+import kotlinx.coroutines.runBlocking
 
-class ReminderActivity : SimpleActivity() {
+class ReminderActivity : AppCompatActivity() {
     companion object {
         private const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
         private const val INCREASE_VOLUME_DELAY = 300L
@@ -24,12 +34,12 @@ class ReminderActivity : SimpleActivity() {
 
     private val increaseVolumeHandler = Handler(Looper.getMainLooper())
     private val maxReminderDurationHandler = Handler(Looper.getMainLooper())
-    private val swipeGuideFadeHandler = Handler()
+    private val swipeGuideFadeHandler = Handler(Looper.getMainLooper())
     private val vibrationHandler = Handler(Looper.getMainLooper())
     private var isAlarmReminder = false
     private var didVibrate = false
     private var wasAlarmSnoozed = false
-    private var alarm: Alarm? = null
+    //private var alarm: Alarm? = null
     private var audioManager: AudioManager? = null
     private var mediaPlayer: MediaPlayer? = null
     private var vibrator: Vibrator? = null
@@ -39,28 +49,22 @@ class ReminderActivity : SimpleActivity() {
     private var finished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        isMaterialActivity = true
+        //isMaterialActivity = true
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         showOverLockscreen()
-        updateTextColors(binding.root)
-        updateStatusbarColor(getProperBackgroundColor())
+        //updateTextColors(binding.root)
+        //updateStatusbarColor(getProperBackgroundColor())
 
+        /*
         val id = intent.getIntExtra(ALARM_ID, -1)
         isAlarmReminder = id != -1
         if (id != -1) {
             alarm = dbHelper.getAlarmWithId(id) ?: return
         }
+         */
 
-        val label = if (isAlarmReminder) {
-            if (alarm!!.label.isEmpty()) {
-                getString(com.simplemobiletools.commons.R.string.alarm)
-            } else {
-                alarm!!.label
-            }
-        } else {
-            getString(R.string.timer)
-        }
+        val label = getString(R.string.app_name)
 
         binding.reminderTitle.text = label
         binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(), false, false) else getString(R.string.time_expired)
@@ -70,28 +74,20 @@ class ReminderActivity : SimpleActivity() {
             finishActivity()
         }, maxDuration * 1000L)
 
-        setupButtons()
+        setupAlarmButtons()
         setupEffects()
-    }
-
-    private fun setupButtons() {
-        if (isAlarmReminder) {
-            setupAlarmButtons()
-        } else {
-            setupTimerButtons()
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupAlarmButtons() {
         binding.reminderStop.beGone()
         binding.reminderDraggableBackground.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulsing_animation))
-        binding.reminderDraggableBackground.applyColorFilter(getProperPrimaryColor())
+        //binding.reminderDraggableBackground.applyColorFilter(getProperPrimaryColor())
 
-        val textColor = getProperTextColor()
-        binding.reminderDismiss.applyColorFilter(textColor)
-        binding.reminderDraggable.applyColorFilter(textColor)
-        binding.reminderSnooze.applyColorFilter(textColor)
+        //val textColor = getProperTextColor()
+        //binding.reminderDismiss.applyColorFilter(textColor)
+        //binding.reminderDraggable.applyColorFilter(textColor)
+        //binding.reminderSnooze.applyColorFilter(textColor)
 
         var minDragX = 0f
         var maxDragX = 0f
@@ -154,22 +150,16 @@ class ReminderActivity : SimpleActivity() {
         }
     }
 
-    private fun setupTimerButtons() {
-        binding.reminderStop.background = resources.getColoredDrawableWithColor(R.drawable.circle_background_filled, getProperPrimaryColor())
-        arrayOf(binding.reminderSnooze, binding.reminderDraggableBackground, binding.reminderDraggable, binding.reminderDismiss).forEach {
-            it.beGone()
-        }
-
-        binding.reminderStop.setOnClickListener {
-            finishActivity()
-        }
-    }
 
     private fun setupEffects() {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         initialAlarmVolume = audioManager?.getStreamVolume(AudioManager.STREAM_ALARM) ?: 7
 
-        val doVibrate = alarm?.vibrate ?: config.timerVibrate
+        var doVibrate = false
+        runBlocking {
+            doVibrate = StoreData(applicationContext).loadVibrate()?: return@runBlocking
+        }
+
         if (doVibrate && isOreoPlus()) {
             val pattern = LongArray(2) { 500 }
             vibrationHandler.postDelayed({
@@ -178,10 +168,9 @@ class ReminderActivity : SimpleActivity() {
             }, 500)
         }
 
-        val soundUri = if (alarm != null) {
-            alarm!!.soundUri
-        } else {
-            config.timerSoundUri
+        var soundUri = SILENT
+        runBlocking {
+            soundUri = StoreData(applicationContext).loadSound()[1] ?: return@runBlocking
         }
 
         if (soundUri != SILENT) {
@@ -193,8 +182,12 @@ class ReminderActivity : SimpleActivity() {
                     prepare()
                     start()
                 }
+                var increaseVolumeGradually = false
+                runBlocking {
+                    increaseVolumeGradually = StoreData(applicationContext).loadIncreaseVolumeGradually() ?: return@runBlocking
+                }
 
-                if (config.increaseVolumeGradually) {
+                if (increaseVolumeGradually) {
                     scheduleVolumeIncrease(MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS.toFloat(), initialAlarmVolume!!.toFloat(), 0)
                 }
             } catch (e: Exception) {
@@ -219,12 +212,7 @@ class ReminderActivity : SimpleActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent?.action == AlarmClock.ACTION_SNOOZE_ALARM) {
-            val durationMinutes = intent.getIntExtra(AlarmClock.EXTRA_ALARM_SNOOZE_DURATION, -1)
-            if (durationMinutes == -1) {
-                snoozeAlarm()
-            } else {
-                snoozeAlarm(durationMinutes)
-            }
+            snoozeAlarm()
         } else {
             finishActivity()
         }
@@ -245,7 +233,13 @@ class ReminderActivity : SimpleActivity() {
     }
 
     private fun destroyEffects() {
-        if (config.increaseVolumeGradually) {
+
+        var increaseVolumeGradually = false
+        runBlocking {
+            increaseVolumeGradually = StoreData(applicationContext).loadIncreaseVolumeGradually() ?: return@runBlocking
+        }
+
+        if (increaseVolumeGradually) {
             resetVolumeToInitialValue()
         }
 
@@ -256,41 +250,20 @@ class ReminderActivity : SimpleActivity() {
         vibrator = null
     }
 
-    private fun snoozeAlarm(overrideSnoozeDuration: Int? = null) {
+    private fun snoozeAlarm() {
         destroyEffects()
-        if (overrideSnoozeDuration != null) {
-            setupAlarmClock(alarm!!, overrideSnoozeDuration * MINUTE_SECONDS)
-            wasAlarmSnoozed = true
-            finishActivity()
-        } else if (config.useSameSnooze) {
-            setupAlarmClock(alarm!!, config.snoozeTime * MINUTE_SECONDS)
-            wasAlarmSnoozed = true
-            finishActivity()
-        } else {
-            showPickSecondsDialog(config.snoozeTime * MINUTE_SECONDS, true, cancelCallback = { finishActivity() }) {
-                config.snoozeTime = it / MINUTE_SECONDS
-                setupAlarmClock(alarm!!, it)
-                wasAlarmSnoozed = true
-                finishActivity()
-            }
+        var snoozeTime = 5
+        runBlocking {
+            snoozeTime = StoreData(applicationContext).loadSnoozeTime() ?: return@runBlocking
         }
+        AlarmClock.setAlarm()
+        wasAlarmSnoozed = true
+        finishActivity()
     }
 
     private fun finishActivity() {
         if (!wasAlarmSnoozed && alarm != null) {
             cancelAlarmClock(alarm!!)
-            if (alarm!!.days > 0) {
-                scheduleNextAlarm(alarm!!, false)
-            }
-            if (alarm!!.days < 0) {
-                if (alarm!!.oneShot) {
-                    alarm!!.isEnabled = false
-                    dbHelper.deleteAlarms(arrayListOf(alarm!!))
-                } else {
-                    dbHelper.updateAlarmEnabledState(alarm!!.id, false)
-                }
-                updateWidgets()
-            }
         }
 
         finished = true

@@ -8,6 +8,7 @@ const val ALARM_ID = "alarm_id"
 const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
 const val ALARM_NOTIF_ID = 9998
 const val EARLY_ALARM_NOTIF_ID = 10003
+const val SILENT = "silent"
 
 
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
@@ -23,3 +24,7 @@ fun ensureBackgroundThread(callback: () -> Unit) {
 }
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
 fun isOreoPlus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
+
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O_MR1)
+fun isOreoMr1Plus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1

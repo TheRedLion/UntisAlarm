@@ -16,12 +16,13 @@ class HideAlarmReceiver : BroadcastReceiver() {
         channelId?.let { context.deleteNotificationChannel(channelId) }
         context.hideNotification(id)
 
+        /*
         ensureBackgroundThread {
             val alarm = context.dbHelper.getAlarmWithId(id)
             if (alarm != null && alarm.days < 0) {
                 context.dbHelper.updateAlarmEnabledState(alarm.id, false)
-                context.updateWidgets()
+                //context.updateWidgets()
             }
-        }
+        }*/
     }
 }

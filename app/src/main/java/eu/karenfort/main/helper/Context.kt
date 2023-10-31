@@ -76,7 +76,7 @@ fun Context.grantReadUriPermission(uriString: String) {
 }
 fun Context.getAlarmNotification(pendingIntent: PendingIntent, alarm: AlarmClock): Notification {
     val soundUri = alarm.soundUri
-    if (soundUri != "silent") {
+    if (soundUri != SILENT) {
         grantReadUriPermission(soundUri)
     }
     val channelId = "simple_alarm_channel_${soundUri}_${alarm.vibrate}"
@@ -155,3 +155,5 @@ fun Context.showAlarmNotification(alarm: AlarmClock) {
         showErrorToast(e)
     }
 }
+
+val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

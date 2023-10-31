@@ -29,6 +29,33 @@ class StoreData (
     private val vibrateKey = booleanPreferencesKey("vibrate")
     private val soundTitleKey = stringPreferencesKey("soundTitle")
     private val soundUriKey = stringPreferencesKey("soundUri")
+    private val increaseVolumeGraduallyKey = booleanPreferencesKey("increaseVolumeGradually")
+    private val snoozeTimeKey = intPreferencesKey("snoozeTime")
+
+    suspend fun storeSnoozeTime(snoozeTime: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[snoozeTimeKey] = snoozeTime
+            }
+        }
+    }
+
+    suspend fun loadSnoozeTime(): Int? {
+        val preferences = context.dataStore.data.first()
+        return preferences[snoozeTimeKey]
+    }
+    suspend fun storeIncreaseVolumeGradually(vibrate: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[increaseVolumeGraduallyKey] = vibrate
+            }
+        }
+    }
+
+    suspend fun loadIncreaseVolumeGradually(): Boolean? {
+        val preferences = context.dataStore.data.first()
+        return preferences[vibrateKey]
+    }
 
     suspend fun storeVibrate(vibrate: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
