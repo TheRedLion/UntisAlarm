@@ -1,4 +1,4 @@
-package com.carlkarenfort.test
+package eu.karenfort.main.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -17,13 +17,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.carlkarenfort.test.alarm.AlarmItem
-import com.carlkarenfort.test.alarm.AndroidAlarmScheduler
+import eu.karenfort.main.StoreData
+import eu.karenfort.main.alarm.AlarmItem
+import eu.karenfort.main.alarm.AndroidAlarmScheduler
+import com.carlkarenfort.test.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.time.LocalTime
 
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")

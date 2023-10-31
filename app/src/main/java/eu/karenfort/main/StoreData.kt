@@ -1,4 +1,4 @@
-package com.carlkarenfort.test
+package eu.karenfort.main
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -12,7 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userData")
 class StoreData (
@@ -27,6 +26,38 @@ class StoreData (
     private val alarmActiveKey = booleanPreferencesKey("alarm-active")
     private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
     private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
+    private val vibrateKey = booleanPreferencesKey("vibrate")
+    private val soundTitleKey = stringPreferencesKey("soundTitle")
+    private val soundUriKey = stringPreferencesKey("soundUri")
+
+    suspend fun storeVibrate(vibrate: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[vibrateKey] = vibrate
+            }
+        }
+    }
+    suspend fun loadVibrate(): Boolean? {
+        val preferences = context.dataStore.data.first()
+        return preferences[vibrateKey]
+    }
+
+    suspend fun loadSound(): Array<String?> {
+        val preferences = context.dataStore.data.first()
+        return arrayOf(
+            preferences[soundTitleKey],
+            preferences[soundUriKey]
+        )
+    }
+
+    fun storeSound(soundTitle: String, soundUri: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[soundTitleKey] = soundTitle
+                settings[soundUriKey] = soundUri
+            }
+        }
+    }
 
     suspend fun loadID(): Int? {
         val preferences = context.dataStore.data.first()

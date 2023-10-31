@@ -1,4 +1,4 @@
-package com.carlkarenfort.test.alarm
+package eu.karenfort.main.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -9,12 +9,11 @@ import android.os.Build
 import android.os.StrictMode
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import com.carlkarenfort.test.AlarmClock
-import com.carlkarenfort.test.Misc
-import com.carlkarenfort.test.R
-import com.carlkarenfort.test.StoreData
-import com.carlkarenfort.test.UntisApiCalls
+import eu.karenfort.main.alarmClock.AlarmClock
+import eu.karenfort.main.Misc
+import eu.karenfort.main.StoreData
+import eu.karenfort.main.api.UntisApiCalls
+import eu.karenfort.main.helper.showAlarmNotification
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
 
@@ -94,23 +93,28 @@ class AlarmReceiver: BroadcastReceiver() {
             //alarm clock already set properly
             Log.i(TAG, "alarm clock set properly")
             setNew("normal", alarmClockTime, context)
-        } else if (alarmClockHour == null || alarmClockMinute == null) {
-            //no alarm clock set, setting a new one
-            Log.i(TAG, "no alarm clock set, setting a new one")
-
-            val alarmClock = AlarmClock()
-            alarmClock.setAlarm(alarmClockTime, context)
-
-            setNew("normal", schoolStart, context)
         } else {
-            //alarm set improperly
-            Log.i(TAG, "removing old and setting new alarm")
+            // todo: use proper values for now test values
+            val alarmClock = AlarmClock(true, "default", "default")
+            if (alarmClockHour == null || alarmClockMinute == null) {
+                //no alarm clock set, setting a new one
+                Log.i(TAG, "no alarm clock set, setting a new one")
 
-            val alarmClock = AlarmClock()
-            alarmClock.cancelAlarm(context)
-            alarmClock.setAlarm(alarmClockTime, context)
+                alarmClock.setAlarm(alarmClockTime, context)
+                context.showAlarmNotification(alarmClock)
 
-            setNew("normal", schoolStart, context)
+
+                setNew("normal", schoolStart, context)
+            } else {
+                //alarm set improperly
+                Log.i(TAG, "removing old and setting new alarm")
+
+                alarmClock.cancelAlarm(context)
+                alarmClock.setAlarm(alarmClockTime, context)
+                context.showAlarmNotification(alarmClock)
+
+                setNew("normal", schoolStart, context)
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.carlkarenfort.test.alarm
+package eu.karenfort.main.alarm
 
 data class AlarmItem(
     val id: Int

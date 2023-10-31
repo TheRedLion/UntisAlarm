@@ -1,4 +1,4 @@
-package com.carlkarenfort.test
+package eu.karenfort.main.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +15,11 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import eu.karenfort.main.Misc
+import eu.karenfort.main.StoreData
+import eu.karenfort.main.api.UntisApiCalls
+import eu.karenfort.main.api.WebApiCalls
+import com.carlkarenfort.test.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

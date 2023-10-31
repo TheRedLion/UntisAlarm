@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name="eu.karenfort.main.activities.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
@@ -35,15 +35,14 @@
         </activity>
 
         <activity
-            android:name=".WelcomeActivity"
+            android:name="eu.karenfort.main.activities.WelcomeActivity"
             android:exported="true"
-            android:parentActivityName=".WelcomeActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
         <receiver
-            android:name=".alarm.AlarmReceiver"
+            android:name="eu.karenfort.main.alarm.AlarmReceiver"
             android:exported="false">
             <!--
             <intent-filter>
@@ -52,7 +51,7 @@
             -->
         </receiver>
         <receiver
-            android:name=".alarm.AlarmClockReceiver"
+            android:name="eu.karenfort.main.alarm.AlarmReceiver"
             android:exported="false">
         </receiver>
 

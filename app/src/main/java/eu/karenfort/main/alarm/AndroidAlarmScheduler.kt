@@ -1,11 +1,11 @@
-package com.carlkarenfort.test.alarm
+package eu.karenfort.main.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.carlkarenfort.test.AlarmClock
+import eu.karenfort.main.alarmClock.AlarmClock
 
 class AndroidAlarmScheduler(
     private val context: Context

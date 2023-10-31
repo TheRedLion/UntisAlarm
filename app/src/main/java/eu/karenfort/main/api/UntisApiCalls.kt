@@ -1,9 +1,6 @@
-package com.carlkarenfort.test
+package eu.karenfort.main.api
 
 import android.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.responseObjects.Timetable

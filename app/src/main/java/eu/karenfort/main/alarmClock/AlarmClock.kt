@@ -1,4 +1,4 @@
-package com.carlkarenfort.test
+package eu.karenfort.main.alarmClock
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -8,25 +8,32 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
-import com.carlkarenfort.test.alarm.AlarmClockReceiver
-import com.carlkarenfort.test.alarm.AlarmReceiver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import eu.karenfort.main.StoreData
+import eu.karenfort.main.alarm.AlarmReceiver
 import java.time.LocalTime
 import java.util.Calendar
 
-class AlarmClock {
-    private val TAG = "AlarmClock"
+import androidx.annotation.Keep
+import androidx.versionedparcelable.VersionedParcelize
+import eu.karenfort.main.helper.ALARM_ID
+import java.io.Serializable
 
+
+class AlarmClock (
+    var vibrate: Boolean,
+    var soundTitle: String,
+    var soundUri: String,
+) : Serializable{
+    private val TAG = "AlarmClock"
+    val id = 543
+    val label = "UntisAlarm"
     @RequiresApi(Build.VERSION_CODES.S)
     fun setAlarm(schoolStart: LocalTime, context: Context) {
         Log.i(TAG, "called setalarm")
 
         val intent2 = Intent(context, AlarmClockReceiver::class.java)
-
-        val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        intent2.putExtra(ALARM_ID, this as Serializable)
+        val pendingIntent = PendingIntent.getBroadcast(context, id, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (alarmManager.canScheduleExactAlarms()) {
@@ -65,7 +72,7 @@ class AlarmClock {
         val intent2 = Intent(context, AlarmReceiver::class.java)
         intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
-        val pendingIntent = PendingIntent.getBroadcast(context, 543, intent2,
+        val pendingIntent = PendingIntent.getBroadcast(context, id, intent2,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

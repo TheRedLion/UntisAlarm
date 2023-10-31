@@ -1,4 +1,4 @@
-package com.carlkarenfort.test
+package eu.karenfort.main.api
 
 import android.util.Log
 import org.json.JSONObject

@@ -1,9 +1,8 @@
-package com.carlkarenfort.test
+package eu.karenfort.main
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import java.io.IOException
 import java.time.DayOfWeek
 import java.time.LocalDate
 

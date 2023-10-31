@@ -1,4 +1,4 @@
-package com.carlkarenfort.test.ui.theme
+package eu.karenfort.main.ui.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme

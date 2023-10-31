@@ -6,7 +6,6 @@ plugins {
 android {
     namespace 'com.carlkarenfort.test'
     compileSdk 34
-
     defaultConfig {
         applicationId "com.carlkarenfort.test"
         minSdk 26
