@@ -17,6 +17,7 @@ import android.os.PowerManager
 import android.text.SpannableString
 import android.text.format.DateFormat
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationCompat
@@ -26,12 +27,17 @@ import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.alarmClock.AlarmClockReceiver
+import eu.karenfort.main.alarmClock.DismissAlarmReceiver
+import eu.karenfort.main.alarmClock.EarlyAlarmDismissalReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
 import eu.karenfort.main.alarmClock.SnoozeService
 import kotlinx.coroutines.runBlocking
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 
-fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isScreenOn
+fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
 
 fun Context.deleteNotificationChannel(channelId: String) {
     if (isOreoPlus()) {
@@ -84,6 +90,7 @@ fun Context.grantReadUriPermission(uriString: String) {
         // ensure custom reminder sounds play well
         grantUriPermission("com.android.systemui", Uri.parse(uriString), Intent.FLAG_GRANT_READ_URI_PERMISSION)
     } catch (ignored: Exception) {
+        Log.i("Context", "ERRRRRROR")
     }
 }
 fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
@@ -92,8 +99,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     runBlocking {
         val storeData = StoreData(applicationContext)
         soundUri = storeData.loadSound()[1] ?: SILENT
-        vibrate = storeData.loadVibrate() ?: false
-
+        vibrate = storeData.loadVibrate() ?: true
     }
     if (soundUri != SILENT) {
         grantReadUriPermission(soundUri)
@@ -101,34 +107,32 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     val channelId = "simple_alarm_channel_${soundUri}_${vibrate}"
     val label = "Alarm"
 
-    if (isOreoPlus()) {
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_ALARM)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setLegacyStreamType(AudioManager.STREAM_ALARM)
-            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-            .build()
+    val audioAttributes = AudioAttributes.Builder()
+        .setUsage(AudioAttributes.USAGE_ALARM)
+        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+        .setLegacyStreamType(AudioManager.STREAM_ALARM)
+        .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+        .build()
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        NotificationChannel(channelId, label, importance).apply {
-            setBypassDnd(true)
-            enableLights(true)
-            // todo: Proper black and light mode / preferences preferably in a new settings activity
-            lightColor = 0
-            enableVibration(vibrate)
-            setSound(Uri.parse(soundUri), audioAttributes)
-            notificationManager.createNotificationChannel(this)
-        }
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val importance = NotificationManager.IMPORTANCE_HIGH
+    NotificationChannel(channelId, label, importance).apply {
+        setBypassDnd(true)
+        enableLights(true)
+        // todo: Proper black and light mode / preferences preferably in a new settings activity
+        lightColor = 0
+        enableVibration(vibrate)
+        setSound(Uri.parse(soundUri), audioAttributes)
+        notificationManager.createNotificationChannel(this)
     }
 
     val dismissIntent = getHideAlarmPendingIntent(channelId)
-    val builder = NotificationCompat.Builder(this)
+    val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
         .setContentTitle(label)
         .setContentText(getFormattedTime(getPassedSeconds(), false, false))
         .setSmallIcon(R.drawable.ic_alarm_vector)
         .setContentIntent(pendingIntent)
-        .setPriority(Notification.PRIORITY_HIGH)
+        .setPriority(NotificationManager.IMPORTANCE_HIGH)
         .setDefaults(Notification.DEFAULT_LIGHTS)
         .setAutoCancel(true)
         .setChannelId(channelId)
@@ -156,7 +160,6 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
 }
 fun Context.getOpenAlarmTabIntent(): PendingIntent {
     val intent = getLaunchIntent() ?: Intent(this, MainActivity::class.java)
-    intent.putExtra("open_tab", 1)
     return PendingIntent.getActivity(this, 9996, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }
 
@@ -234,6 +237,20 @@ fun Context.getEarlyAlarmDismissalIntent(): PendingIntent {
         putExtra(ALARM_ID, ALARM_CLOCK_ID)
     }
     return PendingIntent.getBroadcast(this, EARLY_ALARM_DISMISSAL_INTENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+}
+
+fun Context.getDismissAlarmPendingIntent(alarmId: Int, notificationId: Int): PendingIntent {
+    val intent = Intent(this, DismissAlarmReceiver::class.java).apply {
+        putExtra(ALARM_ID, alarmId)
+        putExtra(NOTIFICATION_ID, notificationId)
+    }
+    return PendingIntent.getBroadcast(this, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+}
+
+fun Context.cancelAlarmClock() {
+    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    alarmManager.cancel(getAlarmIntent())
+    alarmManager.cancel(getEarlyAlarmDismissalIntent())
 }
 
 val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -30,4 +30,7 @@
     <string name="short_minute">min</string>
     <string name="snooze">Snooze</string>
     <string name="dismiss_alarm">Dismiss</string>
+    <string name="test">test</string>
+    <string name="upcoming_alarm">Upcoming Alarm</string>
+    <string name="time_expired">Time expired</string>
 </resources>

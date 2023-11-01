@@ -14,6 +14,9 @@ const val EARLY_ALARM_NOTIF_ID = 10003
 const val SILENT = "silent"
 const val ALARM_CLOCK_ID = 543
 const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
+const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
+const val NOTIFICATION_ID = "notification_id"
+
 
 
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()

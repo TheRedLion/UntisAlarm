@@ -24,15 +24,8 @@ class AlarmReceiver: BroadcastReceiver() {
     private val alarmRequestCode = 73295871
 
     @RequiresApi(Build.VERSION_CODES.S)
-    override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(context: Context, intent: Intent?) {
         Log.i(TAG ,"called onReceive()")
-
-        //check if we have a context
-        if (context == null) {
-            Log.i(TAG, "context from onReceive is null, cancelling onReceive")
-            return
-        }
-        Log.i(TAG, "has context")
 
         if (!Misc.isOnline(context)) {
             Log.i(TAG, "Phone has no internet connectivity")
@@ -62,9 +55,7 @@ class AlarmReceiver: BroadcastReceiver() {
             //TODO: warn user that he got logged out
             return
         }
-        //none of the loaded data is null
 
-        //get schoolStart
         StrictMode.setThreadPolicy(policy)
         val untisApiCalls = UntisApiCalls(
             loginData[0]!!,
@@ -99,7 +90,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 Log.i(TAG, "no alarm clock set, setting a new one")
 
                 AlarmClock.setAlarm(alarmClockTime, context)
-                context.showAlarmNotification()
+                //context.showAlarmNotification()
 
 
                 setNew("normal", schoolStart, context)
@@ -109,7 +100,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
                 AlarmClock.cancelAlarm(context)
                 AlarmClock.setAlarm(alarmClockTime, context)
-                context.showAlarmNotification()
+                //context.showAlarmNotification()
 
                 setNew("normal", schoolStart, context)
             }

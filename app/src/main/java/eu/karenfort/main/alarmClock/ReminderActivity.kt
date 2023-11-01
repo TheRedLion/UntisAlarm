@@ -3,6 +3,7 @@ package eu.karenfort.main.alarmClock
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
@@ -12,19 +13,28 @@ import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.provider.AlarmClock
+import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
+import android.view.View
+import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
+import com.carlkarenfort.test.databinding.ActivityReminderBinding
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.helper.ALARM_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
 import eu.karenfort.main.helper.SILENT
+import eu.karenfort.main.helper.getFormattedTime
+import eu.karenfort.main.helper.getPassedSeconds
 import eu.karenfort.main.helper.isOreoMr1Plus
 import eu.karenfort.main.helper.isOreoPlus
 import eu.karenfort.main.helper.notificationManager
+import eu.karenfort.main.helper.viewBinding
 import kotlinx.coroutines.runBlocking
+import java.time.LocalTime
 
 class ReminderActivity : AppCompatActivity() {
     companion object {
@@ -49,6 +59,7 @@ class ReminderActivity : AppCompatActivity() {
     private var finished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i("ReminderActivity", "creating ReminderActivity")
         //isMaterialActivity = true
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -67,9 +78,11 @@ class ReminderActivity : AppCompatActivity() {
         val label = getString(R.string.app_name)
 
         binding.reminderTitle.text = label
-        binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(), false, false) else getString(R.string.time_expired)
+        binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(), false, false) else getString(
+            R.string.time_expired
+        )
 
-        val maxDuration = if (isAlarmReminder) config.alarmMaxReminderSecs else config.timerMaxReminderSecs
+        val maxDuration = 60
         maxReminderDurationHandler.postDelayed({
             finishActivity()
         }, maxDuration * 1000L)
@@ -77,6 +90,20 @@ class ReminderActivity : AppCompatActivity() {
         setupAlarmButtons()
         setupEffects()
     }
+    private fun View.beGone() {
+        visibility = View.GONE
+    }
+    private fun View.onGlobalLayout(callback: () -> Unit) {
+        viewTreeObserver?.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (viewTreeObserver != null) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    callback()
+                }
+            }
+        })
+    }
+    private fun View.performHapticFeedback() = performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupAlarmButtons() {
@@ -155,7 +182,7 @@ class ReminderActivity : AppCompatActivity() {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         initialAlarmVolume = audioManager?.getStreamVolume(AudioManager.STREAM_ALARM) ?: 7
 
-        var doVibrate = false
+        var doVibrate = true
         runBlocking {
             doVibrate = StoreData(applicationContext).loadVibrate()?: return@runBlocking
         }
@@ -175,8 +202,12 @@ class ReminderActivity : AppCompatActivity() {
 
         if (soundUri != SILENT) {
             try {
-                mediaPlayer = MediaPlayer().apply {
-                    setAudioStreamType(AudioManager.STREAM_ALARM)
+                mediaPlayer = MediaPlayer()
+                mediaPlayer!!.setAudioAttributes(AudioAttributes.Builder()
+                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
+                    .build())
+
+                mediaPlayer = mediaPlayer!!.apply {
                     setDataSource(this@ReminderActivity, Uri.parse(soundUri))
                     isLooping = true
                     prepare()
@@ -256,16 +287,12 @@ class ReminderActivity : AppCompatActivity() {
         runBlocking {
             snoozeTime = StoreData(applicationContext).loadSnoozeTime() ?: return@runBlocking
         }
-        AlarmClock.setAlarm()
+        eu.karenfort.main.alarmClock.AlarmClock.setAlarm(LocalTime.now().plusMinutes(5), this)
         wasAlarmSnoozed = true
         finishActivity()
     }
 
     private fun finishActivity() {
-        if (!wasAlarmSnoozed && alarm != null) {
-            cancelAlarmClock(alarm!!)
-        }
-
         finished = true
         destroyEffects()
         finish()

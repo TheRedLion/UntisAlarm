@@ -14,20 +14,21 @@ class AndroidAlarmScheduler(
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val ALARM_REQUEST_CODE = 73295871
      fun schedule(alarmItem: AlarmItem) {
-        Log.i(TAG, "scheduled Alarm")
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            ALARM_REQUEST_CODE,
-            intent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
+         //todo: work manager
+         Log.i(TAG, "scheduled Alarm")
+         val intent = Intent(context, AlarmReceiver::class.java)
+         val pendingIntent = PendingIntent.getBroadcast(
+             context,
+             ALARM_REQUEST_CODE,
+             intent,
+             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+         )
+         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
 
-    }
+     }
 
     fun cancel(alarmItem: AlarmItem) {
-        AlarmClock().cancelAlarm(context)
+        AlarmClock.cancelAlarm(context)
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,

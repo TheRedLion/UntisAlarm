@@ -56,7 +56,8 @@ class UntisApiCalls constructor(
         id: Int
     ): LocalTime? {
         try {
-            val today = LocalDate.now()
+            //val today = LocalDate.now()
+            val today = LocalDate.of(2023, 11, 6)
             val timetable: Timetable = session.getTimetableFromPersonId(
                 today,
                 today,

@@ -9,10 +9,12 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
@@ -28,6 +30,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
     private val TAG = "AlarmClockReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.i(TAG, "called alarmclock receiver")
         val alarmClock = AlarmClock()//intent.getSerializableExtra(ALARM_ID, AlarmClock::class.java) as AlarmClock
 
         // No early notification for now
@@ -35,11 +38,13 @@ class AlarmClockReceiver : BroadcastReceiver() {
         //context.hideNotification(EARLY_ALARM_NOTIF_ID) // hide early dismissal notification if not already dismissed
 
         if (context.isScreenOn()) {
-            context.showAlarmNotification(alarmClock)
+            Log.i(TAG, "showing screen notification alarm")
+            context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
-                context.hideNotification(alarmClock.id)
+                context.hideNotification(ALARM_CLOCK_ID)
             }, 10000)
         } else {
+            Log.i(TAG, "showing full activity view")
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             if (notificationManager.getNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID) == null) {
@@ -60,7 +65,6 @@ class AlarmClockReceiver : BroadcastReceiver() {
                 0,
                 Intent(context, ReminderActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    putExtra(ALARM_ID, alarmClock.id)
                 },
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )

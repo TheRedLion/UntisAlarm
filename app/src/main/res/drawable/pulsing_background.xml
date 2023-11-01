@@ -7,6 +7,6 @@
         android:color="@android:color/white"/>
 
     <size
-        android:width="@dimen/reminder_background_min_size"
-        android:height="@dimen/reminder_background_min_size"/>
+        android:width="70dp"
+        android:height="70dp"/>
 </shape>

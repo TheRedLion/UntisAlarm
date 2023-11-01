@@ -20,36 +20,32 @@ import eu.karenfort.main.helper.ALARM_ID
 import java.io.Serializable
 
 
-class AlarmClock () {
+class AlarmClock {
     private val TAG = "AlarmClock"
     val label = "UntisAlarm"
 
     companion object {
         private val TAG = "AlarmClock"
-        @RequiresApi(Build.VERSION_CODES.S)
         fun setAlarm(schoolStart: LocalTime, context: Context) {
-            Log.i(TAG, "called setalarm")
+            Log.i(TAG, "called setalarm(Clock)")
 
             val intent2 = Intent(context, AlarmClockReceiver::class.java)
-            intent2.putExtra(ALARM_ID, this as Serializable)
             val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            if (alarmManager.canScheduleExactAlarms()) {
-                Log.i(TAG, "what the fuck is happening")
-                if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-                    Log.i(TAG, "this is normal")
-                }
+            if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                Log.i(TAG, "this is bad")
             }
 
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR_OF_DAY, 16)
+                set(Calendar.HOUR_OF_DAY, 16) //should be schoolstart.hour and minute
                 set(Calendar.MINUTE, 11)
                 set(Calendar.SECOND, 0)
             }
 
-            val calendarMills = calendar.timeInMillis
+            //val calendarMills = calendar.timeInMillis
+            val calendarMills = System.currentTimeMillis() + 5000 //todo: remove debug code
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
 
             val nextAlarmClock: AlarmManager.AlarmClockInfo = alarmManager.nextAlarmClock
@@ -60,7 +56,7 @@ class AlarmClock () {
                 storeData.storeAlarmClock(schoolStart.hour, schoolStart.minute)
             }
 
-            //don't know a different way to update the alarmPreview in main activity
+            //todo: do with companion object instead or smth
             /*val intent3 = Intent(context, MainActivity::class.java)
             intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent3)*/

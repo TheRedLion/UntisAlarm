@@ -41,6 +41,24 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name="eu.karenfort.main.alarmClock.ReminderActivity"
+            android:configChanges="orientation|screenSize|screenLayout"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:showOnLockScreen="true"
+            android:taskAffinity=".ReminderActivity"
+            >
+
+            <intent-filter>
+                <action android:name="android.intent.action.SNOOZE_ALARM" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
         <receiver
             android:name="eu.karenfort.main.alarm.AlarmReceiver"
             android:exported="false">
@@ -50,11 +68,23 @@
             </intent-filter>
             -->
         </receiver>
+
         <receiver
-            android:name="eu.karenfort.main.alarm.AlarmReceiver"
+            android:name="eu.karenfort.main.alarmClock.AlarmClockReceiver"
             android:exported="false">
         </receiver>
-
+        <receiver
+            android:name="eu.karenfort.main.alarmClock.DismissAlarmReceiver"
+            android:exported="false">
+        </receiver>
+        <receiver
+            android:name="eu.karenfort.main.alarmClock.EarlyAlarmDismissalReceiver"
+            android:exported="false">
+        </receiver>
+        <receiver
+            android:name="eu.karenfort.main.alarmClock.HideAlarmReceiver"
+            android:exported="false">
+        </receiver>
     </application>
 
 </manifest>
