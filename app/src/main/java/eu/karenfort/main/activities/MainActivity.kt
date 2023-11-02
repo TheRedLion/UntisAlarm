@@ -6,9 +6,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -17,10 +20,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmItem
 import eu.karenfort.main.alarm.AndroidAlarmScheduler
-import com.carlkarenfort.test.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +34,6 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
 
-    private lateinit var setNewUser: Button
     private lateinit var timeBeforeSchool: TextView
     private lateinit var setTBS: EditText
     private lateinit var updateTBS: Button
@@ -46,13 +48,13 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        setNewUser = findViewById(R.id.addNewUser)
         timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
         setTBS = findViewById(R.id.setTBS)
         updateTBS = findViewById(R.id.updateTBS)
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
         tempDisplay = findViewById(R.id.tempDisplay)
+
 
         toggleAlarm.isClickable = false
 
@@ -138,11 +140,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        setNewUser.setOnClickListener { _ : View? ->
-            intent = Intent(this@MainActivity, WelcomeActivity::class.java)
-            startActivity(intent)
-        }
-
         updateTBS.setOnClickListener { _ : View? ->
             //temp
             //val alarmClock = AlarmClock()
@@ -205,4 +202,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.top_right_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.settings -> {
+                intent = Intent(this@MainActivity, SettingsActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.logout -> {
+                intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.about_us -> {
+                val uri = Uri.parse("https://github.com/TheRedLion/UntisAlarm")
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }

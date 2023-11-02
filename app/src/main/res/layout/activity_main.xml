@@ -17,16 +17,6 @@
         app:layout_constraintTop_toBottomOf="@+id/alarmPreview" />
 
     <!-- go back to welcome screen -->
-    <Button
-        android:id="@+id/addNewUser"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/new_user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- show the current TBS-->
     <TextView
