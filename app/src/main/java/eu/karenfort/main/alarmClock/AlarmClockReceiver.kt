@@ -6,32 +6,24 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
-import eu.karenfort.main.StoreData
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
-import eu.karenfort.main.helper.ALARM_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
-import eu.karenfort.main.helper.EARLY_ALARM_NOTIF_ID
 import eu.karenfort.main.helper.hideNotification
-import eu.karenfort.main.helper.isOreoPlus
 import eu.karenfort.main.helper.isScreenOn
 import eu.karenfort.main.helper.showAlarmNotification
 import eu.karenfort.main.helper.showErrorToast
-import kotlinx.coroutines.runBlocking
 
 class AlarmClockReceiver : BroadcastReceiver() {
     private val TAG = "AlarmClockReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "called alarmclock receiver")
-        val alarmClock = AlarmClock()//intent.getSerializableExtra(ALARM_ID, AlarmClock::class.java) as AlarmClock
 
         // No early notification for now
         // todo: maybe add early notifs in the future
@@ -42,13 +34,14 @@ class AlarmClockReceiver : BroadcastReceiver() {
             context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
+                Log.i(TAG, "UN-showing screen notification alarm")
             }, 10000)
         } else {
             Log.i(TAG, "showing full activity view")
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             if (notificationManager.getNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID) == null) {
-                oldNotificationChannelCleanup(notificationManager) // cleans up previous notification channel that had sound properties
+                notificationManager.deleteNotificationChannel("Alarm") // cleans up previous notification channel that had sound properties
                 NotificationChannel(
                     ALARM_NOTIFICATION_CHANNEL_ID,
                     "Alarm",
@@ -71,7 +64,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
 
             val builder = NotificationCompat.Builder(context, ALARM_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.alarm_vector)
-                .setContentTitle(alarmClock.label)
+                .setContentTitle(context.getString(R.string.app_name))
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
@@ -83,10 +76,5 @@ class AlarmClockReceiver : BroadcastReceiver() {
                 context.showErrorToast(e)
             }
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun oldNotificationChannelCleanup(notificationManager: NotificationManager) {
-        notificationManager.deleteNotificationChannel("Alarm")
     }
 }

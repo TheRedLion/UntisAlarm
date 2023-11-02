@@ -6,19 +6,16 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.helper.*
 
 class EarlyAlarmDismissalReceiver : BroadcastReceiver() {
-
+    private val TAG = "EarlyAlarmDismissalReceiver"
     override fun onReceive(context: Context, intent: Intent) {
-        val alarmId = intent.getIntExtra(ALARM_ID, -1)
-        if (alarmId == -1) {
-            return
-        }
-
-        triggerEarlyDismissalNotification(context, alarmId)
+        Log.i(TAG, "in onReceive")
+        triggerEarlyDismissalNotification(context, ALARM_CLOCK_ID)
     }
 
     private fun triggerEarlyDismissalNotification(context: Context, alarmId: Int) {
@@ -39,10 +36,11 @@ class EarlyAlarmDismissalReceiver : BroadcastReceiver() {
         val contentIntent = context.getOpenAlarmTabIntent()
         val notification = NotificationCompat.Builder(context)
             .setContentTitle(context.getString(R.string.upcoming_alarm))
-            .setContentText("test, here should be an alarm string")
+            .setContentText("Upcoming Alarm. Press dismiss to dismiss the alarm early.")
             .setSmallIcon(R.drawable.ic_alarm_vector)
             .setPriority(Notification.PRIORITY_LOW)
             .addAction(0, context.getString(R.string.dismiss_alarm), dismissIntent)
+            .setDeleteIntent(dismissIntent)
             .setContentIntent(contentIntent)
             .setSound(null)
             .setAutoCancel(true)

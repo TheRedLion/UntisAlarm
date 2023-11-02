@@ -22,7 +22,6 @@ import java.io.Serializable
 
 class AlarmClock {
     private val TAG = "AlarmClock"
-    val label = "UntisAlarm"
 
     companion object {
         private val TAG = "AlarmClock"
@@ -62,9 +61,32 @@ class AlarmClock {
             context.startActivity(intent3)*/
         }
 
+        fun setAlarm(timeInS: Int, context: Context) {
+            Log.i(TAG, "called setalarm(Clock)")
+
+            val intent2 = Intent(context, AlarmClockReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                Log.i(TAG, "this is bad")
+            }
+
+            val triggerTime = System.currentTimeMillis() + timeInS * 1000 //todo: remove debug code
+            alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerTime, pendingIntent), pendingIntent)
+
+
+
+            //todo: do with companion object instead or smth
+            /*val intent3 = Intent(context, MainActivity::class.java)
+            intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent3)*/
+        }
+
+
         fun cancelAlarm(context: Context) {
             Log.i(TAG, "called")
-            val intent2 = Intent(context, AlarmReceiver::class.java)
+            val intent2 = Intent(context, AlarmClockReceiver::class.java)
             intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
             val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2,
