@@ -12,15 +12,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.carlkarenfort.test.R
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.materialswitch.MaterialSwitch
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmItem
 import eu.karenfort.main.alarm.AndroidAlarmScheduler
@@ -34,27 +31,19 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
 
-    private lateinit var timeBeforeSchool: TextView
-    private lateinit var setTBS: EditText
-    private lateinit var updateTBS: Button
     private lateinit var alarmPreview: TextView
-    private lateinit var toggleAlarm: Switch
-    private lateinit var tempDisplay: TextView
+    private lateinit var toggleAlarm: MaterialSwitch
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DynamicColors.applyToActivitiesIfAvailable(application);
         Log.i(TAG, "creating Main Activity")
 
         setContentView(R.layout.activity_main)
 
-        timeBeforeSchool = findViewById(R.id.timeBeforeSchool)
-        setTBS = findViewById(R.id.setTBS)
-        updateTBS = findViewById(R.id.updateTBS)
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
-        tempDisplay = findViewById(R.id.tempDisplay)
-
 
         toggleAlarm.isClickable = false
 
@@ -64,14 +53,18 @@ class MainActivity : AppCompatActivity() {
             NotificationManager.IMPORTANCE_DEFAULT
         )
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 
         //Log.i(TAG, "requesting permission")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.SCHEDULE_EXACT_ALARM),
+                arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.SCHEDULE_EXACT_ALARM
+                ),
                 0
             )
         }
@@ -98,13 +91,13 @@ class MainActivity : AppCompatActivity() {
             if (tbs == null) {
                 //60 minutes is the default value for tbs
                 runOnUiThread {
-                    timeBeforeSchool.text = "60 min"
+                    //timeBeforeSchool.text = "60 min"
                 }
 
                 storeData.storeTBS(60)
             } else {
                 runOnUiThread {
-                    timeBeforeSchool.text = "$tbs ${getString(R.string.short_minute)}"
+                    //timeBeforeSchool.text = "$tbs ${getString(R.string.short_minute)}"
                 }
             }
 
@@ -140,6 +133,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        /*
         updateTBS.setOnClickListener { _ : View? ->
             //temp
             //val alarmClock = AlarmClock()
@@ -182,6 +176,8 @@ class MainActivity : AppCompatActivity() {
             setTBS.setText("")
         }
 
+         */
+
         //create listener for switch
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
             val storeData = StoreData(applicationContext)
@@ -197,6 +193,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "should schedule")
                 alarmItem.let(scheduler::schedule)
             } else {
+                alarmPreview.text = getString(R.string.no_alarm_tomorrow)
                 Log.i(TAG, "cancelling")
                 alarmItem.let(scheduler::cancel)
             }
@@ -210,15 +207,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.settings -> {
                 intent = Intent(this@MainActivity, SettingsActivity::class.java)
                 startActivity(intent)
             }
+
             R.id.logout -> {
                 intent = Intent(this@MainActivity, WelcomeActivity::class.java)
                 startActivity(intent)
             }
+
             R.id.about_us -> {
                 val uri = Uri.parse("https://github.com/TheRedLion/UntisAlarm")
                 val intent = Intent(Intent.ACTION_VIEW, uri)

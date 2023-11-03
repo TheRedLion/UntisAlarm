@@ -334,7 +334,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/settings/baseline_settings_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/arrow_circle_right/baseline_arrow_circle_right_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -345,7 +345,7 @@
                         <option name="values">
                           <map>
                             <entry key="opacityPercent" value="0" />
-                            <entry key="outputName" value="settings_vecor" />
+                            <entry key="outputName" value="ic_confirm_in_textfield" />
                             <entry key="sourceFile" value="C:\Users\Karen\AndroidStudioProjects\UntisAlarm" />
                           </map>
                         </option>
