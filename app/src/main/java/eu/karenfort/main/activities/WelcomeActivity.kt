@@ -20,6 +20,7 @@ import eu.karenfort.main.StoreData
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
 import com.carlkarenfort.test.R
+import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,23 +38,13 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var intent: Intent
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var schoolAddressDisplay: TextView
-
-    private var policy: StrictMode.ThreadPolicy =
-        StrictMode.ThreadPolicy.Builder().permitAll().build()
-
     private var schools: Array<Array<String>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i(TAG, "creating Welcome activity")
         setContentView(R.layout.activity_welcome)
 
-        untisSchool = findViewById(R.id.untisSchool)
-        untisUserName = findViewById(R.id.untisUsername)
-        untisPassword = findViewById(R.id.untisPassword)
-        runButton = findViewById(R.id.runButton)
-        autoCompleteTextView = findViewById(R.id.autoCompleteTextView)
-        schoolAddressDisplay = findViewById(R.id.schoolAddressDisplay)
+        getLayoutObjectsByID()
 
         var schoolName: String? = null
         var server: String? = null
@@ -156,7 +147,7 @@ class WelcomeActivity : AppCompatActivity() {
 
             //verify login data
             var untisApiCalls: UntisApiCalls? = null
-            StrictMode.setThreadPolicy(policy)
+            StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
             try {
                 untisApiCalls = UntisApiCalls(
                     untisUserName.text.toString(),
@@ -194,5 +185,14 @@ class WelcomeActivity : AppCompatActivity() {
             intent = Intent(this@WelcomeActivity, MainActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun getLayoutObjectsByID() {
+        untisSchool = findViewById(R.id.untisSchool)
+        untisUserName = findViewById(R.id.untisUsername)
+        untisPassword = findViewById(R.id.untisPassword)
+        runButton = findViewById(R.id.runButton)
+        autoCompleteTextView = findViewById(R.id.autoCompleteTextView)
+        schoolAddressDisplay = findViewById(R.id.schoolAddressDisplay)
     }
 }

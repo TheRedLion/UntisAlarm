@@ -1,7 +1,9 @@
 package eu.karenfort.main.helper
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Looper
+import android.os.StrictMode
 import androidx.annotation.ChecksSdkIntAtLeast
 import java.util.Calendar
 import java.util.Date
@@ -26,6 +28,8 @@ const val ALARM_SOUND_DEFAULT = SILENT //todo: set actual default
 const val IVG_DEFAULT = false
 const val LANGUAGE_DEFAULT = LANGUAGE_SYSTEM_DEFAULT
 const val DARK_MODE_DEFAULT = -1
+
+val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
@@ -61,8 +65,10 @@ fun getPassedSeconds(): Int {
     return ((calendar.timeInMillis + offset) / 1000).toInt()
 }
 
+@SuppressLint("ObsoleteSdkInt")
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
 fun isOreoPlus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+fun isTiramisuPlus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O_MR1)

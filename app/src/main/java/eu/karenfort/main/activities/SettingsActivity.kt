@@ -25,7 +25,6 @@ import eu.karenfort.main.helper.VIBRATE_DEFAULT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -41,84 +40,94 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var tbsInputLayout: TextInputLayout
     private lateinit var snoozeInputLayout: TextInputLayout
     private lateinit var alarmName: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+        getLayoutObjectsByID()
+
+        disableClicking() //disabling clicks until everything was properly loaded
+
+        loadAndDisplayStoredStates()
+
+        setListener()
+    }
+
+    private fun getLayoutObjectsByID() {
         languageSettings = findViewById(R.id.language_settings)
         colorSchemeSettings = findViewById(R.id.color_scheme_settings)
         darkModeSettings = findViewById(R.id.dark_mode_settings)
-
-        alarmSoundSettings = findViewById(R.id.alarm_settings) //sound
-
+        alarmSoundSettings = findViewById(R.id.alarm_settings)
+        alarmName = findViewById(R.id.alarm_sound_name)
         ivgToggle = findViewById(R.id.ivgToggle)
         vibrateToggle = findViewById(R.id.vibrateToggle)
         tbsInputField = findViewById(R.id.tbs_input_field)
         snoozeInputField = findViewById(R.id.snooze_input_field)
         tbsInputLayout = findViewById(R.id.tbs_input_layout)
         snoozeInputLayout = findViewById(R.id.snooze_input_layout)
-        alarmName = findViewById(R.id.alarm_sound_name)
+    }
 
-        var tbs: Int
-        var vibrate: Boolean
-        var snooze: Int
-        var ivg: Boolean
+    private fun setListener() {
+        snoozeInputLayout.setEndIconOnClickListener { _: View? -> handleSetSnooze() }
+        tbsInputLayout.setEndIconOnClickListener { _: View? -> handleSetTBS() }
+        vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
+        ivgToggle.addOnCheckedStateChangedListener { _, state -> handleToggleIVG(state) }
+        darkModeSettings.setOnClickListener { darkModeDialog() }
+        alarmSoundSettings.setOnClickListener { alarmSoundDialog() }
+        languageSettings.setOnClickListener { languageDialog() }
+        colorSchemeSettings.setOnClickListener { colorDialog() }
+    }
 
-        val storeData = StoreData(this)
-        runBlocking {
-            tbs = storeData.loadTBS() ?: initTBS()
-            vibrate = storeData.loadVibrate() ?: initVibrate()
-            snooze = storeData.loadSnoozeTime() ?: initSnooze()
-            ivg = storeData.loadIncreaseVolumeGradually() ?: initIVG()
+    private fun enableClicking() {
+        languageSettings.isClickable = true
+        colorSchemeSettings.isClickable = true
+        darkModeSettings.isClickable = true
+        alarmSoundSettings.isClickable = true
+        ivgToggle.isClickable = true
+        vibrateToggle.isClickable = true
+        tbsInputField.isClickable = true
+        snoozeInputField.isClickable = true
+    }
+
+    private fun disableClicking() {
+        languageSettings.isClickable = false
+        colorSchemeSettings.isClickable = false
+        darkModeSettings.isClickable = false
+        alarmSoundSettings.isClickable = false
+        ivgToggle.isClickable = false
+        vibrateToggle.isClickable = false
+        tbsInputField.isClickable = false
+        snoozeInputField.isClickable = false
+    }
+
+    private fun loadAndDisplayStoredStates() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val storeData = StoreData(applicationContext)
+
+            val tbs: Int = storeData.loadTBS() ?: initTBS()
+            val vibrate: Boolean = storeData.loadVibrate() ?: initVibrate()
+            val snooze: Int = storeData.loadSnoozeTime() ?: initSnooze()
+            val ivg: Boolean = storeData.loadIncreaseVolumeGradually() ?: initIVG()
             if (storeData.loadSound()[0] == null) initSound()
             if (storeData.loadLanguage() == null) initLanguage()
             if (storeData.loadDarkMode() == null) initDarkMode()
+
+            runOnUiThread {
+                tbsInputLayout.hint =
+                    "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $tbs${
+                        getString(R.string.short_minute)
+                    })"
+                vibrateToggle.isChecked = vibrate
+                snoozeInputLayout.hint =
+                    "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $snooze${
+                        getString(R.string.short_minute)
+                    })"
+                ivgToggle.isChecked = ivg
+            }
+
+            enableClicking()
         }
-
-        tbsInputLayout.hint =
-            "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $tbs${
-                getString(R.string.short_minute)
-            })"
-        vibrateToggle.isChecked = vibrate
-        snoozeInputLayout.hint =
-            "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $snooze${
-                getString(R.string.short_minute)
-            })"
-        ivgToggle.isChecked = ivg
-
-
-        snoozeInputLayout.setEndIconOnClickListener { _: View? ->
-            handleSetSnooze()
-        }
-
-        tbsInputLayout.setEndIconOnClickListener { _ : View? ->
-            handleSetTBS()
-        }
-
-        vibrateToggle.addOnCheckedStateChangedListener { _, state ->
-            handleToggleVibrate(state)
-        }
-
-        ivgToggle.addOnCheckedStateChangedListener { _, state ->
-            handleToggleIVG(state)
-        }
-
-        darkModeSettings.setOnClickListener {
-            darkModeDialog()
-        }
-
-        alarmSoundSettings.setOnClickListener {
-            alarmSoundDialog()
-        }
-
-        languageSettings.setOnClickListener {
-            languageDialog()
-        }
-
-        colorSchemeSettings.setOnClickListener {
-            colorDialog()
-        }
-
     }
 
     private fun colorDialog() {

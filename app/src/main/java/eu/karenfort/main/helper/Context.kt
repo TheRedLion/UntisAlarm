@@ -21,6 +21,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
@@ -35,6 +36,9 @@ import kotlin.time.Duration.Companion.minutes
 
 fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
 
+fun Context.areNotificationsEnabled(): Boolean {
+    return NotificationManagerCompat.from(this).areNotificationsEnabled()
+}
 fun Context.deleteNotificationChannel(channelId: String) {
     if (isOreoPlus()) {
         try {
@@ -64,6 +68,7 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
             }
         }
     } catch (e: Exception) {
+        Log.i("Context", e.toString())
     }
 }
 fun Context.showErrorToast(msg: String, length: Int = Toast.LENGTH_LONG) {
@@ -224,7 +229,7 @@ fun Context.getEarlyAlarmDismissalIntent(): PendingIntent {
     return PendingIntent.getBroadcast(this, EARLY_ALARM_DISMISSAL_INTENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }
 
-fun Context.getDismissAlarmPendingIntent(alarmId: Int, notificationId: Int): PendingIntent {
+fun Context.getDismissAlarmPendingIntent(alarmId: Int): PendingIntent {
     val intent = Intent(this, DismissAlarmReceiver::class.java)
     return PendingIntent.getBroadcast(this, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }

@@ -52,4 +52,10 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="currently">Currently</string>
+    <string name="error">error</string>
+    <string name="default_current_tbs">The Alarm currently goes off 60 minutes before your first lesson.</string>
+    <string name="error_loading_tbs">An error occurred, please set the Time\n before School in the settings menu</string>
+    <string name="the_alarm_currently_goes_off">"The Alarm currently goes off "</string>
+    <string name="minutes_n_before_your_first_lesson">" minutes\\n before your first lesson."</string>
+    <string name="button_to_change_tomorrows_alarm">Button to change tomorrows alarm.</string>
 </resources>
