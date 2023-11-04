@@ -3,6 +3,7 @@ package eu.karenfort.main.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -14,32 +15,41 @@ import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmItem
 import eu.karenfort.main.alarm.AndroidAlarmScheduler
+import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
+import eu.karenfort.main.helper.DARK_MODE_DEFAULT
+import eu.karenfort.main.helper.IVG_DEFAULT
+import eu.karenfort.main.helper.LANGUAGE_DEFAULT
+import eu.karenfort.main.helper.SNOOZE_DEFAULT
+import eu.karenfort.main.helper.TBS_DEFAULT
+import eu.karenfort.main.helper.VIBRATE_DEFAULT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class SettingsActivity : AppCompatActivity() {
     private val TAG = "SettingsActivity"
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var colorSchemeSettings: ConstraintLayout
-    private lateinit var defaultAlarmSettings: ConstraintLayout
-    private lateinit var ivgToggle: com.google.android.material.checkbox.MaterialCheckBox
-    private lateinit var darkModeToggle: com.google.android.material.checkbox.MaterialCheckBox
-    private lateinit var vibrateToggle: com.google.android.material.checkbox.MaterialCheckBox
+    private lateinit var alarmSoundSettings: ConstraintLayout
+    private lateinit var darkModeSettings: ConstraintLayout
+    private lateinit var ivgToggle: MaterialCheckBox
+    private lateinit var vibrateToggle: MaterialCheckBox
     private lateinit var tbsInputField: TextInputEditText
     private lateinit var snoozeInputField: TextInputEditText
     private lateinit var tbsInputLayout: TextInputLayout
     private lateinit var snoozeInputLayout: TextInputLayout
+    private lateinit var alarmName: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
         languageSettings = findViewById(R.id.language_settings)
         colorSchemeSettings = findViewById(R.id.color_scheme_settings)
-        darkModeToggle = findViewById(R.id.dark_mode_toggle)
+        darkModeSettings = findViewById(R.id.dark_mode_settings)
 
-        defaultAlarmSettings = findViewById(R.id.alarm_settings) //sound
+        alarmSoundSettings = findViewById(R.id.alarm_settings) //sound
 
         ivgToggle = findViewById(R.id.ivgToggle)
         vibrateToggle = findViewById(R.id.vibrateToggle)
@@ -47,6 +57,35 @@ class SettingsActivity : AppCompatActivity() {
         snoozeInputField = findViewById(R.id.snooze_input_field)
         tbsInputLayout = findViewById(R.id.tbs_input_layout)
         snoozeInputLayout = findViewById(R.id.snooze_input_layout)
+        alarmName = findViewById(R.id.alarm_sound_name)
+
+        var tbs: Int
+        var vibrate: Boolean
+        var snooze: Int
+        var ivg: Boolean
+
+        val storeData = StoreData(this)
+        runBlocking {
+            tbs = storeData.loadTBS() ?: initTBS()
+            vibrate = storeData.loadVibrate() ?: initVibrate()
+            snooze = storeData.loadSnoozeTime() ?: initSnooze()
+            ivg = storeData.loadIncreaseVolumeGradually() ?: initIVG()
+            if (storeData.loadSound()[0] == null) initSound()
+            if (storeData.loadLanguage() == null) initLanguage()
+            if (storeData.loadDarkMode() == null) initDarkMode()
+        }
+
+        tbsInputLayout.hint =
+            "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $tbs${
+                getString(R.string.short_minute)
+            })"
+        vibrateToggle.isChecked = vibrate
+        snoozeInputLayout.hint =
+            "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $snooze${
+                getString(R.string.short_minute)
+            })"
+        ivgToggle.isChecked = ivg
+
 
         snoozeInputLayout.setEndIconOnClickListener { _: View? ->
             handleSetSnooze()
@@ -64,48 +103,138 @@ class SettingsActivity : AppCompatActivity() {
             handleToggleIVG(state)
         }
 
-
-        darkModeToggle.addOnCheckedStateChangedListener { _, state ->
-            handleToggleDarkMode(state)
+        darkModeSettings.setOnClickListener {
+            darkModeDialog()
         }
 
-        defaultAlarmSettings.setOnClickListener {
-            val listItems = arrayOf("Silent", "Set Custom Alarm", "Default Alarm Sound")
-            val checkedItem = intArrayOf(-1)
-
-            MaterialAlertDialogBuilder(this)
-                .setTitle("Choose Alarm Sound")
-                .setNeutralButton(getString(R.string.cancel)) { dialog, which ->
-                    Log.i(TAG, "canceled")
-                    dialog.dismiss()
-                }
-                .setPositiveButton(getString(R.string.confirm)) { dialog, which ->
-
-                    Log.i(TAG, "accepted chosen: ${listItems[checkedItem[0]]}")
-                    dialog.dismiss()
-                }
-                .setSingleChoiceItems(listItems, checkedItem.get(0)) { dialog, which ->
-                    checkedItem[0] = which
-                    Log.i(TAG, "$which, ${checkedItem[0]}")
-                }.show()
+        alarmSoundSettings.setOnClickListener {
+            alarmSoundDialog()
         }
 
         languageSettings.setOnClickListener {
-
+            languageDialog()
         }
 
         colorSchemeSettings.setOnClickListener {
-
+            colorDialog()
         }
 
-
-
     }
 
-    private fun handleToggleDarkMode(state: Int) {
-        val stateBool = state == MaterialCheckBox.STATE_CHECKED
-        StoreData(this).storeDarkMode(stateBool)
+    private fun colorDialog() {
+        val listItems = arrayOf("System Default", "Red", "Blue", "Green", "Orange")
+        var checkedItem = 0
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Choose Alarm Sound")
+            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
+                dialog.dismiss()
+                Log.i(TAG, "Storing $checkedItem in StoreData")
+                //todo: add implementation
+            }
+            .setSingleChoiceItems(listItems, checkedItem) { _, which ->
+                checkedItem = which
+                Log.i(TAG, "$which, $checkedItem")
+            }.show()
     }
+
+    private fun languageDialog() {
+        val listItems = arrayOf("System Default", "English", "German")
+        var checkedItem = 0
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Choose Alarm Sound")
+            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
+                dialog.dismiss()
+                Log.i(TAG, "Storing $checkedItem in StoreData")
+                //todo: add implementation
+            }
+            .setSingleChoiceItems(listItems, checkedItem) { _, which ->
+                checkedItem = which
+                Log.i(TAG, "$which, $checkedItem")
+            }.show()
+    }
+
+    private fun darkModeDialog() {
+        val listItems = arrayOf("System Default", "Lite", "Dark")
+        var checkedItem = 0
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Choose Alarm Sound")
+            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
+                dialog.dismiss()
+                Log.i(TAG, "Storing $checkedItem in StoreData")
+                StoreData(this).storeDarkMode(checkedItem - 1)
+            }
+            .setSingleChoiceItems(listItems, checkedItem) { _, which ->
+                checkedItem = which
+                Log.i(TAG, "$which, $checkedItem")
+            }.show()
+    }
+
+    private fun alarmSoundDialog() {
+        val listItems = arrayOf("System Default", "Silent", "Custom Alarm")
+        var checkedItem = 0
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Choose Alarm Sound")
+            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
+                dialog.dismiss()
+                Log.i(TAG, "Storing $checkedItem in StoreData")
+                //todo: add implementation
+            }
+            .setSingleChoiceItems(listItems, checkedItem) { _, which ->
+                checkedItem = which
+                Log.i(TAG, "$which, $checkedItem")
+            }.show()
+    }
+
+    private fun initDarkMode() {
+        StoreData(this).storeDarkMode(DARK_MODE_DEFAULT)
+    }
+
+    private fun initLanguage(): String {
+        StoreData(this).storeLanguage(LANGUAGE_DEFAULT)
+        return LANGUAGE_DEFAULT
+    }
+
+    private fun initSound(): String {
+        StoreData(this).storeSound(ALARM_SOUND_DEFAULT, "")
+        return ALARM_SOUND_DEFAULT
+    }
+
+    private fun initIVG(): Boolean {
+        StoreData(this).storeIncreaseVolumeGradually(IVG_DEFAULT)
+        return IVG_DEFAULT
+    }
+
+    private fun initSnooze(): Int {
+        StoreData(this).storeSnoozeTime(SNOOZE_DEFAULT)
+        return SNOOZE_DEFAULT
+    }
+
+    private fun initVibrate(): Boolean {
+        StoreData(this).storeVibrate(VIBRATE_DEFAULT)
+        return VIBRATE_DEFAULT
+    }
+
+    private fun initTBS(): Int {
+        StoreData(this).storeTBS(TBS_DEFAULT)
+        return TBS_DEFAULT
+    }
+
 
     private fun handleToggleVibrate(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED

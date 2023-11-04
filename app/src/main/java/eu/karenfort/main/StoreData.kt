@@ -31,9 +31,28 @@ class StoreData (
     private val soundUriKey = stringPreferencesKey("soundUri")
     private val increaseVolumeGraduallyKey = booleanPreferencesKey("increaseVolumeGradually")
     private val snoozeTimeKey = intPreferencesKey("snoozeTime")
-    private val darkModeKey = booleanPreferencesKey("darkMode")
+    private val darkModeKey = intPreferencesKey("darkMode")
+    private val languageKey = stringPreferencesKey("language")
 
-    fun storeDarkMode(isDarkModeEnabled: Boolean) {
+
+    fun storeLanguage(language: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[languageKey] = language
+            }
+        }
+    }
+
+    suspend fun loadLanguage(): String? {
+        val preferences = context.dataStore.data.first()
+        return preferences[languageKey]
+    }
+
+    // -1: System Default, 0: Off: 1: On
+    fun storeDarkMode(isDarkModeEnabled: Int) {
+        if (isDarkModeEnabled >= 2 || isDarkModeEnabled < -1) {
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             context.dataStore.edit { settings ->
                 settings[darkModeKey] = isDarkModeEnabled
@@ -41,7 +60,8 @@ class StoreData (
         }
     }
 
-    suspend fun loadDarkMode(): Boolean? {
+    // -1: System Default, 0: Off: 1: On
+    suspend fun loadDarkMode(): Int? {
         val preferences = context.dataStore.data.first()
         return preferences[darkModeKey]
     }

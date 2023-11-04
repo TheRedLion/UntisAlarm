@@ -11,13 +11,21 @@ const val ALARM_ID = "alarm_id"
 const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
 const val ALARM_NOTIF_ID = 9998
 const val EARLY_ALARM_NOTIF_ID = 10003
-const val SILENT = "silent"
 const val ALARM_CLOCK_ID = 543
 const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
 const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
 const val NOTIFICATION_ID = "notification_id"
 
+const val SILENT = "silent"
+const val LANGUAGE_SYSTEM_DEFAULT = "default"
 
+const val TBS_DEFAULT = 60
+const val VIBRATE_DEFAULT = true
+const val SNOOZE_DEFAULT = 5
+const val ALARM_SOUND_DEFAULT = SILENT //todo: set actual default
+const val IVG_DEFAULT = false
+const val LANGUAGE_DEFAULT = LANGUAGE_SYSTEM_DEFAULT
+const val DARK_MODE_DEFAULT = -1
 
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
