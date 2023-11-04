@@ -133,51 +133,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        /*
-        updateTBS.setOnClickListener { _ : View? ->
-            //temp
-            //val alarmClock = AlarmClock()
-            //alarmClock.setAlarm(LocalTime.now(), )
-
-            val storeData = StoreData(applicationContext)
-
-            val alarmItem = AlarmItem(845746)
-
-            val scheduler = AndroidAlarmScheduler(this)
-
-            val newTBSStr = setTBS.text.toString()
-
-            setTBS.setText("")
-
-            val newTBS: Int
-            try {
-                newTBS = Integer.parseInt(newTBSStr)
-            } catch (e: NumberFormatException) {
-                Toast.makeText(this, getString(R.string.please_only_enter_integers), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            timeBeforeSchool.text = "$newTBS ${getString(R.string.short_minute)}"
-
-            storeData.storeTBS(newTBS)
-
-            CoroutineScope(Dispatchers.Default).launch {
-                val aaStateNullable: Boolean? = storeData.loadAlarmActive()
-                var aaState = false
-                if (aaStateNullable != null) {
-                    aaState = aaStateNullable
-                }
-                if (aaState) {
-                    alarmItem.let(scheduler::cancel)
-                    alarmItem.let(scheduler::schedule)
-                }
-            }
-
-            setTBS.setText("")
-        }
-
-         */
-
         //create listener for switch
         toggleAlarm.setOnCheckedChangeListener { _, isChecked ->
             val storeData = StoreData(applicationContext)
@@ -216,6 +171,7 @@ class MainActivity : AppCompatActivity() {
             R.id.logout -> {
                 intent = Intent(this@MainActivity, WelcomeActivity::class.java)
                 startActivity(intent)
+                finish()
             }
 
             R.id.about_us -> {

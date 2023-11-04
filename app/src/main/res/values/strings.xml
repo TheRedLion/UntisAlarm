@@ -45,4 +45,11 @@
     <string name="snooze_time">Snooze Time</string>
     <string name="increase_volume_gradually">Increase Volume Gradually</string>
     <string name="default_alarm">Default Alarm</string>
+    <string name="general_settings">General Settings</string>
+    <string name="language">Language</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="color_scheme">Color Scheme</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="currently">Currently</string>
 </resources>
