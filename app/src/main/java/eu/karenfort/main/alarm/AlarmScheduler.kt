@@ -7,14 +7,14 @@ import android.content.Intent
 import android.util.Log
 import eu.karenfort.main.alarmClock.AlarmClock
 
-class AndroidAlarmScheduler(
+class AlarmScheduler(
     private val context: Context
 ) {
     private val TAG = "AlarmScheduler"
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val ALARM_REQUEST_CODE = 73295871
-     fun schedule(alarmItem: AlarmItem) {
-         //todo: work manager
+     fun schedule() {
+         //todo: work manager maybe?
          Log.i(TAG, "scheduled Alarm")
          val intent = Intent(context, AlarmReceiver::class.java)
          val pendingIntent = PendingIntent.getBroadcast(
@@ -27,7 +27,7 @@ class AndroidAlarmScheduler(
 
      }
 
-    fun cancel(alarmItem: AlarmItem) {
+    fun cancel() {
         AlarmClock.cancelAlarm(context)
         alarmManager.cancel(
             PendingIntent.getBroadcast(

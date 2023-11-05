@@ -1,5 +1,6 @@
 package eu.karenfort.main.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,8 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.StoreData
-import eu.karenfort.main.alarm.AlarmItem
-import eu.karenfort.main.alarm.AndroidAlarmScheduler
+import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
@@ -39,6 +39,8 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var snoozeInputField: TextInputEditText
     private lateinit var tbsInputLayout: TextInputLayout
     private lateinit var snoozeInputLayout: TextInputLayout
+    private lateinit var cancellationMessageField: TextInputEditText
+    private lateinit var cancellationMessageLayout: TextInputLayout
     private lateinit var alarmName: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,11 +48,8 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         getLayoutObjectsByID()
-
         disableClicking() //disabling clicks until everything was properly loaded
-
         loadAndDisplayStoredStates()
-
         setListener()
     }
 
@@ -64,11 +63,15 @@ class SettingsActivity : AppCompatActivity() {
         vibrateToggle = findViewById(R.id.vibrateToggle)
         tbsInputField = findViewById(R.id.tbs_input_field)
         snoozeInputField = findViewById(R.id.snooze_input_field)
+        cancellationMessageField = findViewById(R.id.cancelled_message_input_field)
         tbsInputLayout = findViewById(R.id.tbs_input_layout)
         snoozeInputLayout = findViewById(R.id.snooze_input_layout)
+        cancellationMessageLayout = findViewById(R.id.cancelled_message_input_layout)
     }
 
     private fun setListener() {
+        cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
+        cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
         snoozeInputLayout.setEndIconOnClickListener { _: View? -> handleSetSnooze() }
         tbsInputLayout.setEndIconOnClickListener { _: View? -> handleSetTBS() }
         vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
@@ -78,6 +81,11 @@ class SettingsActivity : AppCompatActivity() {
         languageSettings.setOnClickListener { languageDialog() }
         colorSchemeSettings.setOnClickListener { colorDialog() }
     }
+
+    private fun handleCancellationMessageInfo() {
+        startActivity(Intent(this@SettingsActivity, CancelledMessageInfo::class.java))
+    }
+
 
     private fun enableClicking() {
         languageSettings.isClickable = true
@@ -255,8 +263,19 @@ class SettingsActivity : AppCompatActivity() {
         StoreData(this).storeIncreaseVolumeGradually(stateBool)
     }
 
+
+    private fun handleSetCancellationMessageEnd() {
+        val newMessage = cancellationMessageField.text.toString()
+
+        cancellationMessageField.setText("")
+
+        cancellationMessageLayout.hint =
+            "${getString(R.string.cancellation_text)} (${getString(R.string.currently)} \"$newMessage\")"
+
+        StoreData(this).storeCancelledMessage(newMessage)
+    }
+
     private fun handleSetSnooze() {
-        val storeData = StoreData(this)
         val newSnoozeStr = snoozeInputField.text.toString()
 
         snoozeInputField.setText("")
@@ -277,13 +296,11 @@ class SettingsActivity : AppCompatActivity() {
                 getString(R.string.short_minute)
             })"
 
-        storeData.storeTBS(newSnooze)
+        StoreData(this).storeTBS(newSnooze)
     }
 
     private fun handleSetTBS() {
         val storeData = StoreData(this)
-        val alarmItem = AlarmItem(845746)
-        val scheduler = AndroidAlarmScheduler(this)
         val newTBSStr = tbsInputField.text.toString()
 
         tbsInputField.setText("")
@@ -310,8 +327,8 @@ class SettingsActivity : AppCompatActivity() {
                 aaState = aaStateNullable
             }
             if (aaState) {
-                alarmItem.let(scheduler::cancel)
-                alarmItem.let(scheduler::schedule)
+                AlarmScheduler(applicationContext).cancel()
+                AlarmScheduler(applicationContext).schedule()
             }
         }
     }

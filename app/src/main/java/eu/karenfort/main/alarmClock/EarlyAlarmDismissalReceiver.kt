@@ -15,10 +15,10 @@ class EarlyAlarmDismissalReceiver : BroadcastReceiver() {
     private val TAG = "EarlyAlarmDismissalReceiver"
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "in onReceive")
-        triggerEarlyDismissalNotification(context, ALARM_CLOCK_ID)
+        triggerEarlyDismissalNotification(context)
     }
 
-    private fun triggerEarlyDismissalNotification(context: Context, alarmId: Int) {
+    private fun triggerEarlyDismissalNotification(context: Context) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (isOreoPlus()) {
             NotificationChannel(
@@ -32,7 +32,7 @@ class EarlyAlarmDismissalReceiver : BroadcastReceiver() {
             }
         }
 
-        val dismissIntent = context.getDismissAlarmPendingIntent(alarmId, EARLY_ALARM_NOTIF_ID)
+        val dismissIntent = context.getDismissAlarmPendingIntent()
         val contentIntent = context.getOpenAlarmTabIntent()
         val notification = NotificationCompat.Builder(context)
             .setContentTitle(context.getString(R.string.upcoming_alarm))

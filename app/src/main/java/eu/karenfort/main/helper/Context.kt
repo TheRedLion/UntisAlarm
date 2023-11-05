@@ -10,6 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -32,8 +34,37 @@ import eu.karenfort.main.alarmClock.EarlyAlarmDismissalReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
 import eu.karenfort.main.alarmClock.SnoozeAlarmReceiver
 import kotlinx.coroutines.runBlocking
+import java.time.DayOfWeek
+import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
+fun Context.getNextDay(): LocalDate {
+    //Log.i(TAG, "called getNextDay()")
+    var nextDay = LocalDate.now()
+    nextDay = nextDay.plusDays(1)
+
+    // Check if the next day is a weekend (Saturday or Sunday)
+    while (nextDay.dayOfWeek == DayOfWeek.SATURDAY || nextDay.dayOfWeek == DayOfWeek.SUNDAY) {
+        nextDay = nextDay.plusDays(1)
+    }
+    return nextDay
+}
+fun Context.isOnline(): Boolean {
+    val connectivityManager =
+        this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val capabilities =
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+    if (capabilities != null) {
+        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            return true
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            return true
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+            return true
+        }
+    }
+    return false
+}
 fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
 
 fun Context.areNotificationsEnabled(): Boolean {
@@ -185,7 +216,7 @@ fun Context.getFormattedTime(passedSeconds: Int, showSeconds: Boolean, makeAmPmS
     val seconds = passedSeconds % 60
 
     return if (use24HourFormat) {
-        val formattedTime = formatTime(showSeconds, use24HourFormat, hours, minutes, seconds)
+        val formattedTime = formatTime(showSeconds, true, hours, minutes, seconds)
         SpannableString(formattedTime)
     } else {
         val formattedTime = formatTo12HourFormat(showSeconds, hours, minutes, seconds)
@@ -229,9 +260,9 @@ fun Context.getEarlyAlarmDismissalIntent(): PendingIntent {
     return PendingIntent.getBroadcast(this, EARLY_ALARM_DISMISSAL_INTENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }
 
-fun Context.getDismissAlarmPendingIntent(alarmId: Int): PendingIntent {
+fun Context.getDismissAlarmPendingIntent(): PendingIntent {
     val intent = Intent(this, DismissAlarmReceiver::class.java)
-    return PendingIntent.getBroadcast(this, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    return PendingIntent.getBroadcast(this, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 }
 
 fun Context.cancelAlarmClock() {

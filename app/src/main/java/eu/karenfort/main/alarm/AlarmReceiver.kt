@@ -5,33 +5,30 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.StrictMode
 import android.util.Log
-import androidx.annotation.RequiresApi
-import eu.karenfort.main.alarmClock.AlarmClock
-import eu.karenfort.main.Misc
 import eu.karenfort.main.StoreData
+import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.api.UntisApiCalls
-import eu.karenfort.main.helper.showAlarmNotification
+import eu.karenfort.main.helper.ALARM_REQUEST_CODE
+import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import eu.karenfort.main.helper.getNextDay
+import eu.karenfort.main.helper.isOnline
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
 
 
 class AlarmReceiver: BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
-    private var policy: StrictMode.ThreadPolicy =  StrictMode.ThreadPolicy.Builder().permitAll().build()
-    private val alarmRequestCode = 73295871
 
-    @RequiresApi(Build.VERSION_CODES.S)
-    override fun onReceive(context: Context, intent: Intent?) {
-        Log.i(TAG ,"called onReceive()")
+    override fun onReceive(context: Context, intent: Intent) {
+        Log.i(TAG ,"called onReceive() with intent:$intent")
 
-        if (!Misc.isOnline(context)) {
+        if (!context.isOnline()) {
             Log.i(TAG, "Phone has no internet connectivity")
+            //todo: maybe send notif that alarm might not be set properly?
             return
         }
-        Log.i(TAG, "phone has internet")
 
         val storeData = StoreData(context)
         var id: Int?
@@ -39,8 +36,8 @@ class AlarmReceiver: BroadcastReceiver() {
         var tbs: Int?
         val alarmClockArray: Array<Int?>
 
-        //TODO("move alarm receiver from main thread")
         runBlocking {
+            //todo: move alarm receiver from main thread
             id = storeData.loadID()
             loginData = storeData.loadLoginData()
             tbs = storeData.loadTBS()
@@ -49,25 +46,30 @@ class AlarmReceiver: BroadcastReceiver() {
         }
         val alarmClockHour = alarmClockArray[0]
         val alarmClockMinute = alarmClockArray[1]
-        Log.i(TAG, "loaded data from StoreData")
 
-        if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null || tbs == null) {
-            //TODO: warn user that he got logged out
+
+        if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
+            //todo: warn user that he got logged out
+            setNew("error", null, context)
             return
         }
 
-        StrictMode.setThreadPolicy(policy)
+        if (tbs == null) {
+            //should never happen
+            tbs = 60 //just settings default value, should fix itself next time user opens app
+        }
+
+        StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
         val untisApiCalls = UntisApiCalls(
             loginData[0]!!,
             loginData[1]!!,
             loginData[2]!!,
             loginData[3]!!
         )
-        val schoolStart = untisApiCalls.getSchoolStartForDay(
-            id!!,
-        )
 
-        Log.i(TAG, "Getting school start for day: ${Misc.getNextDay()}. Is $schoolStart")
+        val schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+
+        Log.i(TAG, "Getting school start for day: ${context.getNextDay()}. Is $schoolStart")
         //debug: var schoolStart = LocalTime.of(7, 0)
 
         if (schoolStart == null) {
@@ -75,37 +77,40 @@ class AlarmReceiver: BroadcastReceiver() {
             setNew("noAlarmToday", null, context)
             return
         }
-        //there is school that day
 
-        //calculate alarmclock time
         val alarmClockTime = schoolStart.minusMinutes(tbs!!.toLong())
 
-        if (alarmClockTime.hour == alarmClockHour && alarmClockTime.minute == alarmClockMinute) {
-            //alarm clock already set properly
-            Log.i(TAG, "alarm clock set properly")
+        if (isAlarmClockSetProperly(alarmClockTime, alarmClockHour, alarmClockMinute)) {
+            //Log.i(TAG, "Alarm clock set properly")
             setNew("normal", alarmClockTime, context)
-        } else {
-            if (alarmClockHour == null || alarmClockMinute == null) {
-                //no alarm clock set, setting a new one
-                Log.i(TAG, "no alarm clock set, setting a new one")
-
-                AlarmClock.setAlarm(alarmClockTime, context)
-                //context.showAlarmNotification()
-
-
-                setNew("normal", schoolStart, context)
-            } else {
-                //alarm set improperly
-                Log.i(TAG, "removing old and setting new alarm")
-
-                AlarmClock.cancelAlarm(context)
-                AlarmClock.setAlarm(alarmClockTime, context)
-                //context.showAlarmNotification()
-
-                setNew("normal", schoolStart, context)
-            }
+            return
         }
+
+        if (isAnAlarmClockSet(alarmClockHour, alarmClockMinute)) {
+            //Log.i(TAG, "No alarm clock set, setting a new one")
+
+            AlarmClock.setAlarm(alarmClockTime, context)
+            //context.showAlarmNotification() //todo: decide if we want that (maybe as setting)
+            setNew("normal", schoolStart, context)
+            return
+        }
+
+        //Log.i(TAG, "Removing old and Setting new alarm")
+        AlarmClock.cancelAlarm(context)
+        AlarmClock.setAlarm(alarmClockTime, context)
+        //context.showAlarmNotification()
+
+        setNew("normal", schoolStart, context)
     }
+
+    private fun isAnAlarmClockSet(alarmClockHour: Int?, alarmClockMinute: Int?) =
+        alarmClockHour == null || alarmClockMinute == null
+
+    private fun isAlarmClockSetProperly(
+        alarmClockTime: LocalTime,
+        alarmClockHour: Int?,
+        alarmClockMinute: Int?
+    ) = alarmClockTime.hour == alarmClockHour && alarmClockTime.minute == alarmClockMinute
 
     private fun setNew(reason: String, schoolStart: LocalTime?, context: Context) {
         when (reason) {
@@ -114,7 +119,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 val intent = Intent(context, AlarmReceiver::class.java)
                 val pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    alarmRequestCode,
+                    ALARM_REQUEST_CODE,
                     intent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
@@ -133,7 +138,7 @@ class AlarmReceiver: BroadcastReceiver() {
                     val intent = Intent(context, AlarmReceiver::class.java)
                     val pendingIntent = PendingIntent.getBroadcast(
                         context,
-                        alarmRequestCode,
+                        ALARM_REQUEST_CODE,
                         intent,
                         PendingIntent.FLAG_IMMUTABLE
                     )
@@ -159,7 +164,7 @@ class AlarmReceiver: BroadcastReceiver() {
             }
 
             "error" -> {
-
+                Log.i(TAG, "uhhhh") //todo: error
             }
         }
     }

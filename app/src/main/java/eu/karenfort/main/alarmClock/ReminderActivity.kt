@@ -67,17 +67,7 @@ class ReminderActivity : AppCompatActivity() {
         //updateTextColors(binding.root)
         //updateStatusbarColor(getProperBackgroundColor())
 
-        /*
-        val id = intent.getIntExtra(ALARM_ID, -1)
-        isAlarmReminder = id != -1
-        if (id != -1) {
-            alarm = dbHelper.getAlarmWithId(id) ?: return
-        }
-         */
-
-        val label = getString(R.string.app_name)
-
-        binding.reminderTitle.text = label
+        binding.reminderTitle.text = getString(R.string.app_name)
         binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(), false, false) else getString(
             R.string.time_expired
         )

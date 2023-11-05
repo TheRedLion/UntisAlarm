@@ -18,8 +18,7 @@ import com.carlkarenfort.test.R
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.materialswitch.MaterialSwitch
 import eu.karenfort.main.StoreData
-import eu.karenfort.main.alarm.AlarmItem
-import eu.karenfort.main.alarm.AndroidAlarmScheduler
+import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.areNotificationsEnabled
 import eu.karenfort.main.helper.isTiramisuPlus
@@ -28,14 +27,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
     private val TAG = "MainActivity"
-
     private lateinit var alarmPreview: TextView
     private lateinit var toggleAlarm: MaterialSwitch
     private lateinit var editAlarmToday: ImageView
     private lateinit var tbsPreview: TextView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,22 +39,23 @@ class MainActivity : AppCompatActivity() {
         DynamicColors.applyToActivitiesIfAvailable(application) //todo:check if necessary
 
         getLayoutObjectsByID()
-
         disableClicking() //disabling clicks until everything was properly loaded
-
         createNotificationChannel()
-
         requestNotificationPermission()
-
         sendToWelcomeActivity()
-
         CoroutineScope(Dispatchers.IO).launch {
             loadAndDisplayTBS()
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
         }
-
         setListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        CoroutineScope(Dispatchers.IO).launch {
+            loadAndDisplayAlarmClockPreview()
+        }
     }
 
     private fun getLayoutObjectsByID() {
@@ -76,15 +73,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
+        val notificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(NotificationChannel(
             "main_channel",
             "UntisAlarm Notifications",
             NotificationManager.IMPORTANCE_DEFAULT
-        )
-
-        val notificationManager =
-            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+        ))
     }
 
     private fun disableClicking() {
@@ -93,22 +88,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleToggleAlarm(isChecked: Boolean) {
-        val storeData = StoreData(applicationContext)
-
-        val alarmItem = AlarmItem(845746)
-
-        val scheduler = AndroidAlarmScheduler(this)
-
-        storeData.storeAlarmActive(isChecked)
+        val scheduler = AlarmScheduler(this)
+        StoreData(applicationContext).storeAlarmActive(isChecked)
 
         Log.i(TAG, "entered listener")
         if (isChecked) {
             Log.i(TAG, "should schedule")
-            alarmItem.let(scheduler::schedule)
+            AlarmScheduler(this).schedule()
         } else {
             alarmPreview.text = getString(R.string.no_alarm_tomorrow)
             Log.i(TAG, "cancelling")
-            alarmItem.let(scheduler::cancel)
+            AlarmScheduler(this).schedule()
         }
     }
 
@@ -195,8 +185,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
-                intent = Intent(this@MainActivity, SettingsActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             }
 
             R.id.logout -> {

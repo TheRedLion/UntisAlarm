@@ -10,6 +10,41 @@
         style="@style/settings_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/webuntis_settings" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/settings_text_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cancelled_message_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/cancellation_text"
+            app:startIconDrawable="@drawable/ic_info_icon"
+            app:endIconDrawable="@drawable/ic_confirm_in_textfield"
+            app:endIconMode="custom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cancelled_message_input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        style="@style/settings_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/alarm_settings" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

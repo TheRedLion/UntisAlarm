@@ -33,7 +33,20 @@ class StoreData (
     private val snoozeTimeKey = intPreferencesKey("snoozeTime")
     private val darkModeKey = intPreferencesKey("darkMode")
     private val languageKey = stringPreferencesKey("language")
+    private val cancelledMessageKey = stringPreferencesKey("cancelledMessage")
 
+    fun storeCancelledMessage(cancellationMessage: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[cancelledMessageKey] = cancellationMessage
+            }
+        }
+    }
+
+    suspend fun loadCancelledMessage(): String? {
+        val preferences = context.dataStore.data.first()
+        return preferences[cancelledMessageKey]
+    }
 
     fun storeLanguage(language: String) {
         CoroutineScope(Dispatchers.IO).launch {

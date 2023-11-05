@@ -9,6 +9,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
 
+const val ALARM_REQUEST_CODE = 73295871
 const val ALARM_ID = "alarm_id"
 const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
 const val ALARM_NOTIF_ID = 9998

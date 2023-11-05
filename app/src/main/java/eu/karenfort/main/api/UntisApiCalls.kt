@@ -15,9 +15,7 @@ class UntisApiCalls constructor(
     server: String,
     schoolName: String
 ){
-
     private val TAG = "UntisApiCalls"
-
     private val session: Session
 
     init {
@@ -33,11 +31,8 @@ class UntisApiCalls constructor(
         }
     }
 
-    //takes login data and name of user to determine the users webuntis ID
-    //returns id of student or null if no student was found
     fun getID(): Int? {
         var id: Int? = null
-
         //has to stop main thread since it is called during welcome activity
         runBlocking {
             try {
@@ -52,12 +47,11 @@ class UntisApiCalls constructor(
         return id
     }
 
-    fun getSchoolStartForDay(
-        id: Int
-    ): LocalTime? {
+    fun getSchoolStartForDay(id: Int): LocalTime? {
         try {
             //val today = LocalDate.now()
-            val today = LocalDate.of(2023, 11, 6)
+            val today = LocalDate.of(2023, 11, 6) //todo: remove debugging string
+
             val timetable: Timetable = session.getTimetableFromPersonId(
                 today,
                 today,
@@ -69,13 +63,11 @@ class UntisApiCalls constructor(
                 return null
             }
 
-            Log.i(TAG, timetable.toString())
-
             timetable.sortByDate()
             timetable.sortByStartTime()
-            Log.i(TAG, timetable.toString())
+
             for (i in timetable){
-                if (!i.teachers.isEmpty() && i.teachers != null) {
+                if (lessonIsCancelled(i)) {
                     val firstLessonStartTime: LocalTime = i.startTime
                     session.logout()
                     return firstLessonStartTime
@@ -87,5 +79,13 @@ class UntisApiCalls constructor(
             Log.i(TAG,e.toString())
             return null
         }
+    }
+
+    private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
+        Log.i(TAG, lesson.toString())
+        if (lesson.teachers.isEmpty() && lesson.teachers != null) {
+            return true
+        }
+        return false
     }
 }
