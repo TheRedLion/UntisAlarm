@@ -49,8 +49,8 @@ class UntisApiCalls constructor(
 
     fun getSchoolStartForDay(id: Int): LocalTime? {
         try {
-            //val today = LocalDate.now()
-            val today = LocalDate.of(2023, 11, 6) //todo: remove debugging string
+            val today = LocalDate.now()
+            //val today = LocalDate.of(2023, 11, 6) //tod: remove debugging string
 
             val timetable: Timetable = session.getTimetableFromPersonId(
                 today,

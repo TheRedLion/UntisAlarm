@@ -172,10 +172,7 @@ class WelcomeActivity : AppCompatActivity() {
                     //check if there are too many results
                     if (schools!![0][0] == "too many results") {
                         Log.i(TAG, "too many results")
-                        runOnUiThread {
-                            Log.i(TAG, "in main coroutine")
-                            autoCompleteTextView.hint = "Too many results"
-                        }
+                        autoCompleteTextView.hint = "Too many results"
                         return@launch
                     }
                     //there are not
@@ -183,14 +180,12 @@ class WelcomeActivity : AppCompatActivity() {
                         schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
 
                     Log.i(TAG, schoolNames.toString())
-                    runOnUiThread {
-                        val arrayAdapter =
-                            ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
-                        // get reference to the autocomplete text view
-                        val autocompleteTV = autoCompleteTextView
-                        // set adapter to the autocomplete tv on the main thread
-                        autocompleteTV.setAdapter(arrayAdapter)
-                    }
+                    val arrayAdapter =
+                        ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
+                    // get reference to the autocomplete text view
+                    val autocompleteTV = autoCompleteTextView
+                    // set adapter to the autocomplete tv on the main thread
+                    autocompleteTV.setAdapter(arrayAdapter)
                 }
             }
         })

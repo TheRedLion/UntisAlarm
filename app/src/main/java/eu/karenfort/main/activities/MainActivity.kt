@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.datastore.preferences.core.intPreferencesKey
 import com.carlkarenfort.test.R
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.materialswitch.MaterialSwitch
@@ -26,12 +28,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "MainActivity"
     private lateinit var alarmPreview: TextView
     private lateinit var toggleAlarm: MaterialSwitch
     private lateinit var editAlarmToday: ImageView
     private lateinit var tbsPreview: TextView
+    private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
+    private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +54,20 @@ class MainActivity : AppCompatActivity() {
         }
         setListener()
     }
+
+    @SuppressLint("SetTextI18n")
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
+        if (string == null) return //dont know when this would happen
+        if (!isAlarmClockTime(string)) return
+        CoroutineScope(Dispatchers.IO).launch {
+            val alarmClock: Array<Int?> = StoreData(applicationContext).loadAlarmClock()
+            alarmPreview.text = "${alarmClock[0]}:${alarmClock[1]}"
+        }
+    }
+
+    private fun isAlarmClockTime(string: String) =
+        string.equals(alarmClockHourKey) || string.equals(alarmClockMinuteKey)
+
 
     override fun onResume() {
         super.onResume()
@@ -87,8 +105,8 @@ class MainActivity : AppCompatActivity() {
         editAlarmToday.isClickable = false
     }
 
+    @SuppressLint("SetTextI18n")
     private fun handleToggleAlarm(isChecked: Boolean) {
-        val scheduler = AlarmScheduler(this)
         StoreData(applicationContext).storeAlarmActive(isChecked)
 
         Log.i(TAG, "entered listener")
@@ -96,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "should schedule")
             AlarmScheduler(this).schedule()
         } else {
-            alarmPreview.text = getString(R.string.no_alarm_tomorrow)
+            alarmPreview.text = "00:00"
             Log.i(TAG, "cancelling")
             AlarmScheduler(this).schedule()
         }
@@ -120,10 +138,8 @@ class MainActivity : AppCompatActivity() {
     private suspend fun loadAndSetAlarmActive() {
         val storeData = StoreData(applicationContext)
         val aaState: Boolean = storeData.loadAlarmActive() ?: false
-        runOnUiThread {
-            toggleAlarm.isChecked = aaState
-            toggleAlarm.isClickable = true
-        }
+        toggleAlarm.isChecked = aaState
+        toggleAlarm.isClickable = true
     }
 
     @SuppressLint("SetTextI18n")
@@ -131,10 +147,8 @@ class MainActivity : AppCompatActivity() {
         val storeData = StoreData(applicationContext)
         val alarmClock: Array<Int?> = storeData.loadAlarmClock()
         val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClock)
-        runOnUiThread {
-            alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
-            editAlarmToday.isClickable = true
-        }
+        alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
+        editAlarmToday.isClickable = true
     }
 
     @SuppressLint("SetTextI18n")
@@ -142,14 +156,10 @@ class MainActivity : AppCompatActivity() {
         val storeData = StoreData(applicationContext)
         val tbs: Int? = storeData.loadTBS()
         if (tbs == null) {
-            runOnUiThread {
-                tbsPreview.text = getString(R.string.error_loading_tbs)
-            }
+            tbsPreview.text = getString(R.string.error_loading_tbs)
             storeData.storeTBS(TBS_DEFAULT)
         } else {
-            runOnUiThread {
-                tbsPreview.text = "${getString(R.string.the_alarm_currently_goes_off)}$tbs${getString(R.string.minutes_n_before_your_first_lesson)}"
-            } //todo: check if looks right
+            tbsPreview.text = "${getString(R.string.the_alarm_currently_goes_off)}$tbs${getString(R.string.minutes_n_before_your_first_lesson)}"//todo: check if looks right
         }
     }
 
@@ -185,11 +195,13 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
+                Log.i(TAG, "should go to welcomeActivity")
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             }
 
             R.id.logout -> {
-                sendToWelcomeActivity()
+                startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
+                deleteLoginData()
             }
 
             R.id.about_us -> {
@@ -199,6 +211,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun deleteLoginData() {
+        val storeData = StoreData(this)
+        storeData.storeID(0)
+        storeData.storeLoginData("", "", "", "")
     }
 
     private fun sendToWelcomeActivity() {

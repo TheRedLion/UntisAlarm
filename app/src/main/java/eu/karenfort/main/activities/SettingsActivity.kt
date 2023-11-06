@@ -121,18 +121,16 @@ class SettingsActivity : AppCompatActivity() {
             if (storeData.loadLanguage() == null) initLanguage()
             if (storeData.loadDarkMode() == null) initDarkMode()
 
-            runOnUiThread {
-                tbsInputLayout.hint =
-                    "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $tbs${
-                        getString(R.string.short_minute)
-                    })"
-                vibrateToggle.isChecked = vibrate
-                snoozeInputLayout.hint =
-                    "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $snooze${
-                        getString(R.string.short_minute)
-                    })"
-                ivgToggle.isChecked = ivg
-            }
+            tbsInputLayout.hint =
+                "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $tbs${
+                    getString(R.string.short_minute)
+                })"
+            vibrateToggle.isChecked = vibrate
+            snoozeInputLayout.hint =
+                "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $snooze${
+                    getString(R.string.short_minute)
+                })"
+            ivgToggle.isChecked = ivg
 
             enableClicking()
         }

@@ -13,6 +13,7 @@ class AlarmScheduler(
     private val TAG = "AlarmScheduler"
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val ALARM_REQUEST_CODE = 73295871
+
      fun schedule() {
          //todo: work manager maybe?
          Log.i(TAG, "scheduled Alarm")
@@ -24,7 +25,6 @@ class AlarmScheduler(
              PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
          )
          alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
-
      }
 
     fun cancel() {

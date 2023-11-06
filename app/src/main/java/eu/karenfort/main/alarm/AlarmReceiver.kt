@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
 import android.util.Log
+import android.widget.TextView
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.api.UntisApiCalls
