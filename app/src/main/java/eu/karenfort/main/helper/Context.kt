@@ -38,7 +38,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
-fun Context.getNextDay(): LocalDate {
+fun getNextDay(): LocalDate {
     //Log.i(TAG, "called getNextDay()")
     var nextDay = LocalDate.now()
     nextDay = nextDay.plusDays(1)

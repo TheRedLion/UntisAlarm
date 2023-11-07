@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -16,17 +17,23 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.fragment.app.FragmentActivity
 import com.carlkarenfort.test.R
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
+import com.google.android.material.timepicker.TimeFormat
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmScheduler
+import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.areNotificationsEnabled
 import eu.karenfort.main.helper.isTiramisuPlus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "MainActivity"
@@ -86,7 +93,44 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setListener() {
         toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
         editAlarmToday.setOnClickListener {
-            //todo: implement action
+            val isSystem24Hour = is24HourFormat(this)
+            val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+            val time = alarmPreview.text.split(":")
+            var hour: Int
+            var minute: Int
+            try {
+                hour = time[0].toInt()
+                minute = time[1].toInt()
+            } catch (e: NumberFormatException) {
+                hour = 0
+                minute = 0
+            }
+            val picker =
+            MaterialTimePicker.Builder()
+                    .setTimeFormat(clockFormat)
+                    .setHour(hour)
+                    .setMinute(minute)
+                    .setTitleText("Edit Alarm Time")
+                    .setInputMode(INPUT_MODE_CLOCK)
+                    .build()
+
+            picker.show(supportFragmentManager, TAG)
+
+            picker.addOnPositiveButtonClickListener {
+                AlarmClock.cancelAlarm(this)
+                AlarmClock.setAlarm(LocalTime.of(picker.hour, picker.minute), this)
+                StoreData(this).storeAlarmClock(picker.hour, picker.minute, 1)
+                picker.dismiss()
+            }
+            picker.addOnNegativeButtonClickListener {
+                picker.dismiss()
+            }
+            picker.addOnCancelListener {
+                picker.dismiss()
+            }
+            picker.addOnDismissListener {
+                picker.dismiss()
+            }
         }
     }
 
@@ -138,8 +182,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private suspend fun loadAndSetAlarmActive() {
         val storeData = StoreData(applicationContext)
         val aaState: Boolean = storeData.loadAlarmActive() ?: false
-        toggleAlarm.isChecked = aaState
-        toggleAlarm.isClickable = true
+        runOnUiThread {
+            toggleAlarm.isChecked = aaState
+            toggleAlarm.isClickable = true
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -147,8 +193,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val storeData = StoreData(applicationContext)
         val alarmClock: Array<Int?> = storeData.loadAlarmClock()
         val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClock)
-        alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
-        editAlarmToday.isClickable = true
+        runOnUiThread {
+            alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
+            editAlarmToday.isClickable = true
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -156,10 +204,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val storeData = StoreData(applicationContext)
         val tbs: Int? = storeData.loadTBS()
         if (tbs == null) {
-            tbsPreview.text = getString(R.string.error_loading_tbs)
+            runOnUiThread {
+                tbsPreview.text = getString(R.string.error_loading_tbs)
+            }
             storeData.storeTBS(TBS_DEFAULT)
         } else {
-            tbsPreview.text = "${getString(R.string.the_alarm_currently_goes_off)}$tbs${getString(R.string.minutes_n_before_your_first_lesson)}"//todo: check if looks right
+            runOnUiThread {
+                tbsPreview.text = "${getString(R.string.the_alarm_currently_goes_off)}$tbs${getString(R.string.minutes_n_before_your_first_lesson)}"//todo: check if looks right
+            }
         }
     }
 

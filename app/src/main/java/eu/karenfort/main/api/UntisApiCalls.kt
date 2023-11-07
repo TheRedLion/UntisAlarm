@@ -1,6 +1,7 @@
 package eu.karenfort.main.api
 
 import android.util.Log
+import eu.karenfort.main.helper.getNextDay
 import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.responseObjects.Timetable
@@ -53,8 +54,8 @@ class UntisApiCalls constructor(
             //val today = LocalDate.of(2023, 11, 6) //tod: remove debugging string
 
             val timetable: Timetable = session.getTimetableFromPersonId(
-                today,
-                today,
+                getNextDay(),
+                getNextDay(),
                 id
             )
 
@@ -65,9 +66,9 @@ class UntisApiCalls constructor(
 
             timetable.sortByDate()
             timetable.sortByStartTime()
-
+            Log.i(TAG, timetable.toString())
             for (i in timetable){
-                if (lessonIsCancelled(i)) {
+                if (!lessonIsCancelled(i)) {
                     val firstLessonStartTime: LocalTime = i.startTime
                     session.logout()
                     return firstLessonStartTime
@@ -83,9 +84,7 @@ class UntisApiCalls constructor(
 
     private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
         Log.i(TAG, lesson.toString())
-        if (lesson.teachers.isEmpty() && lesson.teachers != null) {
-            return true
-        }
+        if (lesson.teachers.isEmpty() && lesson.teachers != null) return true
         return false
     }
 }

@@ -26,6 +26,7 @@ class StoreData (
     private val alarmActiveKey = booleanPreferencesKey("alarm-active")
     private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
     private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
+    private val alarmClockEditedKey = intPreferencesKey("alarmClockEdited")
     private val vibrateKey = booleanPreferencesKey("vibrate")
     private val soundTitleKey = stringPreferencesKey("soundTitle")
     private val soundUriKey = stringPreferencesKey("soundUri")
@@ -137,20 +138,6 @@ class StoreData (
         return preferences[idKey]
     }
 
-    suspend fun loadAlarmClock(): Array<Int?> {
-        val preferences = context.dataStore.data.first()
-
-        //for explanation look ar storeAlarmClock()
-        if (preferences[alarmClockHourKey] == 27 || preferences[alarmClockMinuteKey] == 69) {
-            return arrayOf(null, null)
-        }
-
-        return arrayOf(
-            preferences[alarmClockHourKey],
-            preferences[alarmClockMinuteKey]
-        )
-    }
-
     suspend fun loadLoginData(): Array<String?> {
         val preferences = context.dataStore.data.first()
         return arrayOf(
@@ -171,7 +158,25 @@ class StoreData (
         return preferences[alarmActiveKey]
     }
 
+
+    suspend fun loadAlarmClock(): Array<Int?> {
+        val preferences = context.dataStore.data.first()
+
+        //for explanation look ar storeAlarmClock()
+        if (preferences[alarmClockHourKey] == 27 || preferences[alarmClockMinuteKey] == 69) {
+            return arrayOf(null, null)
+        }
+
+        return arrayOf(
+            preferences[alarmClockHourKey],
+            preferences[alarmClockMinuteKey],
+            preferences[alarmClockEditedKey]
+        )
+    }
     fun storeAlarmClock(hour: Int?, minute: Int?) {
+        storeAlarmClock(hour, minute, 0)
+    }
+    fun storeAlarmClock(hour: Int?, minute: Int?, edited: Int) {
         if (hour != null) {
             if (hour < 0 || hour > 23) {
                 throw Exception("Hour must be 0..23")
@@ -192,6 +197,7 @@ class StoreData (
             context.dataStore.edit { settings ->
                 settings[alarmClockHourKey] = storeHour
                 settings[alarmClockMinuteKey] = storeMinute
+                settings[alarmClockEditedKey] = edited
             }
         }
     }

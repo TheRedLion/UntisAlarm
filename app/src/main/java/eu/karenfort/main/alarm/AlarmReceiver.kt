@@ -25,6 +25,12 @@ class AlarmReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG ,"called onReceive() with intent:$intent")
 
+        /*
+        if (!intent.equals("Intent { flg=0x10 cmp=com.carlkarenfort.test/eu.karenfort.main.alarm.AlarmReceiver }") && !intent.equals(Intent.ACTION_BOOT_COMPLETED)) {
+            Log.i(TAG, "intent $intent is not allowed")
+            return
+        }*/
+
         if (!context.isOnline()) {
             Log.i(TAG, "Phone has no internet connectivity")
             //todo: maybe send notif that alarm might not be set properly?
@@ -38,7 +44,7 @@ class AlarmReceiver: BroadcastReceiver() {
         val alarmClockArray: Array<Int?>
 
         runBlocking {
-            //todo: move alarm receiver from main thread
+            //todo: maybe need to move alarm receiver from main thread
             id = storeData.loadID()
             loginData = storeData.loadLoginData()
             tbs = storeData.loadTBS()
@@ -47,7 +53,6 @@ class AlarmReceiver: BroadcastReceiver() {
         }
         val alarmClockHour = alarmClockArray[0]
         val alarmClockMinute = alarmClockArray[1]
-
 
         if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
             //todo: warn user that he got logged out
@@ -70,7 +75,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
         val schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
-        Log.i(TAG, "Getting school start for day: ${context.getNextDay()}. Is $schoolStart")
+        Log.i(TAG, "Getting school start for day: ${getNextDay()}. Is $schoolStart")
         //debug: var schoolStart = LocalTime.of(7, 0)
 
         if (schoolStart == null) {
@@ -81,6 +86,7 @@ class AlarmReceiver: BroadcastReceiver() {
 
         val alarmClockTime = schoolStart.minusMinutes(tbs!!.toLong())
 
+        //todo: test for edited but only if day is right
         if (isAlarmClockSetProperly(alarmClockTime, alarmClockHour, alarmClockMinute)) {
             //Log.i(TAG, "Alarm clock set properly")
             setNew("normal", alarmClockTime, context)
@@ -96,7 +102,6 @@ class AlarmReceiver: BroadcastReceiver() {
             return
         }
 
-        //Log.i(TAG, "Removing old and Setting new alarm")
         AlarmClock.cancelAlarm(context)
         AlarmClock.setAlarm(alarmClockTime, context)
         //context.showAlarmNotification()

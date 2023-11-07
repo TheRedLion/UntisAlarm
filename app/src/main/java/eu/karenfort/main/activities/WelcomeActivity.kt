@@ -172,7 +172,9 @@ class WelcomeActivity : AppCompatActivity() {
                     //check if there are too many results
                     if (schools!![0][0] == "too many results") {
                         Log.i(TAG, "too many results")
-                        autoCompleteTextView.hint = "Too many results"
+                        runOnUiThread {
+                            autoCompleteTextView.hint = "Too many results"
+                        }
                         return@launch
                     }
                     //there are not
@@ -182,10 +184,10 @@ class WelcomeActivity : AppCompatActivity() {
                     Log.i(TAG, schoolNames.toString())
                     val arrayAdapter =
                         ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
-                    // get reference to the autocomplete text view
                     val autocompleteTV = autoCompleteTextView
-                    // set adapter to the autocomplete tv on the main thread
-                    autocompleteTV.setAdapter(arrayAdapter)
+                    runOnUiThread {
+                        autocompleteTV.setAdapter(arrayAdapter)
+                    }
                 }
             }
         })
