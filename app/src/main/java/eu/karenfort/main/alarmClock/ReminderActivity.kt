@@ -192,6 +192,7 @@ class ReminderActivity : AppCompatActivity() {
 
         if (soundUri != SILENT) {
             try {
+                Log.i("ReminderActivity", "SoundUri: $soundUri")
                 mediaPlayer = MediaPlayer()
                 mediaPlayer!!.setAudioAttributes(AudioAttributes.Builder()
                     .setLegacyStreamType(AudioManager.STREAM_ALARM)

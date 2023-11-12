@@ -11,6 +11,7 @@ import java.time.LocalTime
 import java.util.Calendar
 
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
+import eu.karenfort.main.helper.areNotificationsEnabled
 
 
 class AlarmClock {
@@ -26,14 +27,16 @@ class AlarmClock {
             val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+            if (!context.areNotificationsEnabled()) {
                 Log.i(TAG, "this is bad")
             }
 
+            //todo: debuging stuff in here
+            val schoolStart1 = LocalTime.now().plusMinutes(1)
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR_OF_DAY, schoolStart.hour) //should be schoolstart.hour and minute //tod: remove debug code
-                set(Calendar.MINUTE, schoolStart.minute)
+                set(Calendar.HOUR_OF_DAY, schoolStart1.hour) //should be schoolstart.hour and minute //tod: remove debug code
+                set(Calendar.MINUTE, schoolStart1.minute)
                 set(Calendar.SECOND, 0)
             }
 
@@ -62,7 +65,7 @@ class AlarmClock {
             val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+            if (!context.areNotificationsEnabled()) {
                 Log.i(TAG, "this is bad")
             }
 

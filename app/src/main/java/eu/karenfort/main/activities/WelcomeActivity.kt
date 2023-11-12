@@ -165,6 +165,7 @@ class WelcomeActivity : AppCompatActivity() {
                     Log.i(TAG, schools.toString())
 
                     if (schools == null) {
+                        Log.i(TAG, "schools is null")
                         return@launch
                     }
                     Log.i(TAG, "schools is not null")

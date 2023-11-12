@@ -38,11 +38,14 @@ class WebApiCalls {
         connection.setRequestProperty("Sec-Fetch-Site", "same-site")
         connection.setRequestProperty("Content-Length", data.toByteArray(StandardCharsets.UTF_8).size.toString())
 
+        //todo: this is somehow broken
         connection.doOutput = true
         val os: OutputStream = connection.outputStream
 
         os.write(data.toByteArray(StandardCharsets.UTF_8))
         os.close()
+
+        Log.i(TAG, "in getSchools2")
 
         val responseCode = connection.responseCode
         if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -71,6 +74,7 @@ class WebApiCalls {
     }
 
     private fun parseSchoolData(jsonResponse: String): Array<Array<String>> {
+        Log.i(TAG, "parseSchoolData")
         val json = JSONObject(jsonResponse)
 
         if (json.has("result")) {

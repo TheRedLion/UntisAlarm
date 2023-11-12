@@ -209,6 +209,9 @@ class SettingsActivity : AppCompatActivity() {
             }
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
+                if (checkedItem == 0) {
+                    StoreData(this).storeSound("Default", "content://settings/system/alarm_alert")
+                }
                 Log.i(TAG, "Storing $checkedItem in StoreData")
                 //todo: add implementation
             }
