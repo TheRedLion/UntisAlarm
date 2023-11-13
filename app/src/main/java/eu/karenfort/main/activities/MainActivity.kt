@@ -83,6 +83,21 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent == null) {
+            Log.i(TAG, "intent was null")
+            return
+        }
+        val extras = intent.extras
+        if (extras == null) {
+            Log.i(TAG, "extras was null")
+            return
+        }
+        val newAlarmClockTime = extras.getString("newAlarmClockTime")
+        alarmPreview.text = newAlarmClockTime
+    }
+
     private fun getLayoutObjectsByID() {
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
@@ -210,7 +225,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             storeData.storeTBS(TBS_DEFAULT)
         } else {
             runOnUiThread {
-                tbsPreview.text = "${getString(R.string.the_alarm_currently_goes_off)}$tbs${getString(R.string.minutes_n_before_your_first_lesson)}"//todo: check if looks right
+                tbsPreview.text = "${getString(R.string.the_alarm_currently_goes_off)}$tbs${getString(R.string.minutes_n_before_your_first_lesson)}"
             }
         }
     }

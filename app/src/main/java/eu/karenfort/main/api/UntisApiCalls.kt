@@ -28,7 +28,7 @@ class UntisApiCalls constructor(
                 schoolName
             )
         } catch (e: IOException) {
-            throw e // TODO: does that cancel the object creation?
+            throw e // IO exeption throw is used to check if login data was valid
         }
     }
 
@@ -75,7 +75,6 @@ class UntisApiCalls constructor(
                 }
             }
             return null
-            // TODO: Other Implementations
         } catch (e: IOException) {
             Log.i(TAG,e.toString())
             return null

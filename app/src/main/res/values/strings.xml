@@ -56,4 +56,7 @@
     <string name="cancellation_text">Cancellation Text</string>
     <string name="cancelled_message_explanation">Some Schools do not display cancelled messages as cancelled, instead they set a Message like \"Lesson is cancelled\" or \"Do assinged Tasks\". If this is the case for you, enter the shown Message, so that these lessons will also be registered as cancelled.</string>
     <string name="error">ERROR</string>
+    <string name="not_logged_in">Not Logged in</string>
+    <string name="you_are_currently_not_logged_in_please_login_again">You are currently not logged in, please login again.</string>
+    <string name="login">Login</string>
 </resources>

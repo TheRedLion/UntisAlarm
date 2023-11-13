@@ -14,6 +14,7 @@ import com.carlkarenfort.test.R
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
+import eu.karenfort.main.helper.EARLY_ALARM_NOTIF_ID
 import eu.karenfort.main.helper.hideNotification
 import eu.karenfort.main.helper.isScreenOn
 import eu.karenfort.main.helper.showAlarmNotification
@@ -25,9 +26,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "called alarmclock receiver")
 
-        // No early notification for now
-        // todo: maybe add early notifs in the future
-        //context.hideNotification(EARLY_ALARM_NOTIF_ID) // hide early dismissal notification if not already dismissed
+        context.hideNotification(EARLY_ALARM_NOTIF_ID) // hide early dismissal notification if not already dismissed
 
         if (context.isScreenOn()) {
             Log.i(TAG, "showing screen notification alarm")

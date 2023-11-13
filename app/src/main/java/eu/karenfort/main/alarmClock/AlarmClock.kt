@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import eu.karenfort.main.StoreData
+import eu.karenfort.main.activities.MainActivity
 import java.time.LocalTime
 import java.util.Calendar
 
@@ -31,12 +32,12 @@ class AlarmClock {
                 Log.i(TAG, "this is bad")
             }
 
-            //todo: debuging stuff in here
-            val schoolStart1 = LocalTime.now().plusMinutes(1)
+            //tod: debuging stuff in here
+            //schoolStart = LocalTime.now().plusMinutes(1)
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR_OF_DAY, schoolStart1.hour) //should be schoolstart.hour and minute //tod: remove debug code
-                set(Calendar.MINUTE, schoolStart1.minute)
+                set(Calendar.HOUR_OF_DAY, schoolStart.hour)
+                set(Calendar.MINUTE, schoolStart.minute)
                 set(Calendar.SECOND, 0)
             }
 
@@ -50,12 +51,13 @@ class AlarmClock {
             if (nextAlarmClock.triggerTime > System.currentTimeMillis()) {
                 val storeData = StoreData(context)
                 storeData.storeAlarmClock(schoolStart.hour, schoolStart.minute)
-            }
 
-            //todo: do with companion object instead or smth
-            /*val intent3 = Intent(context, MainActivity::class.java)
-            intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent3)*/
+                val intent1 = Intent(context, MainActivity::class.java)
+                intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent1.putExtra("newAlarmClockTime", "${schoolStart.hour}:${schoolStart.minute}")
+                context.startActivity(intent1)
+            }
         }
 
         fun setAlarm(timeInS: Int, context: Context) {
@@ -66,18 +68,11 @@ class AlarmClock {
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!context.areNotificationsEnabled()) {
-                Log.i(TAG, "this is bad")
+                Log.i(TAG, "notifications are not enabled")
             }
 
-            val triggerTime = System.currentTimeMillis() + timeInS * 1000 //todo: remove debug code
+            val triggerTime = System.currentTimeMillis() + timeInS * 1000
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerTime, pendingIntent), pendingIntent)
-
-
-
-            //todo: do with companion object instead or smth
-            /*val intent3 = Intent(context, MainActivity::class.java)
-            intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent3)*/
         }
 
 

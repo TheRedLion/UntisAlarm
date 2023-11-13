@@ -15,6 +15,7 @@ import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.getNextDay
 import eu.karenfort.main.helper.isOnline
+import eu.karenfort.main.helper.showAlarmNotification
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
 
@@ -97,14 +98,14 @@ class AlarmReceiver: BroadcastReceiver() {
             //Log.i(TAG, "No alarm clock set, setting a new one")
 
             AlarmClock.setAlarm(alarmClockTime, context)
-            //context.showAlarmNotification() //todo: decide if we want that (maybe as setting)
+            context.showAlarmNotification()
             setNew("normal", schoolStart, context)
             return
         }
 
         AlarmClock.cancelAlarm(context)
         AlarmClock.setAlarm(alarmClockTime, context)
-        //context.showAlarmNotification()
+        context.showAlarmNotification()
 
         setNew("normal", schoolStart, context)
     }

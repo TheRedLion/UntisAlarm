@@ -12,6 +12,7 @@ import java.util.TimeZone
 const val ALARM_REQUEST_CODE = 73295871
 const val ALARM_ID = "alarm_id"
 const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
+const val NOT_LOGGED_IN_CHANNEL_ID = "Not_logged_in_id"
 const val ALARM_NOTIF_ID = 9998
 const val EARLY_ALARM_NOTIF_ID = 10003
 const val ALARM_CLOCK_ID = 543
