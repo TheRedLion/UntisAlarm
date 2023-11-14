@@ -59,4 +59,5 @@
     <string name="not_logged_in">Not Logged in</string>
     <string name="you_are_currently_not_logged_in_please_login_again">You are currently not logged in, please login again.</string>
     <string name="login">Login</string>
+    <string name="alarm_clock_notifications">Alarm Clock Notifications</string>
 </resources>

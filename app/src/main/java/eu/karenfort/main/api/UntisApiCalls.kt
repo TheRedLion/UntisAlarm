@@ -31,20 +31,20 @@ class UntisApiCalls constructor(
             throw e // IO exeption throw is used to check if login data was valid
         }
     }
+    //todo: i think the functions need to be suspending
 
     fun getID(): Int? {
         var id: Int? = null
         //has to stop main thread since it is called during welcome activity
-        runBlocking {
-            try {
-                //login to API
-                id = session.infos.personId
-            } catch (e: IOException) {
-                Log.i(TAG, "error")
-                e.printStackTrace()
-                return@runBlocking
-            }
+
+        try {
+            //login to API
+            id = session.infos.personId
+        } catch (e: IOException) {
+            Log.i(TAG, "error")
+            e.printStackTrace()
         }
+
         return id
     }
 

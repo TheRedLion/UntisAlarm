@@ -1,6 +1,8 @@
 package eu.karenfort.main.api
 
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -12,11 +14,13 @@ import java.nio.charset.StandardCharsets
 class WebApiCalls {
     private val TAG = "WebApiCalls"
 
-    fun getSchools(searchSchoolString: String): Array<Array<String>>? {
+    suspend fun getSchools(searchSchoolString: String): Array<Array<String>>? {
         Log.i(TAG, "in getSchools")
 
         val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
-        val connection = url.openConnection() as HttpURLConnection
+        val connection = withContext(Dispatchers.IO) {
+            url.openConnection()
+        } as HttpURLConnection
 
         val data = """{
         "id": "wu_schulsuche-1697008128606",
@@ -38,12 +42,15 @@ class WebApiCalls {
         connection.setRequestProperty("Sec-Fetch-Site", "same-site")
         connection.setRequestProperty("Content-Length", data.toByteArray(StandardCharsets.UTF_8).size.toString())
 
-        //todo: this is somehow broken
         connection.doOutput = true
         val os: OutputStream = connection.outputStream
 
-        os.write(data.toByteArray(StandardCharsets.UTF_8))
-        os.close()
+        withContext(Dispatchers.IO) {
+            os.write(data.toByteArray(StandardCharsets.UTF_8))
+        }
+        withContext(Dispatchers.IO) {
+            os.close()
+        }
 
         Log.i(TAG, "in getSchools2")
 
@@ -52,10 +59,14 @@ class WebApiCalls {
             val reader = BufferedReader(InputStreamReader(connection.inputStream))
             val response = StringBuilder()
             var line: String?
-            while (reader.readLine().also { line = it } != null) {
+            while (withContext(Dispatchers.IO) {
+                    reader.readLine()
+                }.also { line = it } != null) {
                 response.append(line)
             }
-            reader.close()
+            withContext(Dispatchers.IO) {
+                reader.close()
+            }
 
             val jsonResponse = response.toString()
 

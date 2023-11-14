@@ -30,6 +30,12 @@ class AlarmClock {
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!context.areNotificationsEnabled()) {
                 Log.i(TAG, "this is bad")
+
+                val intent1 = Intent(context, MainActivity::class.java)
+                intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent1.putExtra("areNotifsAllowed", "false")
+                context.startActivity(intent1)
             }
 
             //tod: debuging stuff in here

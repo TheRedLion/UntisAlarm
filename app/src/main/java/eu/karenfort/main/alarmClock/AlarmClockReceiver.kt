@@ -43,7 +43,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
                 notificationManager.deleteNotificationChannel("Alarm") // cleans up previous notification channel that had sound properties
                 NotificationChannel(
                     ALARM_NOTIFICATION_CHANNEL_ID,
-                    "Alarm",
+                    context.getString(R.string.alarm_clock_notifications),
                     NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     setBypassDnd(true)

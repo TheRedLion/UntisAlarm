@@ -7,11 +7,14 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -41,14 +44,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var toggleAlarm: MaterialSwitch
     private lateinit var editAlarmToday: ImageView
     private lateinit var tbsPreview: TextView
+    private lateinit var notifsDisabledTextView: TextView
     private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
     private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
+
+    companion object {
+        var active = false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        DynamicColors.applyToActivitiesIfAvailable(application) //todo:check if necessary
-
         getLayoutObjectsByID()
         disableClicking() //disabling clicks until everything was properly loaded
         createNotificationChannel()
@@ -60,6 +66,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             loadAndSetAlarmActive()
         }
         setListener()
+        updateNotfsDisabledWarning()
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        active = true
+    }
+
+    override fun onStop() {
+        super.onStop()
+        active = false
     }
 
     @SuppressLint("SetTextI18n")
@@ -78,13 +96,23 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onResume() {
         super.onResume()
+        updateNotfsDisabledWarning()
         CoroutineScope(Dispatchers.IO).launch {
             loadAndDisplayAlarmClockPreview()
         }
     }
 
+    private fun updateNotfsDisabledWarning() {
+        if (areNotificationsEnabled()) {
+            notifsDisabledTextView.visibility = INVISIBLE
+        } else {
+            notifsDisabledTextView.visibility = VISIBLE
+        }
+    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        Log.i(TAG, "intent received")
         if (intent == null) {
             Log.i(TAG, "intent was null")
             return
@@ -96,6 +124,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
         val newAlarmClockTime = extras.getString("newAlarmClockTime")
         alarmPreview.text = newAlarmClockTime
+
+        when (extras.getString("areNotifsAllowed")) {
+            "true" -> notifsDisabledTextView.visibility = INVISIBLE
+            "false" -> notifsDisabledTextView.visibility = VISIBLE
+        }
     }
 
     private fun getLayoutObjectsByID() {
@@ -103,6 +136,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         toggleAlarm = findViewById(R.id.toggleAlarm)
         editAlarmToday = findViewById(R.id.edit_alarm_tomorrow)
         tbsPreview = findViewById(R.id.current_tbs)
+        notifsDisabledTextView = findViewById(R.id.disabled_notfs)
     }
 
     private fun setListener() {
@@ -154,7 +188,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(NotificationChannel(
             "main_channel",
-            "UntisAlarm Notifications",
+            "UntisAlarm Notifications", //todo: make notificcation channels right (view system settings/UntisWecker/notifs)
             NotificationManager.IMPORTANCE_DEFAULT
         ))
     }
@@ -294,5 +328,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             finish()
         }
     }
+
 
 }
