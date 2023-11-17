@@ -34,6 +34,7 @@ import eu.karenfort.main.helper.isOreoPlus
 import eu.karenfort.main.helper.notificationManager
 import eu.karenfort.main.helper.viewBinding
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class ReminderActivity : AppCompatActivity() {
@@ -278,7 +279,7 @@ class ReminderActivity : AppCompatActivity() {
         runBlocking {
             snoozeTime = StoreData(applicationContext).loadSnoozeTime() ?: return@runBlocking
         }
-        eu.karenfort.main.alarmClock.AlarmClock.setAlarm(LocalTime.now().plusMinutes(5), this)
+        eu.karenfort.main.alarmClock.AlarmClock.setAlarm(LocalDateTime.now().plusMinutes(5), this)
         wasAlarmSnoozed = true
         finishActivity()
     }

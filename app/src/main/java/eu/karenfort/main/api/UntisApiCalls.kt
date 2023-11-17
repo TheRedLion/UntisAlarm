@@ -7,6 +7,7 @@ import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 
@@ -48,14 +49,14 @@ class UntisApiCalls constructor(
         return id
     }
 
-    fun getSchoolStartForDay(id: Int): LocalTime? {
+    fun getSchoolStartForDay(id: Int): LocalDateTime? {
         try {
             val today = LocalDate.now()
             //val today = LocalDate.of(2023, 11, 6) //tod: remove debugging string
-
+            val nextDay = getNextDay()
             val timetable: Timetable = session.getTimetableFromPersonId(
-                getNextDay(),
-                getNextDay(),
+                nextDay,
+                nextDay,
                 id
             )
 
@@ -69,8 +70,9 @@ class UntisApiCalls constructor(
             Log.i(TAG, timetable.toString())
             for (i in timetable){
                 if (!lessonIsCancelled(i)) {
-                    val firstLessonStartTime: LocalTime = i.startTime
+                    val firstLessonStartTime: LocalDateTime = LocalDateTime.of(nextDay, i.startTime)
                     session.logout()
+                    getNextDay()
                     return firstLessonStartTime
                 }
             }

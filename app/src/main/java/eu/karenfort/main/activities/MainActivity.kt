@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
@@ -20,9 +19,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.fragment.app.FragmentActivity
 import com.carlkarenfort.test.R
-import com.google.android.material.color.DynamicColors
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
@@ -32,10 +29,12 @@ import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.areNotificationsEnabled
+import eu.karenfort.main.helper.getNextDay
 import eu.karenfort.main.helper.isTiramisuPlus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -61,12 +60,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         requestNotificationPermission()
         sendToWelcomeActivity()
         CoroutineScope(Dispatchers.IO).launch {
+            // TODO: load alarm clock instantly
             loadAndDisplayTBS()
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
         }
         setListener()
-        updateNotfsDisabledWarning()
+        updateNotifsDisabledWarning()
     }
 
 
@@ -96,13 +96,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onResume() {
         super.onResume()
-        updateNotfsDisabledWarning()
+        updateNotifsDisabledWarning()
         CoroutineScope(Dispatchers.IO).launch {
             loadAndDisplayAlarmClockPreview()
         }
     }
 
-    private fun updateNotfsDisabledWarning() {
+    private fun updateNotifsDisabledWarning() {
         if (areNotificationsEnabled()) {
             notifsDisabledTextView.visibility = INVISIBLE
         } else {
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             picker.addOnPositiveButtonClickListener {
                 AlarmClock.cancelAlarm(this)
-                AlarmClock.setAlarm(LocalTime.of(picker.hour, picker.minute), this)
+                AlarmClock.setAlarm(LocalDateTime.of(getNextDay(), LocalTime.of(picker.hour, picker.minute)), this)
                 StoreData(this).storeAlarmClock(picker.hour, picker.minute, 1)
                 picker.dismiss()
             }
@@ -207,6 +207,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Log.i(TAG, "should schedule")
             AlarmScheduler(this).schedule()
         } else {
+            // TODO: Make sure the alarm clock is properly cancelled
             alarmPreview.text = "00:00"
             Log.i(TAG, "cancelling")
             AlarmScheduler(this).schedule()

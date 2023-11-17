@@ -13,6 +13,7 @@ import java.util.Calendar
 
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.areNotificationsEnabled
+import java.time.LocalDateTime
 
 
 class AlarmClock {
@@ -21,7 +22,7 @@ class AlarmClock {
     companion object {
         private val TAG = "AlarmClock"
 
-        fun setAlarm(schoolStart: LocalTime, context: Context) {
+        fun setAlarm(schoolStart: LocalDateTime, context: Context) {
             Log.i(TAG, "called setalarm(Clock)")
 
             val intent = Intent(context, AlarmClockReceiver::class.java)
@@ -42,12 +43,18 @@ class AlarmClock {
             //schoolStart = LocalTime.now().plusMinutes(1)
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
+                set(Calendar.DAY_OF_YEAR, schoolStart.dayOfYear)
                 set(Calendar.HOUR_OF_DAY, schoolStart.hour)
                 set(Calendar.MINUTE, schoolStart.minute)
                 set(Calendar.SECOND, 0)
             }
+            Log.i(TAG, "Hour: ")
+            Log.i(TAG, schoolStart.hour.toString())
+            Log.i(TAG, "Minute: ")
+            Log.i(TAG, schoolStart.minute.toString())
 
             val calendarMills = calendar.timeInMillis
+
             //val calendarMills = System.currentTimeMillis() + 5000 //tod: remove debug code
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
 

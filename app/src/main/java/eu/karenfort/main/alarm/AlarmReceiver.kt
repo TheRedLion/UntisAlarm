@@ -17,6 +17,7 @@ import eu.karenfort.main.helper.getNextDay
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.helper.showAlarmNotification
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 
@@ -24,6 +25,7 @@ class AlarmReceiver: BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
+        //todo: put stuff from this method into different class so it can directly be executed the first time the app is loaded, might need to make sure that code keeps running when app is closed
         Log.i(TAG ,"called onReceive() with intent:$intent")
 
         /*
@@ -76,10 +78,9 @@ class AlarmReceiver: BroadcastReceiver() {
 
         val schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
-        Log.i(TAG, "Getting school start for day: ${getNextDay()}. Is $schoolStart")
-        //debug: var schoolStart = LocalTime.of(7, 0)
-
-        if (schoolStart == null) {
+        if (schoolStart != null) {
+            Log.i(TAG, "Getting school start for day: ${schoolStart.dayOfYear}. Is $schoolStart")
+        } else {
             //probably holiday or something
             setNew("noAlarmToday", null, context)
             return
@@ -108,18 +109,19 @@ class AlarmReceiver: BroadcastReceiver() {
         context.showAlarmNotification()
 
         setNew("normal", schoolStart, context)
+        //todo: add option for when there is no more school on a day
     }
 
     private fun isAnAlarmClockSet(alarmClockHour: Int?, alarmClockMinute: Int?) =
         alarmClockHour == null || alarmClockMinute == null
 
     private fun isAlarmClockSetProperly(
-        alarmClockTime: LocalTime,
+        alarmClockTime: LocalDateTime,
         alarmClockHour: Int?,
         alarmClockMinute: Int?
     ) = alarmClockTime.hour == alarmClockHour && alarmClockTime.minute == alarmClockMinute
 
-    private fun setNew(reason: String, schoolStart: LocalTime?, context: Context) {
+    private fun setNew(reason: String, schoolStart: LocalDateTime?, context: Context) {
         when (reason) {
             "noAlarmToday" -> {
                 val alarmManager = context.getSystemService(AlarmManager::class.java)
@@ -149,7 +151,7 @@ class AlarmReceiver: BroadcastReceiver() {
                         intent,
                         PendingIntent.FLAG_IMMUTABLE
                     )
-                    if (LocalTime.now().isBefore(schoolStart.minusHours(2))) {
+                    if (LocalDateTime.now().isBefore(schoolStart.minusHours(2))) {
                         Log.i(TAG, "setting new Alarm for in 15 minutes to an hour.")
                         alarmManager.setAndAllowWhileIdle(
                             AlarmManager.RTC,
