@@ -34,6 +34,7 @@ import eu.karenfort.main.helper.isTiramisuPlus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -60,7 +61,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         requestNotificationPermission()
         sendToWelcomeActivity()
         CoroutineScope(Dispatchers.IO).launch {
-            // TODO: load alarm clock instantly
             loadAndDisplayTBS()
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
@@ -85,8 +85,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (string == null) return //dont know when this would happen
         if (!isAlarmClockTime(string)) return
         CoroutineScope(Dispatchers.IO).launch {
-            val alarmClock: Array<Int?> = StoreData(applicationContext).loadAlarmClock()
-            alarmPreview.text = "${alarmClock[0]}:${alarmClock[1]}"
+            val (alarmClockDateTime, edited) = StoreData(applicationContext).loadAlarmClock()
+            if (alarmClockDateTime == null) {
+                alarmPreview.text = ""
+            } else {
+                alarmPreview.text = "${alarmClockDateTime.hour}:${alarmClockDateTime.minute}"
+            }
         }
     }
 
@@ -168,7 +172,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             picker.addOnPositiveButtonClickListener {
                 AlarmClock.cancelAlarm(this)
                 AlarmClock.setAlarm(LocalDateTime.of(getNextDay(), LocalTime.of(picker.hour, picker.minute)), this)
-                StoreData(this).storeAlarmClock(picker.hour, picker.minute, 1)
+                StoreData(this).storeAlarmClock(LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(picker.hour, picker.minute)), true)
                 picker.dismiss()
             }
             picker.addOnNegativeButtonClickListener {
@@ -210,7 +214,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             // TODO: Make sure the alarm clock is properly cancelled
             alarmPreview.text = "00:00"
             Log.i(TAG, "cancelling")
-            AlarmScheduler(this).schedule()
+            AlarmScheduler(this).cancel()
         }
     }
 
@@ -241,8 +245,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("SetTextI18n")
     private suspend fun loadAndDisplayAlarmClockPreview() {
         val storeData = StoreData(applicationContext)
-        val alarmClock: Array<Int?> = storeData.loadAlarmClock()
-        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClock)
+        val (alarmClockDateTime, edited) = storeData.loadAlarmClock()
+        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
         runOnUiThread {
             alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
             editAlarmToday.isClickable = true
@@ -265,20 +269,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun reformatAlarmClockPreview(alarmClock: Array<Int?>): Pair<String, String> {
-        if (alarmClock[0] == null || alarmClock[1] == null) {
-            alarmClock[0] = 0
-            alarmClock[1] = 0
+    private fun reformatAlarmClockPreview(alarmClock: LocalDateTime?): Pair<String, String> {
+        if (alarmClock == null) {
+            return Pair("00","00")
         }
-        val alarmClockStrHour = if (alarmClock[0]!! < 10) {
-            "0${alarmClock[0]}"
+        val alarmClockStrHour = if (alarmClock.hour < 10) {
+            "0${alarmClock.hour}"
         } else {
-            "${alarmClock[0]}"
+            "${alarmClock.hour}"
         }
-        val alarmClockStrMinute = if (alarmClock[1]!! < 10) {
-            "0${alarmClock[1]}"
+        val alarmClockStrMinute = if (alarmClock.minute < 10) {
+            "0${alarmClock.minute}"
         } else {
-            "${alarmClock[1]}"
+            "${alarmClock.minute}"
         }
         return Pair(alarmClockStrHour, alarmClockStrMinute)
     }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userData")
 class StoreData (
@@ -24,9 +25,12 @@ class StoreData (
     private val schoolKey = stringPreferencesKey("school")
     private val timeBeforeSchoolKey = intPreferencesKey("tbs")
     private val alarmActiveKey = booleanPreferencesKey("alarm-active")
+    private val alarmClockYearKey = intPreferencesKey("alarmClockYear")
+    private val alarmClockMonthKey = intPreferencesKey("alarmClockMonth")
+    private val alarmClockDayKey = intPreferencesKey("alarmClockDay")
     private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
     private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
-    private val alarmClockEditedKey = intPreferencesKey("alarmClockEdited")
+    private val alarmClockEditedKey = booleanPreferencesKey("alarmClockEdited")
     private val vibrateKey = booleanPreferencesKey("vibrate")
     private val soundTitleKey = stringPreferencesKey("soundTitle")
     private val soundUriKey = stringPreferencesKey("soundUri")
@@ -159,44 +163,34 @@ class StoreData (
     }
 
 
-    suspend fun loadAlarmClock(): Array<Int?> {
+    suspend fun loadAlarmClock(): Pair<LocalDateTime?, Boolean> {
         val preferences = context.dataStore.data.first()
+        val year = preferences[alarmClockYearKey]
+        val month = preferences[alarmClockMonthKey]
+        val day = preferences[alarmClockDayKey]
+        val hour = preferences[alarmClockHourKey]
+        val minute = preferences[alarmClockMinuteKey]
+        val edited: Boolean = preferences[alarmClockEditedKey] == true
 
-        //for explanation look ar storeAlarmClock()
-        if (preferences[alarmClockHourKey] == 27 || preferences[alarmClockMinuteKey] == 69) {
-            return arrayOf(null, null)
+        if (year == -1) return Pair(null, edited)
+
+        if (year == null || month == null || day == null || hour == null || minute == null) {
+            return Pair(null, edited)
         }
 
-        return arrayOf(
-            preferences[alarmClockHourKey],
-            preferences[alarmClockMinuteKey],
-            preferences[alarmClockEditedKey]
-        )
+        return Pair(LocalDateTime.of(year, month, day, hour, minute), edited)
     }
-    fun storeAlarmClock(hour: Int?, minute: Int?) {
-        storeAlarmClock(hour, minute, 0)
+    fun storeAlarmClock(alarmClockDayTime: LocalDateTime) {
+        storeAlarmClock(alarmClockDayTime, false)
     }
-    fun storeAlarmClock(hour: Int?, minute: Int?, edited: Int) {
-        if (hour != null) {
-            if (hour < 0 || hour > 23) {
-                throw Exception("Hour must be 0..23")
-            }
-        }
-
-        if (minute != null) {
-            if (minute < 0 || minute > 60) {
-                throw Exception("Hour must be 0..60")
-            }
-        }
-
+    fun storeAlarmClock(alarmClockDayTime: LocalDateTime, edited: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
-            //I am storing 27:69 because you can't store null, the load function returns null if 27:69 was stored
-            val storeHour: Int = hour ?: 27
-            val storeMinute: Int = minute ?: 69
-
             context.dataStore.edit { settings ->
-                settings[alarmClockHourKey] = storeHour
-                settings[alarmClockMinuteKey] = storeMinute
+                settings[alarmClockYearKey] = alarmClockDayTime.year
+                settings[alarmClockMonthKey] = alarmClockDayTime.monthValue
+                settings[alarmClockDayKey] = alarmClockDayTime.dayOfMonth
+                settings[alarmClockHourKey] = alarmClockDayTime.hour
+                settings[alarmClockMinuteKey] = alarmClockDayTime.minute
                 settings[alarmClockEditedKey] = edited
             }
         }

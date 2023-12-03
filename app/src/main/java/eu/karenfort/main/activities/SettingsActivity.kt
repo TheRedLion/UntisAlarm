@@ -123,7 +123,7 @@ class SettingsActivity : AppCompatActivity() {
 
             runOnUiThread {
                 tbsInputLayout.hint =
-                    "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $tbs${
+                    "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $tbs${
                         getString(R.string.short_minute)
                     })"
                 vibrateToggle.isChecked = vibrate
@@ -325,7 +325,7 @@ class SettingsActivity : AppCompatActivity() {
             return
         }
         tbsInputLayout.hint =
-            "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $newTBS${
+            "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $newTBS${
                 getString(R.string.short_minute)
             })"
 

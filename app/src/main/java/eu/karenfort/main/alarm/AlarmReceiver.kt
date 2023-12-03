@@ -7,18 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
 import android.util.Log
-import android.widget.TextView
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
-import eu.karenfort.main.helper.getNextDay
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.helper.showAlarmNotification
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 
 class AlarmReceiver: BroadcastReceiver() {
@@ -44,18 +41,18 @@ class AlarmReceiver: BroadcastReceiver() {
         var id: Int?
         var loginData: Array<String?>
         var tbs: Int?
-        val alarmClockArray: Array<Int?>
+        val storedAlarmClockDateTime: LocalDateTime?
+        val storedAlarmClockEdited: Boolean
 
         runBlocking {
-            //todo: maybe need to move alarm receiver from main thread
             id = storeData.loadID()
             loginData = storeData.loadLoginData()
             tbs = storeData.loadTBS()
-            alarmClockArray = storeData.loadAlarmClock()
+            val pair: kotlin.Pair<LocalDateTime?, Boolean> = storeData.loadAlarmClock()
+            storedAlarmClockDateTime = pair.first
+            storedAlarmClockEdited = pair.second
             //debug: alarmClockArray = arrayOf(6, 43)
         }
-        val alarmClockHour = alarmClockArray[0]
-        val alarmClockMinute = alarmClockArray[1]
 
         if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
             //todo: warn user that he got logged out
@@ -86,40 +83,36 @@ class AlarmReceiver: BroadcastReceiver() {
             return
         }
 
-        val alarmClockTime = schoolStart.minusMinutes(tbs!!.toLong())
+        val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
 
         //todo: test for edited but only if day is right
-        if (isAlarmClockSetProperly(alarmClockTime, alarmClockHour, alarmClockMinute)) {
+        if (isAlarmClockSetProperly(alarmClockDateTime, storedAlarmClockDateTime)) {
             //Log.i(TAG, "Alarm clock set properly")
-            setNew("normal", alarmClockTime, context)
+            setNew("normal", alarmClockDateTime, context)
             return
         }
 
-        if (isAnAlarmClockSet(alarmClockHour, alarmClockMinute)) {
+        if (storedAlarmClockDateTime == null) {
             //Log.i(TAG, "No alarm clock set, setting a new one")
 
-            AlarmClock.setAlarm(alarmClockTime, context)
+            AlarmClock.setAlarm(alarmClockDateTime, context)
             context.showAlarmNotification()
             setNew("normal", schoolStart, context)
             return
         }
 
         AlarmClock.cancelAlarm(context)
-        AlarmClock.setAlarm(alarmClockTime, context)
+        AlarmClock.setAlarm(alarmClockDateTime, context)
         context.showAlarmNotification()
 
         setNew("normal", schoolStart, context)
         //todo: add option for when there is no more school on a day
     }
 
-    private fun isAnAlarmClockSet(alarmClockHour: Int?, alarmClockMinute: Int?) =
-        alarmClockHour == null || alarmClockMinute == null
-
     private fun isAlarmClockSetProperly(
-        alarmClockTime: LocalDateTime,
-        alarmClockHour: Int?,
-        alarmClockMinute: Int?
-    ) = alarmClockTime.hour == alarmClockHour && alarmClockTime.minute == alarmClockMinute
+        alarmClockTime: LocalDateTime?,
+        storedAlarmClockDateTime: LocalDateTime?
+    ) = if (alarmClockTime == null || storedAlarmClockDateTime == null) false else alarmClockTime.isEqual(storedAlarmClockDateTime)
 
     private fun setNew(reason: String, schoolStart: LocalDateTime?, context: Context) {
         when (reason) {

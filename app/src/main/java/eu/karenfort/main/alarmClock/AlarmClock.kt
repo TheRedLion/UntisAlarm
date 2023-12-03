@@ -43,7 +43,9 @@ class AlarmClock {
             //schoolStart = LocalTime.now().plusMinutes(1)
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.DAY_OF_YEAR, schoolStart.dayOfYear)
+                set(Calendar.YEAR, schoolStart.year)
+                set(Calendar.MONTH, schoolStart.monthValue)
+                set(Calendar.DAY_OF_MONTH, schoolStart.dayOfMonth)
                 set(Calendar.HOUR_OF_DAY, schoolStart.hour)
                 set(Calendar.MINUTE, schoolStart.minute)
                 set(Calendar.SECOND, 0)
@@ -63,7 +65,7 @@ class AlarmClock {
             // this check is necessary because android automatically cancels alarms that happen in the past (back to the future vibes)
             if (nextAlarmClock.triggerTime > System.currentTimeMillis()) {
                 val storeData = StoreData(context)
-                storeData.storeAlarmClock(schoolStart.hour, schoolStart.minute)
+                storeData.storeAlarmClock(schoolStart)
 
                 val intent1 = Intent(context, MainActivity::class.java)
                 intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -102,7 +104,7 @@ class AlarmClock {
             alarmManager.cancel(pendingIntent)
 
             val storeData = StoreData(context)
-            storeData.storeAlarmClock(null, null)
+            storeData.storeAlarmClock(LocalDateTime.of(-1,1,1,1,1), false)
         }
     }
 }

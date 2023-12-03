@@ -60,4 +60,5 @@
     <string name="you_are_currently_not_logged_in_please_login_again">You are currently not logged in, please login again.</string>
     <string name="login">Login</string>
     <string name="alarm_clock_notifications">Alarm Clock Notifications</string>
+    <string name="time_before_school_hint">Time Before School</string>
 </resources>
