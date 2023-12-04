@@ -15,7 +15,6 @@ class AlarmScheduler(
     private val ALARM_REQUEST_CODE = 73295871
 
      fun schedule() {
-         //todo: work manager maybe?
          Log.i(TAG, "scheduled Alarm")
          val intent = Intent(context, AlarmReceiver::class.java).also {
              it.action = Intent.ACTION_CALL

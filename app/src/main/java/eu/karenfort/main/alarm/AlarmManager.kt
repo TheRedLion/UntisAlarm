@@ -21,7 +21,6 @@ class AlarmManager {
     companion object {
         private val TAG = "AlarmManager"
         fun main(context: Context) {
-            //todo: put stuff from this method into different class so it can directly be executed the first time the app is loaded, might need to make sure that code keeps running when app is closed
             Log.i(TAG ,"called main")
 
 
@@ -79,7 +78,6 @@ class AlarmManager {
 
             val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
 
-            //todo: test for edited but only if day is right
             if (isAlarmClockSetProperly(alarmClockDateTime, storedAlarmClockDateTime)) {
                 //Log.i(TAG, "Alarm clock set properly")
                 setNew("normal", alarmClockDateTime, context)
@@ -98,7 +96,6 @@ class AlarmManager {
             AlarmClock.setAlarm(alarmClockDateTime, context)
 
             setNew("normal", schoolStart, context)
-            //todo: add option for when there is no more school on a day
         }
 
         private fun isAlarmClockSetProperly(
