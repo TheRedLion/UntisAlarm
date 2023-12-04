@@ -123,10 +123,13 @@ class StoreData (
 
     suspend fun loadSound(): Pair<String?, Uri?> {
         val preferences = context.dataStore.data.first()
-        var uri = Uri.parse(preferences[soundUriKey])
-        if (uri == null) {
-            uri = Uri.parse("content://silent")
+        var uriStr = preferences[soundUriKey]
+        val uri: Uri = if (uriStr == null) {
+            Uri.parse("content://silent")
+        } else {
+            Uri.parse(uriStr)
         }
+
         return Pair(
             preferences[soundTitleKey],
             uri
