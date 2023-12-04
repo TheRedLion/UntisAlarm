@@ -25,36 +25,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity
+            android:name="eu.karenfort.main.activities.ChooseSoundFileActivity"
+            android:exported="false" />
         <activity
             android:name="eu.karenfort.main.activities.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:launchMode="singleTop">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="eu.karenfort.main.activities.SettingsActivity"
             android:exported="false"
             android:parentActivityName="eu.karenfort.main.activities.MainActivity" />
-
         <activity
             android:name="eu.karenfort.main.activities.CancelledMessageInfo"
             android:exported="false"
-            android:parentActivityName="eu.karenfort.main.activities.SettingsActivity"/>
-
+            android:parentActivityName="eu.karenfort.main.activities.SettingsActivity" />
         <activity
             android:name="eu.karenfort.main.activities.WelcomeActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name="eu.karenfort.main.alarmClock.ReminderActivity"
             android:excludeFromRecents="true"

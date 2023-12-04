@@ -1,6 +1,7 @@
 package eu.karenfort.main
 
 import android.content.Context
+import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -120,19 +121,19 @@ class StoreData (
         return preferences[vibrateKey]
     }
 
-    suspend fun loadSound(): Array<String?> {
+    suspend fun loadSound(): Pair<String?, Uri?> {
         val preferences = context.dataStore.data.first()
-        return arrayOf(
+        return Pair(
             preferences[soundTitleKey],
-            preferences[soundUriKey]
+            Uri.parse(preferences[soundUriKey])
         )
     }
 
-    fun storeSound(soundTitle: String, soundUri: String) {
+    fun storeSound(soundTitle: String, soundUri: Uri) {
         CoroutineScope(Dispatchers.IO).launch {
             context.dataStore.edit { settings ->
                 settings[soundTitleKey] = soundTitle
-                settings[soundUriKey] = soundUri
+                settings[soundUriKey] = soundUri.toString()
             }
         }
     }

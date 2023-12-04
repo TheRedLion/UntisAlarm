@@ -186,12 +186,16 @@ class ReminderActivity : AppCompatActivity() {
             }, 500)
         }
 
-        var soundUri = SILENT
+        var soundUri = Uri.parse("content://silent")
         runBlocking {
-            soundUri = StoreData(applicationContext).loadSound()[1] ?: return@runBlocking
+            val (_, newSoundUri) = StoreData(applicationContext).loadSound()
+            if (newSoundUri == null) {
+                return@runBlocking
+            }
+            soundUri = newSoundUri
         }
 
-        if (soundUri != SILENT) {
+        if (soundUri == Uri.parse("content://silent")) {
             try {
                 Log.i("ReminderActivity", "SoundUri: $soundUri")
                 mediaPlayer = MediaPlayer()
@@ -200,7 +204,7 @@ class ReminderActivity : AppCompatActivity() {
                     .build())
 
                 mediaPlayer = mediaPlayer!!.apply {
-                    setDataSource(this@ReminderActivity, Uri.parse(soundUri))
+                    setDataSource(this@ReminderActivity, soundUri)
                     isLooping = true
                     prepare()
                     start()

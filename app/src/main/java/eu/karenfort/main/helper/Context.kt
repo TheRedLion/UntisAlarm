@@ -166,24 +166,29 @@ fun Context.getSnoozePendingIntent(): PendingIntent {
 
 fun Context.getLaunchIntent() = packageManager.getLaunchIntentForPackage("eu.karenfort.main")
 
-fun Context.grantReadUriPermission(uriString: String) {
+fun Context.grantReadUriPermission(uri: Uri) {
     try {
         // ensure custom reminder sounds play well
-        grantUriPermission("com.android.systemui", Uri.parse(uriString), Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        grantUriPermission("com.android.systemui", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
     } catch (ignored: Exception) {
         Log.i("Context", "ERRRRRROR")
     }
 }
 fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
-    var soundUri: String
+    var soundUri: Uri?
     var vibrate: Boolean
     runBlocking {
         val storeData = StoreData(applicationContext)
-        soundUri = storeData.loadSound()[1] ?: SILENT
+        val (_, newSoundUri) = storeData.loadSound()
+        soundUri = newSoundUri
+        if (soundUri == null) {
+            soundUri = Uri.parse("content://silent")
+        }
         vibrate = storeData.loadVibrate() ?: true
     }
-    if (soundUri != SILENT) {
-        grantReadUriPermission(soundUri)
+
+    if (soundUri != Uri.parse("content://silent")) {
+        grantReadUriPermission(soundUri!!)
     }
     val channelId = "simple_alarm_channel_${soundUri}_${vibrate}"
     val label = "Alarm"
@@ -203,7 +208,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         // todo: Proper black and light mode / preferences preferably in a new settings activity
         lightColor = 0
         enableVibration(vibrate)
-        setSound(Uri.parse(soundUri), audioAttributes)
+        setSound(soundUri, audioAttributes)
         notificationManager.createNotificationChannel(this)
     }
 
@@ -222,8 +227,8 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         .setDeleteIntent(dismissIntent)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-    if (soundUri != SILENT) {
-        builder.setSound(Uri.parse(soundUri), AudioManager.STREAM_ALARM)
+    if (soundUri != Uri.parse("content://silent")) {
+        builder.setSound(soundUri, AudioManager.STREAM_ALARM)
     }
 
     if (vibrate) {

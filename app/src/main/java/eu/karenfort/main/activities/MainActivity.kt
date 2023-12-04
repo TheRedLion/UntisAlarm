@@ -215,7 +215,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(NotificationChannel(
             "main_channel",
-            "UntisAlarm Notifications", //todo: make notificcation channels right (view system settings/UntisWecker/notifs)
+            "UntisAlarm Notifications", //todo: make notificcattion channels right (view system setings/UntisWecker/notifs)
             NotificationManager.IMPORTANCE_DEFAULT
         ))
     }
@@ -234,7 +234,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Log.i(TAG, "should schedule")
             AlarmScheduler(this).schedule()
         } else {
-            // TODO: Make sure the alarm clock is properly cancelled
             alarmPreview.text = "00:00"
             Log.i(TAG, "cancelling")
             AlarmScheduler(this).cancel()

@@ -19,6 +19,7 @@ const val ALARM_CLOCK_ID = 543
 const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
 const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
 const val NOTIFICATION_ID = "notification_id"
+const val PICKFILE_RESULT_CODE = 7890
 
 const val SILENT = "silent"
 const val LANGUAGE_SYSTEM_DEFAULT = "default"

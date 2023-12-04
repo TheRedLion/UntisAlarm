@@ -1,11 +1,15 @@
 package eu.karenfort.main.activities
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.carlkarenfort.test.R
@@ -19,6 +23,7 @@ import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.LANGUAGE_DEFAULT
+import eu.karenfort.main.helper.PICKFILE_RESULT_CODE
 import eu.karenfort.main.helper.SNOOZE_DEFAULT
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
@@ -117,7 +122,8 @@ class SettingsActivity : AppCompatActivity() {
             val vibrate: Boolean = storeData.loadVibrate() ?: initVibrate()
             val snooze: Int = storeData.loadSnoozeTime() ?: initSnooze()
             val ivg: Boolean = storeData.loadIncreaseVolumeGradually() ?: initIVG()
-            if (storeData.loadSound()[0] == null) initSound()
+            val (title, _) = storeData.loadSound()
+            if (title == null) initSound()
             if (storeData.loadLanguage() == null) initLanguage()
             if (storeData.loadDarkMode() == null) initDarkMode()
 
@@ -209,15 +215,16 @@ class SettingsActivity : AppCompatActivity() {
             }
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
-                when (checkedItem) {
+                when (checkedItem) {//todo: update the alarm that is currently set
                     0 -> {
-                        StoreData(this).storeSound("Default", "content://settings/system/alarm_alert")
-                    } //todo: update the alarm that is currently set
+                        StoreData(this).storeSound("Default", Uri.parse("content://settings/system/alarm_alert"))
+                    }
                     1 -> {
-                        StoreData(this).storeSound("Silent", "silent")
+                        StoreData(this).storeSound("Silent", Uri.parse("content://silent"))
                     }
                     2 -> {
-                        //todo make user able to choose file
+                        intent = Intent(this@SettingsActivity, ChooseSoundFileActivity::class.java)
+                        startActivity(intent)
                     }
                 }
                 Log.i(TAG, "Storing $checkedItem in StoreData")
@@ -239,7 +246,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun initSound(): String {
-        StoreData(this).storeSound(ALARM_SOUND_DEFAULT, "")
+        StoreData(this).storeSound(ALARM_SOUND_DEFAULT, Uri.parse("content://silent"))
         return ALARM_SOUND_DEFAULT
     }
 
