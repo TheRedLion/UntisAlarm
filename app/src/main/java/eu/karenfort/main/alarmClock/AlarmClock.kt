@@ -50,7 +50,7 @@ class AlarmClock {
                 timeInMillis = System.currentTimeMillis()
                 set(Calendar.YEAR, schoolStart.year)
                 set(Calendar.MONTH, schoolStart.monthValue)
-                set(Calendar.DAY_OF_MONTH, schoolStart.dayOfMonth)
+                set(Calendar.DAY_OF_YEAR, schoolStart.dayOfYear)
                 set(Calendar.HOUR_OF_DAY, schoolStart.hour)
                 set(Calendar.MINUTE, schoolStart.minute)
                 set(Calendar.SECOND, 0)

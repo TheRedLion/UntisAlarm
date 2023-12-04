@@ -90,14 +90,12 @@ class AlarmManager {
                 //Log.i(TAG, "No alarm clock set, setting a new one")
 
                 AlarmClock.setAlarm(alarmClockDateTime, context)
-                context.showAlarmNotification()
                 setNew("normal", schoolStart, context)
                 return
             }
 
             AlarmClock.cancelAlarm(context)
             AlarmClock.setAlarm(alarmClockDateTime, context)
-            context.showAlarmNotification()
 
             setNew("normal", schoolStart, context)
             //todo: add option for when there is no more school on a day
