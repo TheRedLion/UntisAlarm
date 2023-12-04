@@ -16,6 +16,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -25,6 +26,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
 import com.google.android.material.timepicker.TimeFormat
 import eu.karenfort.main.StoreData
+import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.helper.TBS_DEFAULT
@@ -37,6 +39,8 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.TextStyle
+import java.util.Locale
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "MainActivity"
@@ -67,6 +71,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
         setListener()
         updateNotifsDisabledWarning()
+        AlarmManager.main(this)
     }
 
 
@@ -85,11 +90,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (string == null) return //dont know when this would happen
         if (!isAlarmClockTime(string)) return
         CoroutineScope(Dispatchers.IO).launch {
-            val (alarmClockDateTime, edited) = StoreData(applicationContext).loadAlarmClock()
+            val (alarmClockDateTime, _) = StoreData(applicationContext).loadAlarmClock()
             if (alarmClockDateTime == null) {
-                alarmPreview.text = ""
+                alarmPreview.text = getString(R.string.error)
             } else {
-                alarmPreview.text = "${alarmClockDateTime.hour}:${alarmClockDateTime.minute}"
+                alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockDateTime.hour}:${alarmClockDateTime.minute}"
             }
         }
     }
@@ -101,6 +106,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onResume() {
         super.onResume()
         updateNotifsDisabledWarning()
+        AlarmManager.main(this)
         CoroutineScope(Dispatchers.IO).launch {
             loadAndDisplayAlarmClockPreview()
         }
@@ -148,7 +154,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         editAlarmToday.setOnClickListener {
             val isSystem24Hour = is24HourFormat(this)
             val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
-            val time = alarmPreview.text.split(":")
+            val regex = Regex("""\d{2}:\d{2}""")
+            val matchResult = regex.find(alarmPreview.text)
+            val timeString = matchResult?.value ?: "00:00"
+            val time = timeString.split(":")
             var hour: Int
             var minute: Int
             try {
@@ -171,8 +180,22 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             picker.addOnPositiveButtonClickListener {
                 AlarmClock.cancelAlarm(this)
-                AlarmClock.setAlarm(LocalDateTime.of(getNextDay(), LocalTime.of(picker.hour, picker.minute)), this)
-                StoreData(this).storeAlarmClock(LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(picker.hour, picker.minute)), true)
+                if (toggleAlarm.isChecked) {
+                    AlarmClock.setAlarm(
+                        LocalDateTime.of(
+                            getNextDay(),
+                            LocalTime.of(picker.hour, picker.minute)
+                        ), this
+                    )
+                    StoreData(this).storeAlarmClock(
+                        LocalDateTime.of(
+                            LocalDate.now().plusDays(1),
+                            LocalTime.of(picker.hour, picker.minute)
+                        ), true
+                    )
+                } else {
+                    Toast.makeText(this, "Alarms are disabled", Toast.LENGTH_SHORT).show()
+                }
                 picker.dismiss()
             }
             picker.addOnNegativeButtonClickListener {
@@ -245,10 +268,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("SetTextI18n")
     private suspend fun loadAndDisplayAlarmClockPreview() {
         val storeData = StoreData(applicationContext)
-        val (alarmClockDateTime, edited) = storeData.loadAlarmClock()
+        val (alarmClockDateTime, _) = storeData.loadAlarmClock()
+        if (alarmClockDateTime == null) {
+            runOnUiThread {
+                alarmPreview.text = "00:00"
+                editAlarmToday.isClickable = true
+            }
+            return
+        }
         val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
         runOnUiThread {
-            alarmPreview.text = "${alarmClockStrHour}:${alarmClockStrMinute}"
+            alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockStrHour}:${alarmClockStrMinute}"
             editAlarmToday.isClickable = true
         }
     }
@@ -269,10 +299,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun reformatAlarmClockPreview(alarmClock: LocalDateTime?): Pair<String, String> {
-        if (alarmClock == null) {
-            return Pair("00","00")
-        }
+    private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
         val alarmClockStrHour = if (alarmClock.hour < 10) {
             "0${alarmClock.hour}"
         } else {
@@ -332,6 +359,5 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             finish()
         }
     }
-
 
 }

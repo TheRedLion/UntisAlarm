@@ -47,7 +47,7 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="currently">Currently</string>
-    <string name="default_current_tbs">The Alarm currently goes off 60 minutes before your first lesson.</string>
+    <string name="default_current_tbs">The Alarm currently goes off 60 minutes before your first lesson. Edit this in the Settings menu.</string>
     <string name="error_loading_tbs">Please set the Time before School in the settings menu.</string>
     <string name="the_alarm_currently_goes_off">"The Alarm currently goes off "</string>
     <string name="minutes_n_before_your_first_lesson">" minutes before your first lesson."</string>
@@ -61,4 +61,5 @@
     <string name="login">Login</string>
     <string name="alarm_clock_notifications">Alarm Clock Notifications</string>
     <string name="time_before_school_hint">Time Before School</string>
+    <string name="loading">Loading…</string>
 </resources>

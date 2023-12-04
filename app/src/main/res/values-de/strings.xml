@@ -49,7 +49,7 @@
     <string name="confirm">Bestätigen</string>
     <string name="currently">Gerade</string>
     <string name="error">FEHLER</string>
-    <string name="default_current_tbs">Der Wecker ist zur Zeit auf 60 minuten vor der ersten Schulstunde gestellt.</string>
+    <string name="default_current_tbs">Der Wecker ist zur Zeit auf 60 minuten vor der ersten Schulstunde gestellt. Dies kann in den Einstellungen bearbeitet werden.</string>
     <string name="error_loading_tbs">Bitte setzte die Zeit vor Schulbeginn in den Einstellungen.</string>
     <string name="the_alarm_currently_goes_off">"Der Wecker ist zur Zeit auf "</string>
     <string name="minutes_n_before_your_first_lesson">" minuten vor der ersten Schulstunde gestellt"</string>
@@ -57,4 +57,10 @@
     <string name="webuntis_settings">Webuntis Einstellungen</string>
     <string name="cancellation_text">Ausfallnachricht</string>
     <string name="cancelled_message_explanation">Einige Schulen zeigen ausgefallene Stunden nicht als ausgefallen an, stattdessen wird eine Nachricht, wie \"Stunde fällt aus\" oder \"Aufgaben Selbstständig\" an. Sollte das der Fall sein, gebe diese Nachricht bitte hier ein, damit diese Stunden auch als ausfallend registriert werden.</string>
+    <string name="not_logged_in">Nicht angemeldet</string>
+    <string name="you_are_currently_not_logged_in_please_login_again">Du bist derzeit nicht angemeldet, bitte melde dich erneut an.</string>
+    <string name="login">Anmelden</string>
+    <string name="alarm_clock_notifications">Wecker Benachrichtigungen</string>
+    <string name="time_before_school_hint">Zeit vor Schulbeginn</string>
+    <string name="loading">Lädt…</string>
 </resources>

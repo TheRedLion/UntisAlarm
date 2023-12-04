@@ -41,7 +41,7 @@
                 style="@style/alarm_clock_preview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/error"
+                android:text="@string/loading"
                 app:layout_constraintBottom_toTopOf="@+id/current_tbs"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

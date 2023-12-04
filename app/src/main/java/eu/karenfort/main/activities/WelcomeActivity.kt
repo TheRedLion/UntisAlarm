@@ -133,7 +133,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun selectionListener() {
         autoCompleteTextView.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
-            schoolAddressDisplay.text = schools?.get(position)?.get(1)
+            schoolAddressDisplay.text = schools?.get(position)?.get(1) //todo prevent array out of bounds error
             schoolName = schools?.get(position)?.get(3)
             server = schools?.get(position)?.get(2)
         }

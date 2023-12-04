@@ -24,7 +24,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
     private val TAG = "AlarmClockReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "called alarmclock receiver")
+        Log.i(TAG, "called alarmclock receiver with intent: $intent")
 
         context.hideNotification(EARLY_ALARM_NOTIF_ID) // hide early dismissal notification if not already dismissed
 
