@@ -11,12 +11,13 @@ class AlarmReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "called onReceive with intent: $intent")
 
-        /* //todo add intent checks
-            if (!intent.equals("Intent { flg=0x10 cmp=com.carlkarenfort.test/eu.karenfort.main.alarm.AlarmReceiver }") && !intent.equals(Intent.ACTION_BOOT_COMPLETED)) {
-                Log.i(TAG, "intent $intent is not allowed")
+        val actualAction = intent.action
+        if (actualAction != null && actualAction != Intent.ACTION_BOOT_COMPLETED) {
+            if (actualAction != Intent.ACTION_CALL) {
+                Log.i(TAG, "no allowed intent")
                 return
-            }*/
-
+            }
+        }
         AlarmManager.main(context)
     }
 }

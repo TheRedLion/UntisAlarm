@@ -17,7 +17,9 @@ class AlarmScheduler(
      fun schedule() {
          //todo: work manager maybe?
          Log.i(TAG, "scheduled Alarm")
-         val intent = Intent(context, AlarmReceiver::class.java)
+         val intent = Intent(context, AlarmReceiver::class.java).also {
+             it.action = Intent.ACTION_CALL
+         }
          val pendingIntent = PendingIntent.getBroadcast(
              context,
              ALARM_REQUEST_CODE,
@@ -33,7 +35,9 @@ class AlarmScheduler(
             PendingIntent.getBroadcast(
                 context,
                 ALARM_REQUEST_CODE,
-                Intent(context, AlarmReceiver::class.java),
+                Intent(context, AlarmReceiver::class.java).also {
+                    it.action = Intent.ACTION_CALL
+                },
                 PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )

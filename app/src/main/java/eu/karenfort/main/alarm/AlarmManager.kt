@@ -110,7 +110,9 @@ class AlarmManager {
             when (reason) {
                 "noAlarmToday" -> {
                     val alarmManager = context.getSystemService(AlarmManager::class.java)
-                    val intent = Intent(context, AlarmReceiver::class.java)
+                    val intent = Intent(context, AlarmReceiver::class.java).also {
+                        it.action = Intent.ACTION_CALL
+                    }
                     val pendingIntent = PendingIntent.getBroadcast(
                         context,
                         ALARM_REQUEST_CODE,
@@ -129,7 +131,9 @@ class AlarmManager {
                 "normal" -> {
                     if (schoolStart != null) {
                         val alarmManager = context.getSystemService(AlarmManager::class.java)
-                        val intent = Intent(context, AlarmReceiver::class.java)
+                        val intent = Intent(context, AlarmReceiver::class.java).also {
+                            it.action = Intent.ACTION_CALL
+                        }
                         val pendingIntent = PendingIntent.getBroadcast(
                             context,
                             ALARM_REQUEST_CODE,
@@ -158,7 +162,7 @@ class AlarmManager {
                 }
 
                 "error" -> {
-                    Log.i(TAG, "uhhhh") //todo: error
+                    Log.i(TAG, "uhhhh") //todo: error handling
                 }
             }
         }
