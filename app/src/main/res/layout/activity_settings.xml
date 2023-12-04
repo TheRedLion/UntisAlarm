@@ -44,7 +44,8 @@
                         android:id="@+id/cancelled_message_input_field"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text" />
+                        android:inputType="text"
+                        android:singleLine="true"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,7 +79,8 @@
                         android:id="@+id/tbs_input_field"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:singleLine="true"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -129,7 +131,8 @@
                         android:id="@+id/snooze_input_field"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:singleLine="true"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 

@@ -270,7 +270,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val (alarmClockDateTime, _) = storeData.loadAlarmClock()
         if (alarmClockDateTime == null) {
             runOnUiThread {
-                alarmPreview.text = "00:00"
+                alarmPreview.text = getString(R.string.loading)
+                AlarmManager.main(this)
                 editAlarmToday.isClickable = true
             }
             return

@@ -158,7 +158,6 @@ class WelcomeActivity : AppCompatActivity() {
                     return
                 }
 
-                //phone is online
                 CoroutineScope(Dispatchers.IO).launch {
                     Log.i(TAG, "started coroutine")
                     val webApiCalls = WebApiCalls()
