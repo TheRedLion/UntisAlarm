@@ -9,5 +9,6 @@ class CancelledMessageInfo : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cancelled_message_info)
         //todo implement that lessons with messages that have "Tasks(Aufgaben)" or "Cancelled(Ausfall)" in them are shown and the user can check if they are actually cancelled
+
     }
 }

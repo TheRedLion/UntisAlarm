@@ -67,9 +67,9 @@ class StoreData (
         return preferences[languageKey]
     }
 
-    // -1: System Default, 0: Off: 1: On
+    // 0: System Default, 1: Off: 2: On
     fun storeDarkMode(isDarkModeEnabled: Int) {
-        if (isDarkModeEnabled >= 2 || isDarkModeEnabled < -1) {
+        if (isDarkModeEnabled > 2 || isDarkModeEnabled <= -1) {
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
@@ -79,7 +79,7 @@ class StoreData (
         }
     }
 
-    // -1: System Default, 0: Off: 1: On
+    // 0: System Default, 1: Off: 2: On
     suspend fun loadDarkMode(): Int? {
         val preferences = context.dataStore.data.first()
         return preferences[darkModeKey]

@@ -200,13 +200,30 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
         .build()
 
+    var darkmode = 0
+    var isDark = false
+    runBlocking {
+        val storeData = StoreData(applicationContext)    // 0: System Default, 1: Off: 2: On
+        if (storeData.loadDarkMode() == null) {
+            storeData.storeDarkMode(0)
+        }
+        darkmode = storeData.loadDarkMode()!!
+        if (darkmode == 0) {
+           // check if system default is dark mode
+            val currentNightMode = applicationContext.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+            isDark = currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
+        }
+    }
     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     val importance = NotificationManager.IMPORTANCE_HIGH
     NotificationChannel(channelId, label, importance).apply {
         setBypassDnd(true)
-        enableLights(true)
-        // todo: Proper black and light mode / preferences preferably in a new settings activity
-        lightColor = 0
+        if (isDark or (darkmode == 2)) {
+            enableLights(true)
+            lightColor = 0
+        } else {
+            enableLights(false)
+        }
         enableVibration(vibrate)
         setSound(soundUri, audioAttributes)
         notificationManager.createNotificationChannel(this)

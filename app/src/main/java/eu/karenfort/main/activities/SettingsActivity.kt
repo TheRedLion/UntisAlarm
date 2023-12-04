@@ -1,6 +1,5 @@
 package eu.karenfort.main.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,10 +7,10 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.LocaleListCompat
 import com.carlkarenfort.test.R
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -23,13 +22,13 @@ import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.LANGUAGE_DEFAULT
-import eu.karenfort.main.helper.PICKFILE_RESULT_CODE
 import eu.karenfort.main.helper.SNOOZE_DEFAULT
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -156,7 +155,6 @@ class SettingsActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
                 Log.i(TAG, "Storing $checkedItem in StoreData")
-                //todo: add implementation
             }
             .setSingleChoiceItems(listItems, checkedItem) { _, which ->
                 checkedItem = which
@@ -166,7 +164,22 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun languageDialog() {
         val listItems = arrayOf("System Default", "English", "German")
+        // load checkedItem from StoreData
         var checkedItem = 0
+        runBlocking {
+            val storeData = StoreData(this@SettingsActivity)
+            val language = storeData.loadLanguage()
+            if (language != null) {
+                checkedItem = when (language) {
+                    "System Default" -> 0
+                    "English" -> 1
+                    "German" -> 2
+                    else -> 0
+                }
+            }
+        }
+
+
 
         MaterialAlertDialogBuilder(this)
             .setTitle("Choose Alarm Sound")
@@ -176,18 +189,41 @@ class SettingsActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
                 Log.i(TAG, "Storing $checkedItem in StoreData")
-                //todo: add implementation
+
+                // Change app language to the selected language
+                val language = when (checkedItem) {
+                    0 -> "system"
+                    1 -> "en"
+                    2 -> "de"
+                    else -> "system"
+                }
+
+                val appLocale = LocaleListCompat.forLanguageTags(language) // or use "xx-YY"
+
+                AppCompatDelegate.setApplicationLocales(appLocale)
             }
             .setSingleChoiceItems(listItems, checkedItem) { _, which ->
-                checkedItem = which
-                Log.i(TAG, "$which, $checkedItem")
+                // check if the user selected a different language
+                if (checkedItem != which) {
+                    // restart the activity
+                    checkedItem = which
+                    StoreData(this).storeLanguage(listItems[which])
+                    Log.i(TAG, "$which, $checkedItem")
+                }
             }.show()
     }
 
     private fun darkModeDialog() {
         val listItems = arrayOf("System Default", "Lite", "Dark")
+        // load checkedItem from StoreData
         var checkedItem = 0
-
+        runBlocking {
+            val storeData = StoreData(this@SettingsActivity)
+            if (storeData.loadDarkMode() != null) {
+                checkedItem = storeData.loadDarkMode()!!
+            }
+        }
+        Log.i(TAG, "Loaded $checkedItem from StoreData")
         MaterialAlertDialogBuilder(this)
             .setTitle("Choose Alarm Sound")
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
@@ -195,8 +231,14 @@ class SettingsActivity : AppCompatActivity() {
             }
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
+                // Change app theme to the selected theme
+                when (checkedItem) {
+                    0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
                 Log.i(TAG, "Storing $checkedItem in StoreData")
-                StoreData(this).storeDarkMode(checkedItem - 1)
+                StoreData(this).storeDarkMode(checkedItem)
             }
             .setSingleChoiceItems(listItems, checkedItem) { _, which ->
                 checkedItem = which
