@@ -13,10 +13,10 @@ class WarningNotifications {
                 .setContentText(context.getString(R.string.your_alarms_might_not_be_set_properly_please_make_sure_that_they_are))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             builder.build()
-        } //todo implement functions
+        } //todo add implementation
 
         fun sendLoggedOutNotif() {
 
-        }
+        } //todo add implementation
     }
 }

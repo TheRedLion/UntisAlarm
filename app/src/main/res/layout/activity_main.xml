@@ -29,9 +29,11 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="60dp"
+
                 android:contentDescription="@string/button_to_change_tomorrows_alarm"
-                app:layout_constraintBottom_toTopOf="@+id/current_tbs"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/alarmPreview"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_edit" />
@@ -42,21 +44,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/loading"
-                app:layout_constraintBottom_toTopOf="@+id/current_tbs"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/current_tbs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxEms="15"
-                android:singleLine="false"
-                android:text="@string/default_current_tbs"
-                android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.materialswitch.MaterialSwitch

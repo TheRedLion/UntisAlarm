@@ -36,7 +36,6 @@ import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.INFO_NOTIFICARION_CHANNEL_ID
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.areNotificationsEnabled
-import eu.karenfort.main.helper.getNextDay
 import eu.karenfort.main.helper.isTiramisuPlus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +43,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneOffset
 import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Locale
@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var alarmPreview: TextView
     private lateinit var toggleAlarm: MaterialSwitch
     private lateinit var editAlarmToday: ImageView
-    private lateinit var tbsPreview: TextView
     private lateinit var notifsDisabledTextView: TextView
     private val alarmClockYearKey = intPreferencesKey("alarmClockYear")
     private val alarmClockMonthKey = intPreferencesKey("alarmClockMonth")
@@ -62,11 +61,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
     private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
     private val alarmClockEditedKey = booleanPreferencesKey("alarmClockEdited")
+    private var currentAlarmClockDateTime: LocalDateTime? = null
 
     companion object {
         var active = false
     }
 
+    //todo add pm am
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -76,7 +77,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         requestNotificationPermission()
         sendToWelcomeActivity()
         CoroutineScope(Dispatchers.IO).launch {
-            loadAndDisplayTBS()
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
         }
@@ -106,6 +106,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 alarmPreview.text = getString(R.string.error)
             } else {
                 alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockDateTime.hour}:${alarmClockDateTime.minute}"
+                currentAlarmClockDateTime = alarmClockDateTime
             }
         }
     }
@@ -156,109 +157,115 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
         editAlarmToday = findViewById(R.id.edit_alarm_tomorrow)
-        tbsPreview = findViewById(R.id.current_tbs)
         notifsDisabledTextView = findViewById(R.id.disabled_notfs)
     }
 
     private fun setListener() {
         toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
-        editAlarmToday.setOnClickListener {
-            //todo does not work, just resets itself
-            val isSystem24Hour = is24HourFormat(this)
-            val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
-            val regex = Regex("""\d{2}:\d{2}""")
-            val matchResult = regex.find(alarmPreview.text)
-            val timeString = matchResult?.value ?: "00:00"
-            val time = timeString.split(":")
-            var hour: Int
-            var minute: Int
-            try {
-                hour = time[0].toInt()
-                minute = time[1].toInt()
-            } catch (e: NumberFormatException) {
-                hour = 0
-                minute = 0
-            }
-            val timePicker =
+        editAlarmToday.setOnClickListener { handleEditAlarmToday() }
+    }
+
+    private fun handleEditAlarmToday() {
+        //todo does not work, just resets itself
+        val clockFormat = if (is24HourFormat(this)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+
+        val hour = currentAlarmClockDateTime?.hour ?: LocalDateTime.now().hour
+        val minute = currentAlarmClockDateTime?.minute ?: LocalDateTime.now().minute
+
+        val timePicker =
             MaterialTimePicker.Builder()
-                    .setTimeFormat(clockFormat)
-                    .setHour(hour)
-                    .setMinute(minute)
-                    .setTitleText("Edit Alarm Time")
-                    .setInputMode(INPUT_MODE_CLOCK)
+                .setTimeFormat(clockFormat)
+                .setHour(hour)
+                .setMinute(minute)
+                .setTitleText("Edit Alarm Time")
+                .setInputMode(INPUT_MODE_CLOCK)
+                .build()
+
+        timePicker.show(supportFragmentManager, TAG)
+
+        timePicker.addOnPositiveButtonClickListener {
+            timePicker.dismiss()
+
+            val startDate = getStartDate()
+
+            // Build constraints.
+            val constraintsBuilder =
+                CalendarConstraints.Builder()
+                    .setStart(startDate)
+
+            val selectedDateMilli = currentAlarmClockDateTime?.toInstant(
+                ZoneOffset.UTC
+            )?.toEpochMilli()
+                ?: MaterialDatePicker.todayInUtcMilliseconds()
+
+            val datePicker =
+                MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Select date")
+                    .setSelection(selectedDateMilli)
+                    .setCalendarConstraints(constraintsBuilder.build())
                     .build()
+            datePicker.show(supportFragmentManager, "tag")
 
-            timePicker.show(supportFragmentManager, TAG)
+            datePicker.addOnPositiveButtonClickListener {
 
-            timePicker.addOnPositiveButtonClickListener {
-                timePicker.dismiss()
+                val selectedCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                selectedCalendar.timeInMillis = it
 
-                val today = MaterialDatePicker.todayInUtcMilliseconds()
-                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                // Extract day, month, and year from the selected date
+                val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+                val selectedMonth = selectedCalendar.get(Calendar.MONTH) + 1 // Month is zero-based
+                val selectedYear = selectedCalendar.get(Calendar.YEAR)
 
-                calendar.timeInMillis = today
+                val selectedDateTime = LocalDateTime.of(
+                    LocalDate.of(selectedYear, selectedMonth, selectedDay),
+                    LocalTime.of(timePicker.hour, timePicker.minute)
+                )
 
-                val startDate = calendar.timeInMillis
-
-                // Build constraints.
-                val constraintsBuilder =
-                    CalendarConstraints.Builder()
-                        .setStart(startDate)
-
-                val datePicker =
-                    MaterialDatePicker.Builder.datePicker()
-                        .setTitleText("Select date")
-                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                        .setCalendarConstraints(constraintsBuilder.build())
-                        .build()
-                datePicker.show(supportFragmentManager, "tag")
-                datePicker.addOnPositiveButtonClickListener {
-
-                    val selectedCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                    selectedCalendar.timeInMillis = it
-
-                    // Extract day, month, and year from the selected date
-                    val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
-                    val selectedMonth = selectedCalendar.get(Calendar.MONTH) + 1 // Month is zero-based
-                    val selectedYear = selectedCalendar.get(Calendar.YEAR)
-
-                    val selectedDateTime = LocalDateTime.of(
-                        LocalDate.of(selectedYear, selectedMonth, selectedDay),
-                        LocalTime.of(timePicker.hour, timePicker.minute)
-                    )
-
-                    if (selectedDateTime.isBefore(LocalDateTime.now())) {
-                        Toast.makeText(this, "Selected date and time is before the current time", Toast.LENGTH_SHORT).show()
+                if (selectedDateTime.isBefore(LocalDateTime.now())) {
+                    Toast.makeText(
+                        this,
+                        "Selected date and time is before the current time",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    if (toggleAlarm.isChecked) {
+                        AlarmClock.cancelAlarm(this)
+                        AlarmClock.setAlarm(selectedDateTime, this)
                     } else {
-                        if (toggleAlarm.isChecked) {
-                            AlarmClock.cancelAlarm(this)
-                            AlarmClock.setAlarm(selectedDateTime, this)
-                        } else {
-                            Toast.makeText(this, "Alarms are disabled", Toast.LENGTH_SHORT).show()
-                        }
-                        StoreData(this).storeAlarmClock(selectedDateTime, true)
+                        Toast.makeText(this, "Alarms are disabled", Toast.LENGTH_SHORT).show()
                     }
-                }
-                datePicker.addOnNegativeButtonClickListener {
-                    datePicker.dismiss()
-                }
-                datePicker.addOnCancelListener {
-                    datePicker.dismiss()
-                }
-                datePicker.addOnDismissListener {
-                    datePicker.dismiss()
+                    StoreData(this).storeAlarmClock(selectedDateTime, true)
                 }
             }
-            timePicker.addOnNegativeButtonClickListener {
-                timePicker.dismiss()
+            datePicker.addOnNegativeButtonClickListener {
+                datePicker.dismiss()
             }
-            timePicker.addOnCancelListener {
-                timePicker.dismiss()
+            datePicker.addOnCancelListener {
+                datePicker.dismiss()
             }
-            timePicker.addOnDismissListener {
-                timePicker.dismiss()
+            datePicker.addOnDismissListener {
+                datePicker.dismiss()
             }
         }
+        timePicker.addOnNegativeButtonClickListener {
+            timePicker.dismiss()
+        }
+        timePicker.addOnCancelListener {
+            timePicker.dismiss()
+        }
+        timePicker.addOnDismissListener {
+            timePicker.dismiss()
+        }
+    }
+
+    private fun getStartDate(): Long {
+        val today = MaterialDatePicker.todayInUtcMilliseconds()
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+
+        calendar.timeInMillis = today
+
+        val startDate = calendar.timeInMillis
+        return startDate
     }
 
     private fun createNotificationChannel() {
@@ -328,32 +335,17 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val (alarmClockDateTime, _) = storeData.loadAlarmClock()
         if (alarmClockDateTime == null) {
             runOnUiThread {
-                alarmPreview.text = getString(R.string.loading)
+                alarmPreview.text = getString(R.string.error)
                 AlarmManager.main(this)
                 editAlarmToday.isClickable = true
             }
             return
         }
+        currentAlarmClockDateTime = alarmClockDateTime
         val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
         runOnUiThread {
             alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockStrHour}:${alarmClockStrMinute}"
             editAlarmToday.isClickable = true
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private suspend fun loadAndDisplayTBS() {
-        val storeData = StoreData(applicationContext)
-        val tbs: Int? = storeData.loadTBS()
-        if (tbs == null) {
-            runOnUiThread {
-                tbsPreview.text = getString(R.string.error_loading_tbs)
-            }
-            storeData.storeTBS(TBS_DEFAULT)
-        } else {
-            runOnUiThread {
-                tbsPreview.text = "${getString(R.string.the_alarm_currently_goes_off)}$tbs${getString(R.string.minutes_n_before_your_first_lesson)}"
-            }
         }
     }
 

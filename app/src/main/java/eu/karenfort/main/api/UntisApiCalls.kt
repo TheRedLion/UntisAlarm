@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 
-class UntisApiCalls constructor(
+class UntisApiCalls(
     username: String,
     password: String,
     server: String,
@@ -85,7 +85,6 @@ class UntisApiCalls constructor(
 
     private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
         Log.i(TAG, lesson.toString())
-        if (lesson.teachers.isEmpty() && lesson.teachers != null) return true
-        return false
+        return lesson.teachers.isEmpty() && lesson.teachers != null
     }
 }

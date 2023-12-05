@@ -37,15 +37,15 @@ class AlarmClock {
             if (!context.areNotificationsEnabled()) {
                 Log.i(TAG, "this is bad")
 
-                val intent1 = Intent(context, MainActivity::class.java)
-                intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent1.putExtra("areNotifsAllowed", "false")
-                context.startActivity(intent1)
+                if (MainActivity.active) {
+                    val intent1 = Intent(context, MainActivity::class.java)
+                    intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent1.putExtra("areNotifsAllowed", "false")
+                    context.startActivity(intent1)
+                }
             }
 
-            //tod: debuging stuff in here
-            //schoolStart = LocalTime.now().plusMinutes(1)
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
                 set(Calendar.YEAR, schoolStart.year)
@@ -55,14 +55,9 @@ class AlarmClock {
                 set(Calendar.MINUTE, schoolStart.minute)
                 set(Calendar.SECOND, 0)
             }
-            Log.i(TAG, "Hour: ")
-            Log.i(TAG, schoolStart.hour.toString())
-            Log.i(TAG, "Minute: ")
-            Log.i(TAG, schoolStart.minute.toString())
 
             val calendarMills = calendar.timeInMillis
 
-            //val calendarMills = System.currentTimeMillis() + 5000 //tod: remove debug code
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
 
             val nextAlarmClock: AlarmManager.AlarmClockInfo = alarmManager.nextAlarmClock
@@ -73,12 +68,20 @@ class AlarmClock {
                 storeData.storeAlarmClock(schoolStart)
 
                 //update UI in mainActivity
-                val intent1 = Intent(context, MainActivity::class.java)
-                intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent1.putExtra("newAlarmClockTime", "${schoolStart.dayOfWeek.getDisplayName(
-                    TextStyle.SHORT, Locale.getDefault())} ${schoolStart.hour}:${schoolStart.minute}")
-                context.startActivity(intent1)
+
+                if (MainActivity.active) {
+                    val intent1 = Intent(context, MainActivity::class.java)
+                    intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent1.putExtra(
+                        "newAlarmClockTime", "${
+                            schoolStart.dayOfWeek.getDisplayName(
+                                TextStyle.SHORT, Locale.getDefault()
+                            )
+                        } ${schoolStart.hour}:${schoolStart.minute}"
+                    )
+                    context.startActivity(intent1)
+                }
             }
         }
 
@@ -99,12 +102,19 @@ class AlarmClock {
             val triggerTime = System.currentTimeMillis() + timeInS * 1000
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerTime, pendingIntent), pendingIntent)
 
-            //update UI in mainActivity
-            val intent1 = Intent(context, MainActivity::class.java)
-            intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent1.putExtra("newAlarmClockTime", "${LocalTime.now().plusSeconds(timeInS.toLong()).hour}:${LocalTime.now().plusSeconds(timeInS.toLong()).minute}")
-            context.startActivity(intent1)
+            if (MainActivity.active) {
+                //update UI in mainActivity
+                val intent1 = Intent(context, MainActivity::class.java)
+                intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent1.putExtra(
+                    "newAlarmClockTime",
+                    "${LocalTime.now().plusSeconds(timeInS.toLong()).hour}:${
+                        LocalTime.now().plusSeconds(timeInS.toLong()).minute
+                    }"
+                )
+                context.startActivity(intent1)
+            }
         }
 
 

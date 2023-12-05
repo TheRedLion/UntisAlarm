@@ -59,7 +59,12 @@ class AlarmManager {
                 tbs = 60 //just settings default value, should fix itself next time user opens app
             }
 
-            StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+            if (storedAlarmClockEdited) { //todo make sure that edited is turned back off
+                setNew("noAlarmToday", null, context)
+                return
+            }
+
+            StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD) //todo maybe use ensureBackgroundThread? does that work
             val untisApiCalls = UntisApiCalls(
                 loginData[0]!!,
                 loginData[1]!!,
@@ -69,9 +74,7 @@ class AlarmManager {
 
             val schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
-            if (schoolStart != null) {
-                Log.i(TAG, "Getting school start for day: ${schoolStart.dayOfYear}. Is $schoolStart")
-            } else {
+            if (schoolStart == null) {
                 //probably holiday or something
                 setNew("noAlarmToday", null, context)
                 return

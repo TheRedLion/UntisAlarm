@@ -1,4 +1,4 @@
-package eu.karenfort.main.alarmClock;
+package eu.karenfort.main.alarmClock
 
 import android.content.BroadcastReceiver
 import android.content.Context
