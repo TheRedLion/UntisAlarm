@@ -13,6 +13,7 @@ import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.helper.showAlarmNotification
+import eu.karenfort.main.notifications.WarningNotifications
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
@@ -26,7 +27,7 @@ class AlarmManager {
 
             if (!context.isOnline()) {
                 Log.i(TAG, "Phone has no internet connectivity")
-                //todo: maybe send notif that alarm might not be set properly?
+                WarningNotifications.sendNoInternetNotif(context)
                 return
             }
 
@@ -48,7 +49,7 @@ class AlarmManager {
             }
 
             if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                //todo: warn user that he got logged out
+                WarningNotifications.sendLoggedOutNotif()
                 setNew("error", null, context)
                 return
             }

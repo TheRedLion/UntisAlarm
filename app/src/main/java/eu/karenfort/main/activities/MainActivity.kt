@@ -19,8 +19,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.carlkarenfort.test.R
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
@@ -29,6 +32,8 @@ import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
+import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
+import eu.karenfort.main.helper.INFO_NOTIFICARION_CHANNEL_ID
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.areNotificationsEnabled
 import eu.karenfort.main.helper.getNextDay
@@ -40,7 +45,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.TextStyle
+import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "MainActivity"
@@ -49,8 +56,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private lateinit var editAlarmToday: ImageView
     private lateinit var tbsPreview: TextView
     private lateinit var notifsDisabledTextView: TextView
+    private val alarmClockYearKey = intPreferencesKey("alarmClockYear")
+    private val alarmClockMonthKey = intPreferencesKey("alarmClockMonth")
+    private val alarmClockDayKey = intPreferencesKey("alarmClockDay")
     private val alarmClockHourKey = intPreferencesKey("alarmClockHour")
     private val alarmClockMinuteKey = intPreferencesKey("alarmClockMinute")
+    private val alarmClockEditedKey = booleanPreferencesKey("alarmClockEdited")
 
     companion object {
         var active = false
@@ -60,7 +71,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         getLayoutObjectsByID()
-        disableClicking() //disabling clicks until everything was properly loaded
+        disableClicking() //disabling clicks until everything was properly loaded to stop errors
         createNotificationChannel()
         requestNotificationPermission()
         sendToWelcomeActivity()
@@ -100,7 +111,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun isAlarmClockTime(string: String) =
-        string.equals(alarmClockHourKey) || string.equals(alarmClockMinuteKey)
+        string.equals(alarmClockHourKey) || string.equals(alarmClockMinuteKey) || string.equals(alarmClockEditedKey) || string.equals(alarmClockYearKey) || string.equals(alarmClockMonthKey) || string.equals(alarmClockDayKey)
 
 
     override fun onResume() {
@@ -152,6 +163,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setListener() {
         toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
         editAlarmToday.setOnClickListener {
+            //todo does not work, just resets itself
             val isSystem24Hour = is24HourFormat(this)
             val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
             val regex = Regex("""\d{2}:\d{2}""")
@@ -167,7 +179,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 hour = 0
                 minute = 0
             }
-            val picker =
+            val timePicker =
             MaterialTimePicker.Builder()
                     .setTimeFormat(clockFormat)
                     .setHour(hour)
@@ -176,36 +188,75 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     .setInputMode(INPUT_MODE_CLOCK)
                     .build()
 
-            picker.show(supportFragmentManager, TAG)
+            timePicker.show(supportFragmentManager, TAG)
 
-            picker.addOnPositiveButtonClickListener {
-                AlarmClock.cancelAlarm(this)
-                if (toggleAlarm.isChecked) {
-                    AlarmClock.setAlarm(
-                        LocalDateTime.of(
-                            getNextDay(),
-                            LocalTime.of(picker.hour, picker.minute)
-                        ), this
+            timePicker.addOnPositiveButtonClickListener {
+                timePicker.dismiss()
+
+                val today = MaterialDatePicker.todayInUtcMilliseconds()
+                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+
+                calendar.timeInMillis = today
+
+                val startDate = calendar.timeInMillis
+
+                // Build constraints.
+                val constraintsBuilder =
+                    CalendarConstraints.Builder()
+                        .setStart(startDate)
+
+                val datePicker =
+                    MaterialDatePicker.Builder.datePicker()
+                        .setTitleText("Select date")
+                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                        .setCalendarConstraints(constraintsBuilder.build())
+                        .build()
+                datePicker.show(supportFragmentManager, "tag")
+                datePicker.addOnPositiveButtonClickListener {
+
+                    val selectedCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                    selectedCalendar.timeInMillis = it
+
+                    // Extract day, month, and year from the selected date
+                    val selectedDay = selectedCalendar.get(Calendar.DAY_OF_MONTH)
+                    val selectedMonth = selectedCalendar.get(Calendar.MONTH) + 1 // Month is zero-based
+                    val selectedYear = selectedCalendar.get(Calendar.YEAR)
+
+                    val selectedDateTime = LocalDateTime.of(
+                        LocalDate.of(selectedYear, selectedMonth, selectedDay),
+                        LocalTime.of(timePicker.hour, timePicker.minute)
                     )
-                    StoreData(this).storeAlarmClock(
-                        LocalDateTime.of(
-                            LocalDate.now().plusDays(1),
-                            LocalTime.of(picker.hour, picker.minute)
-                        ), true
-                    )
-                } else {
-                    Toast.makeText(this, "Alarms are disabled", Toast.LENGTH_SHORT).show()
+
+                    if (selectedDateTime.isBefore(LocalDateTime.now())) {
+                        Toast.makeText(this, "Selected date and time is before the current time", Toast.LENGTH_SHORT).show()
+                    } else {
+                        if (toggleAlarm.isChecked) {
+                            AlarmClock.cancelAlarm(this)
+                            AlarmClock.setAlarm(selectedDateTime, this)
+                        } else {
+                            Toast.makeText(this, "Alarms are disabled", Toast.LENGTH_SHORT).show()
+                        }
+                        StoreData(this).storeAlarmClock(selectedDateTime, true)
+                    }
                 }
-                picker.dismiss()
+                datePicker.addOnNegativeButtonClickListener {
+                    datePicker.dismiss()
+                }
+                datePicker.addOnCancelListener {
+                    datePicker.dismiss()
+                }
+                datePicker.addOnDismissListener {
+                    datePicker.dismiss()
+                }
             }
-            picker.addOnNegativeButtonClickListener {
-                picker.dismiss()
+            timePicker.addOnNegativeButtonClickListener {
+                timePicker.dismiss()
             }
-            picker.addOnCancelListener {
-                picker.dismiss()
+            timePicker.addOnCancelListener {
+                timePicker.dismiss()
             }
-            picker.addOnDismissListener {
-                picker.dismiss()
+            timePicker.addOnDismissListener {
+                timePicker.dismiss()
             }
         }
     }
@@ -214,8 +265,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val notificationManager =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(NotificationChannel(
-            "main_channel",
-            "UntisAlarm Notifications", //todo: make notificcattion channels right (view system setings/UntisWecker/notifs)
+            ALARM_CLOCK_NOTIFICATION_CHANNEL_ID,
+            getString(R.string.alarm_notifications_channel_name),
+            NotificationManager.IMPORTANCE_DEFAULT
+        ))
+
+        val notificationManager2 =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager2.createNotificationChannel(NotificationChannel(
+            INFO_NOTIFICARION_CHANNEL_ID,
+            getString(R.string.info_notifications_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT
         ))
     }
@@ -234,7 +293,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Log.i(TAG, "should schedule")
             AlarmScheduler(this).schedule()
         } else {
-            alarmPreview.text = "00:00"
             Log.i(TAG, "cancelling")
             AlarmScheduler(this).cancel()
         }

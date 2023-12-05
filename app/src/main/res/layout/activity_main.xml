@@ -34,7 +34,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/alarmPreview"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_edit_notification" />
+                app:srcCompat="@drawable/ic_edit" />
 
             <TextView
                 android:id="@+id/alarmPreview"

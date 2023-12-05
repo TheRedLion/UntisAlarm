@@ -19,9 +19,11 @@ import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
+import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.LANGUAGE_DEFAULT
+import eu.karenfort.main.helper.SILENT_URI
 import eu.karenfort.main.helper.SNOOZE_DEFAULT
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
@@ -262,7 +264,7 @@ class SettingsActivity : AppCompatActivity() {
                         StoreData(this).storeSound("Default", Uri.parse("content://settings/system/alarm_alert"))
                     }
                     1 -> {
-                        StoreData(this).storeSound("Silent", Uri.parse("content://silent"))
+                        StoreData(this).storeSound("Silent", SILENT_URI)
                     }
                     2 -> {
                         intent = Intent(this@SettingsActivity, ChooseSoundFileActivity::class.java)
@@ -288,7 +290,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun initSound(): String {
-        StoreData(this).storeSound(ALARM_SOUND_DEFAULT, Uri.parse("content://silent"))
+        StoreData(this).storeSound(ALARM_SOUND_DEFAULT, ALARM_SOUND_DEFAULT_URI)
         return ALARM_SOUND_DEFAULT
     }
 

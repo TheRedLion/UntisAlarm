@@ -1,6 +1,7 @@
 package eu.karenfort.main.helper
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Build
 import android.os.Looper
 import android.os.StrictMode
@@ -8,6 +9,10 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
+
+//reminder Activity notifs / alarm notifs
+const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
+const val INFO_NOTIFICATION_CHANNEL_ID = "info_channel"
 
 const val ALARM_REQUEST_CODE = 73295871
 const val ALARM_ID = "alarm_id"
@@ -20,20 +25,27 @@ const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
 const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
 const val NOTIFICATION_ID = "notification_id"
 const val PICKFILE_RESULT_CODE = 7890
+const val INFO_NOTIFICARION_CHANNEL_ID = "Info_Notifs_Channel"
 
-const val SILENT = "silent"
-const val LANGUAGE_SYSTEM_DEFAULT = "default"
+const val SILENT_TITLE = "Silent"
+const val SILENT = "content://silent"
 
+const val LANGUAGE_SYSTEM_DEFAULT = "default" //todo wtf why are there two
+const val LANGUAGE_DEFAULT = LANGUAGE_SYSTEM_DEFAULT
 const val TBS_DEFAULT = 60
 const val VIBRATE_DEFAULT = true
 const val SNOOZE_DEFAULT = 5
-const val ALARM_SOUND_DEFAULT = SILENT //todo: set actual default
-const val IVG_DEFAULT = false
-const val LANGUAGE_DEFAULT = LANGUAGE_SYSTEM_DEFAULT
 const val DARK_MODE_DEFAULT = -1
+const val INCREASE_VOLUME_DELAY = 300L
+const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
+
+const val ALARM_SOUND_DEFAULT_TITLE = SILENT_TITLE //todo proper default uri and title
+const val ALARM_SOUND_DEFAULT = SILENT
+const val IVG_DEFAULT = false
 
 val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-
+val SILENT_URI: Uri = Uri.parse(SILENT)
+val ALARM_SOUND_DEFAULT_URI: Uri = Uri.parse(ALARM_SOUND_DEFAULT)
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
 fun ensureBackgroundThread(callback: () -> Unit) {

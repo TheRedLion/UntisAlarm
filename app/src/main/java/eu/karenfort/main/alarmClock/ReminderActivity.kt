@@ -26,6 +26,9 @@ import com.carlkarenfort.test.databinding.ActivityReminderBinding
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.helper.ALARM_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
+import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
+import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
+import eu.karenfort.main.helper.MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS
 import eu.karenfort.main.helper.SILENT
 import eu.karenfort.main.helper.getFormattedTime
 import eu.karenfort.main.helper.getPassedSeconds
@@ -38,11 +41,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class ReminderActivity : AppCompatActivity() {
-    companion object {
-        private const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
-        private const val INCREASE_VOLUME_DELAY = 300L
-    }
-
     private val increaseVolumeHandler = Handler(Looper.getMainLooper())
     private val maxReminderDurationHandler = Handler(Looper.getMainLooper())
     private val swipeGuideFadeHandler = Handler(Looper.getMainLooper())
@@ -186,7 +184,7 @@ class ReminderActivity : AppCompatActivity() {
             }, 500)
         }
 
-        var soundUri = Uri.parse("content://silent")
+        var soundUri = ALARM_SOUND_DEFAULT_URI
         runBlocking {
             val (_, newSoundUri) = StoreData(applicationContext).loadSound()
             if (newSoundUri == null) {
@@ -195,7 +193,7 @@ class ReminderActivity : AppCompatActivity() {
             soundUri = newSoundUri
         }
 
-        if (soundUri == Uri.parse("content://silent")) {
+        if (soundUri == ALARM_SOUND_DEFAULT_URI) {
             try {
                 Log.i("ReminderActivity", "SoundUri: $soundUri")
                 mediaPlayer = MediaPlayer()

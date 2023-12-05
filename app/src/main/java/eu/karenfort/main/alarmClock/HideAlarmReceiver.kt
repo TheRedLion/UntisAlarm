@@ -12,14 +12,5 @@ class HideAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         context.deleteNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID)
         context.hideNotification(ALARM_CLOCK_ID)
-
-        /*
-        ensureBackgroundThread {
-            val alarm = context.dbHelper.getAlarmWithId(id)
-            if (alarm != null && alarm.days < 0) {
-                context.dbHelper.updateAlarmEnabledState(alarm.id, false)
-                //context.updateWidgets()
-            }
-        }*/
     }
 }
