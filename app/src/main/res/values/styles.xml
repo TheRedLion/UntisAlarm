@@ -54,6 +54,7 @@
 
     <dimen name="bigger_text_size">16sp</dimen>
     <dimen name="big_text_size">18sp</dimen>
+    <dimen name="quite_big_text_size">30sp</dimen>
     <dimen name="really_big_text_size">65sp</dimen>
 
 </resources>

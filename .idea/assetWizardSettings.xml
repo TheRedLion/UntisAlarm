@@ -345,7 +345,7 @@
                         <option name="values">
                           <map>
                             <entry key="opacityPercent" value="0" />
-                            <entry key="outputName" value="ic_edit" />
+                            <entry key="outputName" value="ic_reset" />
                             <entry key="sourceFile" value="C:\Users\Karen\AndroidStudioProjects\UntisAlarm" />
                           </map>
                         </option>

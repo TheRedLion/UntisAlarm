@@ -102,8 +102,6 @@ class AlarmManager {
                             "newAlarmClockTime", "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockStrHour}:${alarmClockStrMinute}"
                         )
                         context.startActivity(intent1)
-
-
                     }
                 }
                 return

@@ -24,25 +24,31 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/edit_alarm_tomorrow"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginStart="60dp"
+            <Button
+                style="?attr/materialIconButtonFilledTonalStyle"
+                app:icon="@drawable/ic_reset"
 
-                android:contentDescription="@string/button_to_change_tomorrows_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.4"
+                android:clickable="false"
+                android:id="@+id/reset_alarm_tomorrow"
+
+                android:layout_marginStart="30dp"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/alarmPreview"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_edit" />
+                />
 
-            <TextView
-                android:id="@+id/alarmPreview"
-                style="@style/alarm_clock_preview"
+            <Button
+                android:textSize="@dimen/quite_big_text_size"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/alarmPreview"
                 android:text="@string/loading"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,18 +67,39 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/disabled_notfs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:maxEms="15"
-        android:singleLine="false"
-        android:text="Warning: Notifications are not enabled, please enable them for the App to work properly."
-        android:textAlignment="center"
-        android:textColor="@color/design_default_color_error"
+
         android:visibility="invisible"
+
+        android:layout_marginBottom="20dp"
+        android:checkable="false"
+        android:clickable="true"
+
+        android:focusable="false"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout2"
-        app:layout_constraintStart_toStartOf="@+id/constraintLayout2" />
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout2">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxEms="20"
+                android:orientation="vertical"
+                android:singleLine="false"
+                android:text="@string/warning_notifications_are_not_enabled_please_enable_them_for_the_app_to_work_properly"
+                android:textAlignment="center"
+                android:textColor="@color/design_default_color_error"
+                android:visibility="visible">
+
+            </TextView>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

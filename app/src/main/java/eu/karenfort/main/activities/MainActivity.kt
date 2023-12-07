@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -22,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.carlkarenfort.test.R
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.materialswitch.MaterialSwitch
@@ -52,10 +54,10 @@ import java.util.TimeZone
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "MainActivity"
-    private lateinit var alarmPreview: TextView
+    private lateinit var alarmPreview: Button
     private lateinit var toggleAlarm: MaterialSwitch
-    private lateinit var editAlarmToday: ImageView
-    private lateinit var notifsDisabledTextView: TextView
+    private lateinit var notifsDisabledCard: MaterialCardView
+    private lateinit var resetAlarm: Button
     private val alarmClockYearKey = intPreferencesKey("alarmClockYear")
     private val alarmClockMonthKey = intPreferencesKey("alarmClockMonth")
     private val alarmClockDayKey = intPreferencesKey("alarmClockDay")
@@ -102,12 +104,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (string == null) return //dont know when this would happen
         if (!isAlarmClockTime(string)) return
         CoroutineScope(Dispatchers.IO).launch {
-            val (alarmClockDateTime, _) = StoreData(applicationContext).loadAlarmClock()
+            val (alarmClockDateTime, alarmClockEdited) = StoreData(applicationContext).loadAlarmClock()
             if (alarmClockDateTime == null) {
                 alarmPreview.text = getString(R.string.error)
+                resetAlarm.isClickable = false
+                resetAlarm.alpha = 0.4F
             } else {
                 alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockDateTime.hour}:${alarmClockDateTime.minute}"
                 currentAlarmClockDateTime = alarmClockDateTime
+                resetAlarm.isClickable = true
+                resetAlarm.alpha = 1F
             }
         }
     }
@@ -124,9 +130,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun updateNotifsDisabledWarning() {
         if (areNotificationsEnabled()) {
-            notifsDisabledTextView.visibility = INVISIBLE
+            notifsDisabledCard.visibility = INVISIBLE
         } else {
-            notifsDisabledTextView.visibility = VISIBLE
+            notifsDisabledCard.visibility = VISIBLE
         }
     }
 
@@ -147,11 +153,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         when (extras.getString("areNotifsAllowed")) {
             "true" -> {
-                notifsDisabledTextView.visibility = INVISIBLE
+                notifsDisabledCard.visibility = INVISIBLE
             }
             "false" -> {
                 requestNotificationPermission()
-                notifsDisabledTextView.visibility = VISIBLE
+                notifsDisabledCard.visibility = VISIBLE
             }
         }
     }
@@ -159,14 +165,25 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun getLayoutObjectsByID() {
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
-        editAlarmToday = findViewById(R.id.edit_alarm_tomorrow)
-        notifsDisabledTextView = findViewById(R.id.disabled_notfs)
+        resetAlarm = findViewById(R.id.reset_alarm_tomorrow)
+        notifsDisabledCard = findViewById(R.id.disabled_notfs)
     }
 
     private fun setListener() {
+        alarmPreview.setOnClickListener { handleEditAlarmToday() }
         toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
-        editAlarmToday.setOnClickListener { handleEditAlarmToday() }
-        notifsDisabledTextView.setOnClickListener {
+        resetAlarm.setOnClickListener {
+            StoreData(this).storeAlarmClock(false)
+            if (toggleAlarm.isChecked) {
+                AlarmManager.main(this, false)
+            } else {
+                AlarmManager.main(this, false)
+            }
+            resetAlarm.alpha = .4F
+            resetAlarm.isClickable = false
+
+        }
+        notifsDisabledCard.setOnClickListener {
             val intent = Intent()
             intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -177,6 +194,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun handleEditAlarmToday() {
         //todo does not work, just resets itself
+
         val clockFormat = if (is24HourFormat(this)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
 
         val hour = currentAlarmClockDateTime?.hour ?: LocalDateTime.now().hour
@@ -245,6 +263,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                         Toast.makeText(this, "Alarms are disabled", Toast.LENGTH_SHORT).show()
                     }
                     StoreData(this).storeAlarmClock(selectedDateTime, true)
+                    resetAlarm.alpha = 1F
+                    resetAlarm.isClickable = true
                 }
             }
             datePicker.addOnNegativeButtonClickListener {
@@ -298,7 +318,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun disableClicking() {
         toggleAlarm.isClickable = false
-        editAlarmToday.isClickable = false
+        alarmPreview.isClickable = false
+        resetAlarm.isClickable = false
     }
 
     @SuppressLint("SetTextI18n")
@@ -349,12 +370,23 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("SetTextI18n")
     private suspend fun loadAndDisplayAlarmClockPreview() {
         val storeData = StoreData(applicationContext)
-        val (alarmClockDateTime, _) = storeData.loadAlarmClock()
+        val (alarmClockDateTime, alarmClockEdited) = storeData.loadAlarmClock()
+        if (alarmClockEdited) {
+            runOnUiThread{
+                resetAlarm.isClickable = true
+                resetAlarm.alpha = 1F
+            }
+        } else {
+            runOnUiThread {
+                resetAlarm.isClickable = false
+                resetAlarm.alpha = .4F
+            }
+        }
         if (alarmClockDateTime == null) {
             runOnUiThread {
                 alarmPreview.text = getString(R.string.error)
                 AlarmManager.main(this)
-                editAlarmToday.isClickable = true
+                alarmPreview.isClickable = true
             }
             return
         }
@@ -362,7 +394,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val (alarmClockStrHour, alarmClockStrMinute) = this.reformatAlarmClockPreview(alarmClockDateTime)
         runOnUiThread {
             alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockStrHour}:${alarmClockStrMinute}"
-            editAlarmToday.isClickable = true
+            alarmPreview.isClickable = true
         }
     }
 
