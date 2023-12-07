@@ -27,7 +27,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
-import eu.karenfort.main.activities.WelcomeActivity
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.alarmClock.AlarmClockReceiver
 import eu.karenfort.main.alarmClock.DismissAlarmReceiver
@@ -37,6 +36,7 @@ import eu.karenfort.main.alarmClock.SnoozeAlarmReceiver
 import kotlinx.coroutines.runBlocking
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
 
 fun getNextDay(): LocalDate {
@@ -95,6 +95,21 @@ fun Context.sendLoggedOutNotif() {
         Log.i("Context", "uhhh")
     }
 }*/
+
+fun Context.reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
+    val alarmClockStrHour = if (alarmClock.hour < 10) {
+        "0${alarmClock.hour}"
+    } else {
+        "${alarmClock.hour}"
+    }
+    val alarmClockStrMinute = if (alarmClock.minute < 10) {
+        "0${alarmClock.minute}"
+    } else {
+        "${alarmClock.minute}"
+    }
+    return Pair(alarmClockStrHour, alarmClockStrMinute)
+}
+
 fun Context.isOnline(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -113,6 +128,7 @@ fun Context.isOnline(): Boolean {
 }
 fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
 
+fun Context.getDefaultAlarmTitle() = this.getString(R.string.default_alarm)
 fun Context.areNotificationsEnabled(): Boolean {
     return NotificationManagerCompat.from(this).areNotificationsEnabled()
 }
@@ -305,7 +321,7 @@ fun Context.setupAlarmClock(triggerInSeconds: Int) {
     val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
     val targetMS = System.currentTimeMillis() + triggerInSeconds * 1000
     try {
-        AlarmClock.setAlarm(triggerInSeconds, applicationContext)
+        AlarmClock.snoozeAlarm(triggerInSeconds, applicationContext)
         // show a notification to allow dismissing the alarm 10 minutes before it actually triggers
         val dismissalTriggerTime = if (targetMS - System.currentTimeMillis() < 10.minutes.inWholeMilliseconds) {
             System.currentTimeMillis() + 500

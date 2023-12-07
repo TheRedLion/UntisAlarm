@@ -11,6 +11,8 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
+import eu.karenfort.main.StoreData
+import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
@@ -28,12 +30,15 @@ class AlarmClockReceiver : BroadcastReceiver() {
 
         context.hideNotification(EARLY_ALARM_NOTIF_ID) // hide early dismissal notification if not already dismissed
 
+        StoreData(context).storeAlarmClock(false)
+
         if (context.isScreenOn()) {
             Log.i(TAG, "showing screen notification alarm")
             context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
                 Log.i(TAG, "UN-showing screen notification alarm")
+                AlarmManager.main(context) // load new alarmClock
             }, 10000)
         } else {
             Log.i(TAG, "showing full activity view")

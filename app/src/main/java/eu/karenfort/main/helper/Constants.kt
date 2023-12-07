@@ -1,11 +1,14 @@
 package eu.karenfort.main.helper
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Looper
 import android.os.StrictMode
 import androidx.annotation.ChecksSdkIntAtLeast
+import com.carlkarenfort.test.R
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
@@ -38,14 +41,16 @@ const val SNOOZE_DEFAULT = 5
 const val DARK_MODE_DEFAULT = -1
 const val INCREASE_VOLUME_DELAY = 300L
 const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
+const val MAX_ALARM_DURATION = 60
 
-const val ALARM_SOUND_DEFAULT_TITLE = SILENT_TITLE //todo proper default uri and title
-const val ALARM_SOUND_DEFAULT = SILENT
+const val ALARM_SOUND_DEFAULT_TITLE = "Default Alarm"
+val ALARM_SOUND_DEFAULT: String = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
+
 const val IVG_DEFAULT = false
 
 val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 val SILENT_URI: Uri = Uri.parse(SILENT)
-val ALARM_SOUND_DEFAULT_URI: Uri = Uri.parse(ALARM_SOUND_DEFAULT)
+val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
 fun ensureBackgroundThread(callback: () -> Unit) {

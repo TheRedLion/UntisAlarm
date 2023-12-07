@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.core.app.NotificationManagerCompat
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
 import java.time.LocalTime
@@ -13,7 +12,9 @@ import java.util.Calendar
 
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.areNotificationsEnabled
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -64,8 +65,7 @@ class AlarmClock {
 
             // this check is necessary because android automatically cancels alarms that happen in the past (back to the future vibes)
             if (nextAlarmClock.triggerTime > System.currentTimeMillis()) {
-                val storeData = StoreData(context)
-                storeData.storeAlarmClock(schoolStart)
+                StoreData(context).storeAlarmClock(schoolStart)
 
                 //update UI in mainActivity
 
@@ -85,7 +85,10 @@ class AlarmClock {
             }
         }
 
-        fun setAlarm(timeInS: Int, context: Context) {
+        fun snoozeAlarm(timeInS: Int, context: Context) {
+
+            if (timeInS < 0) return
+
             Log.i(TAG, "setting alarm clock for in $timeInS seconds or ${timeInS/60}")
 
             //only one alarm may be active at any time
@@ -101,6 +104,8 @@ class AlarmClock {
 
             val triggerTime = System.currentTimeMillis() + timeInS * 1000
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerTime, pendingIntent), pendingIntent)
+
+            StoreData(context).storeAlarmClock(LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault()), true)
 
             if (MainActivity.active) {
                 //update UI in mainActivity
@@ -119,7 +124,7 @@ class AlarmClock {
 
 
         fun cancelAlarm(context: Context) {
-            Log.i(TAG, "called")
+            Log.i(TAG, "canceling")
             val intent2 = Intent(context, AlarmClockReceiver::class.java)
             intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 

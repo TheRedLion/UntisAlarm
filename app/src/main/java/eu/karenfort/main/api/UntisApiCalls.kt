@@ -67,7 +67,7 @@ class UntisApiCalls(
 
             timetable.sortByDate()
             timetable.sortByStartTime()
-            Log.i(TAG, timetable.toString())
+            //Log.i(TAG, timetable.toString())
             for (i in timetable){
                 if (!lessonIsCancelled(i)) {
                     val firstLessonStartTime: LocalDateTime = LocalDateTime.of(nextDay, i.startTime)

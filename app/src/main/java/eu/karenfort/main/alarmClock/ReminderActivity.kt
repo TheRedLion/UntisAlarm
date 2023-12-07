@@ -24,10 +24,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
 import com.carlkarenfort.test.databinding.ActivityReminderBinding
 import eu.karenfort.main.StoreData
+import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.helper.ALARM_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
+import eu.karenfort.main.helper.MAX_ALARM_DURATION
 import eu.karenfort.main.helper.MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS
 import eu.karenfort.main.helper.SILENT
 import eu.karenfort.main.helper.getFormattedTime
@@ -71,7 +73,7 @@ class ReminderActivity : AppCompatActivity() {
             R.string.time_expired
         )
 
-        val maxDuration = 60
+        val maxDuration = MAX_ALARM_DURATION
         maxReminderDurationHandler.postDelayed({
             finishActivity()
         }, maxDuration * 1000L)
@@ -290,6 +292,7 @@ class ReminderActivity : AppCompatActivity() {
         finished = true
         destroyEffects()
         finish()
+        AlarmManager.main(this)
         overridePendingTransition(0, 0)
     }
 

@@ -66,4 +66,8 @@
     <string name="your_alarms_might_not_be_set_properly_please_make_sure_that_they_are">Your Alarms might not be set properly. Please make sure that they are.</string>
     <string name="alarm_notifications_channel_name">Alarm Notifications</string>
     <string name="info_notifications_channel_name">Info Notifications</string>
+    <string name="enable_notifications">You first need to enable notifications.</string>
+    <string name="temop">temop</string>
+    <string name="alarm_sound">Alarm Sound</string>
+    <string name="no_success">No success</string>
 </resources>

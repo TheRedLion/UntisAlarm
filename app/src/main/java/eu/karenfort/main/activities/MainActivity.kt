@@ -34,9 +34,9 @@ import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.INFO_NOTIFICARION_CHANNEL_ID
-import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.areNotificationsEnabled
 import eu.karenfort.main.helper.isTiramisuPlus
+import eu.karenfort.main.helper.reformatAlarmClockPreview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,6 +48,7 @@ import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
+
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "MainActivity"
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     //todo add pm am
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG, "in onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         getLayoutObjectsByID()
@@ -82,7 +84,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
         setListener()
         updateNotifsDisabledWarning()
-        AlarmManager.main(this)
     }
 
 
@@ -116,12 +117,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
 
     override fun onResume() {
+        Log.i(TAG, "resuming")
         super.onResume()
         updateNotifsDisabledWarning()
-        AlarmManager.main(this)
-        CoroutineScope(Dispatchers.IO).launch {
-            loadAndDisplayAlarmClockPreview()
-        }
     }
 
     private fun updateNotifsDisabledWarning() {
@@ -148,8 +146,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         alarmPreview.text = newAlarmClockTime
 
         when (extras.getString("areNotifsAllowed")) {
-            "true" -> notifsDisabledTextView.visibility = INVISIBLE
-            "false" -> notifsDisabledTextView.visibility = VISIBLE
+            "true" -> {
+                notifsDisabledTextView.visibility = INVISIBLE
+            }
+            "false" -> {
+                requestNotificationPermission()
+                notifsDisabledTextView.visibility = VISIBLE
+            }
         }
     }
 
@@ -163,6 +166,13 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setListener() {
         toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
         editAlarmToday.setOnClickListener { handleEditAlarmToday() }
+        notifsDisabledTextView.setOnClickListener {
+            val intent = Intent()
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("android.provider.extra.APP_PACKAGE", packageName);
+            startActivity(intent);
+        }
     }
 
     private fun handleEditAlarmToday() {
@@ -293,20 +303,27 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     @SuppressLint("SetTextI18n")
     private fun handleToggleAlarm(isChecked: Boolean) {
-        StoreData(applicationContext).storeAlarmActive(isChecked)
+        StoreData(this).storeAlarmActive(isChecked)
 
         Log.i(TAG, "entered listener")
         if (isChecked) {
-            Log.i(TAG, "should schedule")
-            AlarmScheduler(this).schedule()
+            if (this.areNotificationsEnabled()) {
+                Log.i(TAG, "should schedule")
+                AlarmScheduler(this).schedule(this, true)
+            } else {
+                toggleAlarm.isChecked = false
+                Toast.makeText(this, getString(R.string.enable_notifications), Toast.LENGTH_SHORT).show()
+            }
         } else {
             Log.i(TAG, "cancelling")
+            AlarmClock.cancelAlarm(this)
             AlarmScheduler(this).cancel()
         }
     }
 
 
     private fun requestNotificationPermission() {
+        Log.i(TAG, "requesting Notification permission")
         if (!isTiramisuPlus()) return
         if (!areNotificationsEnabled()) return
 
@@ -342,25 +359,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             return
         }
         currentAlarmClockDateTime = alarmClockDateTime
-        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
+        val (alarmClockStrHour, alarmClockStrMinute) = this.reformatAlarmClockPreview(alarmClockDateTime)
         runOnUiThread {
             alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockStrHour}:${alarmClockStrMinute}"
             editAlarmToday.isClickable = true
         }
-    }
-
-    private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
-        val alarmClockStrHour = if (alarmClock.hour < 10) {
-            "0${alarmClock.hour}"
-        } else {
-            "${alarmClock.hour}"
-        }
-        val alarmClockStrMinute = if (alarmClock.minute < 10) {
-            "0${alarmClock.minute}"
-        } else {
-            "${alarmClock.minute}"
-        }
-        return Pair(alarmClockStrHour, alarmClockStrMinute)
     }
 
     private suspend fun hasLoggedIn() : Boolean {

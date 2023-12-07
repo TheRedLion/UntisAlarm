@@ -14,18 +14,23 @@ class AlarmScheduler(
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val ALARM_REQUEST_CODE = 73295871
 
-     fun schedule() {
-         Log.i(TAG, "scheduled Alarm")
-         val intent = Intent(context, AlarmReceiver::class.java).also {
-             it.action = Intent.ACTION_CALL
-         }
-         val pendingIntent = PendingIntent.getBroadcast(
+    fun schedule(context: Context) {
+        schedule(context, null)
+    }
+
+    fun schedule(context: Context, isActive: Boolean?) {
+        Log.i(TAG, "scheduled Alarm")
+        eu.karenfort.main.alarm.AlarmManager.main(context, isActive)
+        val intent = Intent(context, AlarmReceiver::class.java).also {
+            it.action = Intent.ACTION_CALL
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
              context,
              ALARM_REQUEST_CODE,
              intent,
              PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
          )
-         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
+         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 900000, pendingIntent)
      }
 
     fun cancel() {

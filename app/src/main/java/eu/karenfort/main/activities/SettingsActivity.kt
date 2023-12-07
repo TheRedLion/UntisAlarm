@@ -1,12 +1,14 @@
 package eu.karenfort.main.activities
 
 import android.content.Intent
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -17,6 +19,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.StoreData
+import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
@@ -75,7 +78,7 @@ class SettingsActivity : AppCompatActivity() {
         cancellationMessageLayout = findViewById(R.id.cancelled_message_input_layout)
     }
 
-    private fun setListener() {
+    private fun setListener() { //todo make selectors have the stored value selected when loaded
         cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
         cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
         snoozeInputLayout.setEndIconOnClickListener { _: View? -> handleSetSnooze() }
@@ -94,14 +97,16 @@ class SettingsActivity : AppCompatActivity() {
 
 
     private fun enableClicking() {
-        languageSettings.isClickable = true
-        colorSchemeSettings.isClickable = true
-        darkModeSettings.isClickable = true
-        alarmSoundSettings.isClickable = true
-        ivgToggle.isClickable = true
-        vibrateToggle.isClickable = true
-        tbsInputField.isClickable = true
-        snoozeInputField.isClickable = true
+        runOnUiThread {
+            languageSettings.isClickable = true
+            colorSchemeSettings.isClickable = true
+            darkModeSettings.isClickable = true
+            alarmSoundSettings.isClickable = true
+            ivgToggle.isClickable = true
+            vibrateToggle.isClickable = true
+            tbsInputField.isClickable = true
+            snoozeInputField.isClickable = true
+        }
     }
 
     private fun disableClicking() {
@@ -249,35 +254,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun alarmSoundDialog() {
-        val listItems = arrayOf("System Default", "Silent", "Custom Alarm")
-        var checkedItem = 0
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Choose Alarm Sound")
-            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
-                dialog.dismiss()
-                when (checkedItem) {//todo: update the alarm that is currently set
-                    0 -> {
-                        StoreData(this).storeSound("Default", Uri.parse("content://settings/system/alarm_alert"))
-                    }
-                    1 -> {
-                        StoreData(this).storeSound("Silent", SILENT_URI)
-                    }
-                    2 -> {
-                        intent = Intent(this@SettingsActivity, ChooseSoundFileActivity::class.java)
-                        startActivity(intent)
-                    }
-                }
-                Log.i(TAG, "Storing $checkedItem in StoreData")
-                //todo: add implementation
-            }
-            .setSingleChoiceItems(listItems, checkedItem) { _, which ->
-                checkedItem = which
-                Log.i(TAG, "$which, $checkedItem")
-            }.show()
+        val intent2 = Intent(this, AlarmSoundPicker::class.java)
+        startActivity(intent2)
     }
 
     private fun initDarkMode() {
@@ -389,8 +367,7 @@ class SettingsActivity : AppCompatActivity() {
                 aaState = aaStateNullable
             }
             if (aaState) {
-                AlarmScheduler(applicationContext).cancel()
-                AlarmScheduler(applicationContext).schedule()
+                AlarmManager.main(this@SettingsActivity)
             }
         }
     }

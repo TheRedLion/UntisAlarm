@@ -148,7 +148,7 @@
                     style="@style/settings_normal_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/default_alarm"
+                    android:text="@string/alarm_sound"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/alarm_sound_image"
                     app:layout_constraintTop_toTopOf="parent"

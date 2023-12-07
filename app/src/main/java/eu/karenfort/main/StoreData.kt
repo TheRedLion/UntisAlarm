@@ -193,6 +193,15 @@ class StoreData (
     fun storeAlarmClock(alarmClockDayTime: LocalDateTime) {
         storeAlarmClock(alarmClockDayTime, false)
     }
+
+    fun storeAlarmClock(edited: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            context.dataStore.edit { settings ->
+                settings[alarmClockEditedKey] = edited
+            }
+        }
+    }
+
     fun storeAlarmClock(alarmClockDayTime: LocalDateTime, edited: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             context.dataStore.edit { settings ->
