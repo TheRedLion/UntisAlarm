@@ -203,7 +203,11 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         vibrate = storeData.loadVibrate() ?: true
     }
 
-    if (soundUri != Uri.parse("content://silent")) {
+    if (soundUri == null) {
+        soundUri = ALARM_SOUND_DEFAULT_URI
+    }
+
+    if (soundUri != SILENT_URI) {
         grantReadUriPermission(soundUri!!)
     }
     val channelId = "simple_alarm_channel_${soundUri}_${vibrate}"
@@ -216,7 +220,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
         .build()
 
-    var darkmode = 0
+    var darkmode: Int
     var isDark = false
     runBlocking {
         val storeData = StoreData(applicationContext)    // 0: System Default, 1: Off: 2: On

@@ -34,6 +34,7 @@ class AlarmSoundPicker : AppCompatActivity() {
                 if (data != null) {
                     val uri = data.parcelable<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                     val title = data.extras?.getString(RingtoneManager.EXTRA_RINGTONE_TITLE)
+                    Log.i(TAG, "Title: $title")
                     if (uri != null) {
                         Log.i(TAG, uri.toString())
                         if (title != null) {

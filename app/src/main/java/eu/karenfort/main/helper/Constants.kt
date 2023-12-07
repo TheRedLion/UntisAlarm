@@ -47,7 +47,6 @@ const val ALARM_SOUND_DEFAULT_TITLE = "Default Alarm"
 val ALARM_SOUND_DEFAULT: String = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
 
 const val IVG_DEFAULT = false
-
 val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 val SILENT_URI: Uri = Uri.parse(SILENT)
 val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)

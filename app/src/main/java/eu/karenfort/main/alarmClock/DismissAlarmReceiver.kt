@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
@@ -26,5 +27,6 @@ class DismissAlarmReceiver : BroadcastReceiver() {
         ensureBackgroundThread {
             context.cancelAlarmClock()
         }
+        AlarmManager.main(context)
     }
 }

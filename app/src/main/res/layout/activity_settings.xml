@@ -143,6 +143,18 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/alarm_settings">
 
+                <Button
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:id="@+id/makeSilent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/silent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="@dimen/settings_label_start_margin"
+                    />
+
                 <TextView
                     android:id="@+id/alarm_sound_name"
                     style="@style/settings_normal_text"

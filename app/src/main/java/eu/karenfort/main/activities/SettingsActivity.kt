@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +27,7 @@ import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.LANGUAGE_DEFAULT
+import eu.karenfort.main.helper.SILENT_TITLE
 import eu.karenfort.main.helper.SILENT_URI
 import eu.karenfort.main.helper.SNOOZE_DEFAULT
 import eu.karenfort.main.helper.TBS_DEFAULT
@@ -51,6 +53,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var cancellationMessageField: TextInputEditText
     private lateinit var cancellationMessageLayout: TextInputLayout
     private lateinit var alarmName: TextView
+    private lateinit var makeSilent: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +79,7 @@ class SettingsActivity : AppCompatActivity() {
         tbsInputLayout = findViewById(R.id.tbs_input_layout)
         snoozeInputLayout = findViewById(R.id.snooze_input_layout)
         cancellationMessageLayout = findViewById(R.id.cancelled_message_input_layout)
+        makeSilent = findViewById(R.id.makeSilent)
     }
 
     private fun setListener() { //todo make selectors have the stored value selected when loaded
@@ -89,6 +93,9 @@ class SettingsActivity : AppCompatActivity() {
         alarmSoundSettings.setOnClickListener { alarmSoundDialog() }
         languageSettings.setOnClickListener { languageDialog() }
         colorSchemeSettings.setOnClickListener { colorDialog() }
+        makeSilent.setOnClickListener {
+            StoreData(this).storeSound(SILENT_TITLE, SILENT_URI)
+        }
     }
 
     private fun handleCancellationMessageInfo() {
@@ -128,10 +135,12 @@ class SettingsActivity : AppCompatActivity() {
             val vibrate: Boolean = storeData.loadVibrate() ?: initVibrate()
             val snooze: Int = storeData.loadSnoozeTime() ?: initSnooze()
             val ivg: Boolean = storeData.loadIncreaseVolumeGradually() ?: initIVG()
-            val (title, _) = storeData.loadSound()
-            if (title == null) initSound()
+            val (alarmSoundTitle, _) = storeData.loadSound()
+            if (alarmSoundTitle == null) initSound()
             if (storeData.loadLanguage() == null) initLanguage()
             if (storeData.loadDarkMode() == null) initDarkMode()
+
+            Log.i(TAG, alarmSoundTitle?:"")
 
             runOnUiThread {
                 tbsInputLayout.hint =
@@ -144,7 +153,7 @@ class SettingsActivity : AppCompatActivity() {
                         getString(R.string.short_minute)
                     })"
                 ivgToggle.isChecked = ivg
-
+                alarmName.text = alarmSoundTitle
             }
             enableClicking()
         }

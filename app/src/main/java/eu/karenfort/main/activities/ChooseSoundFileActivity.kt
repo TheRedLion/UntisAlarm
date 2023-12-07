@@ -35,6 +35,7 @@ class ChooseSoundFileActivity : AppCompatActivity() {
             val name = returnCursor.getString(nameIndex)
             returnCursor.close()
 
+            Log.i(TAG, "Title: $name")
             StoreData(this).storeSound(name, it)
             intent = Intent(this@ChooseSoundFileActivity, SettingsActivity::class.java)
             startActivity(intent)

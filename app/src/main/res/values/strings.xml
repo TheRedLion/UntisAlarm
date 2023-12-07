@@ -71,4 +71,5 @@
     <string name="alarm_sound">Alarm Sound</string>
     <string name="no_success">No success</string>
     <string name="warning_notifications_are_not_enabled_please_enable_them_for_the_app_to_work_properly">Warning: Notifications are not enabled, please enable them for the App to work properly.</string>
+    <string name="silent">Silent</string>
 </resources>

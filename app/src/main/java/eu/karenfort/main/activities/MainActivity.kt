@@ -105,15 +105,27 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (!isAlarmClockTime(string)) return
         CoroutineScope(Dispatchers.IO).launch {
             val (alarmClockDateTime, alarmClockEdited) = StoreData(applicationContext).loadAlarmClock()
-            if (alarmClockDateTime == null) {
-                alarmPreview.text = getString(R.string.error)
-                resetAlarm.isClickable = false
-                resetAlarm.alpha = 0.4F
-            } else {
-                alarmPreview.text = "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockDateTime.hour}:${alarmClockDateTime.minute}"
-                currentAlarmClockDateTime = alarmClockDateTime
-                resetAlarm.isClickable = true
-                resetAlarm.alpha = 1F
+            runOnUiThread {
+                if (alarmClockDateTime == null) {
+                    alarmPreview.text = getString(R.string.error)
+                    resetAlarm.isClickable = false
+                    resetAlarm.alpha = 0.4F
+                } else {
+                    alarmPreview.text = "${
+                        alarmClockDateTime.dayOfWeek.getDisplayName(
+                            TextStyle.SHORT,
+                            Locale.getDefault()
+                        )
+                    } ${alarmClockDateTime.hour}:${alarmClockDateTime.minute}"
+                    currentAlarmClockDateTime = alarmClockDateTime
+                    if (alarmClockEdited) {
+                        resetAlarm.isClickable = true
+                        resetAlarm.alpha = 1F
+                    } else {
+                        resetAlarm.isClickable = false
+                        resetAlarm.alpha = 0.4F
+                    }
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
+import eu.karenfort.main.activities.ReminderActivity
 import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID

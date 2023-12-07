@@ -1,4 +1,4 @@
-package eu.karenfort.main.alarmClock
+package eu.karenfort.main.activities
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -25,13 +25,11 @@ import com.carlkarenfort.test.R
 import com.carlkarenfort.test.databinding.ActivityReminderBinding
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmManager
-import eu.karenfort.main.helper.ALARM_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
 import eu.karenfort.main.helper.MAX_ALARM_DURATION
 import eu.karenfort.main.helper.MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS
-import eu.karenfort.main.helper.SILENT
 import eu.karenfort.main.helper.getFormattedTime
 import eu.karenfort.main.helper.getPassedSeconds
 import eu.karenfort.main.helper.isOreoMr1Plus
@@ -40,9 +38,9 @@ import eu.karenfort.main.helper.notificationManager
 import eu.karenfort.main.helper.viewBinding
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 class ReminderActivity : AppCompatActivity() {
+    private val TAG = "ReminderActivity"
     private val increaseVolumeHandler = Handler(Looper.getMainLooper())
     private val maxReminderDurationHandler = Handler(Looper.getMainLooper())
     private val swipeGuideFadeHandler = Handler(Looper.getMainLooper())
@@ -146,6 +144,7 @@ class ReminderActivity : AppCompatActivity() {
                             binding.reminderDraggable.performHapticFeedback()
                             didVibrate = true
                             finishActivity()
+                            AlarmManager.main(this)
                         }
 
                         if (isOreoPlus()) {
@@ -174,8 +173,14 @@ class ReminderActivity : AppCompatActivity() {
         initialAlarmVolume = audioManager?.getStreamVolume(AudioManager.STREAM_ALARM) ?: 7
 
         var doVibrate = true
+        var soundUri: Uri = ALARM_SOUND_DEFAULT_URI
         runBlocking {
             doVibrate = StoreData(applicationContext).loadVibrate()?: return@runBlocking
+            val (_, newSoundUri) = StoreData(applicationContext).loadSound()
+            if (newSoundUri == null) {
+                return@runBlocking
+            }
+            soundUri = newSoundUri
         }
 
         if (doVibrate && isOreoPlus()) {
@@ -186,39 +191,29 @@ class ReminderActivity : AppCompatActivity() {
             }, 500)
         }
 
-        var soundUri = ALARM_SOUND_DEFAULT_URI
-        runBlocking {
-            val (_, newSoundUri) = StoreData(applicationContext).loadSound()
-            if (newSoundUri == null) {
-                return@runBlocking
+        try {
+            Log.i("ReminderActivity", "Playing sound with Sound Uri: $soundUri")
+            mediaPlayer = MediaPlayer()
+            mediaPlayer!!.setAudioAttributes(AudioAttributes.Builder()
+                .setLegacyStreamType(AudioManager.STREAM_ALARM)
+                .build())
+
+            mediaPlayer = mediaPlayer!!.apply {
+                setDataSource(this@ReminderActivity, soundUri)
+                isLooping = true
+                prepare()
+                start()
             }
-            soundUri = newSoundUri
-        }
-
-        if (soundUri == ALARM_SOUND_DEFAULT_URI) {
-            try {
-                Log.i("ReminderActivity", "SoundUri: $soundUri")
-                mediaPlayer = MediaPlayer()
-                mediaPlayer!!.setAudioAttributes(AudioAttributes.Builder()
-                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
-                    .build())
-
-                mediaPlayer = mediaPlayer!!.apply {
-                    setDataSource(this@ReminderActivity, soundUri)
-                    isLooping = true
-                    prepare()
-                    start()
-                }
-                var increaseVolumeGradually = false
-                runBlocking {
-                    increaseVolumeGradually = StoreData(applicationContext).loadIncreaseVolumeGradually() ?: return@runBlocking
-                }
-
-                if (increaseVolumeGradually) {
-                    scheduleVolumeIncrease(MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS.toFloat(), initialAlarmVolume!!.toFloat(), 0)
-                }
-            } catch (e: Exception) {
+            var increaseVolumeGradually = false
+            runBlocking {
+                increaseVolumeGradually = StoreData(applicationContext).loadIncreaseVolumeGradually() ?: return@runBlocking
             }
+
+            if (increaseVolumeGradually) {
+                scheduleVolumeIncrease(MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS.toFloat(), initialAlarmVolume!!.toFloat(), 0)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to play Alarm Clock Sounds!")
         }
     }
 
