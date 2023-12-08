@@ -25,6 +25,9 @@ import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.R
+import com.carlkarenfort.test.R.drawable.ic_login_vector
+import com.carlkarenfort.test.R.string.not_logged_in
+import com.carlkarenfort.test.R.string.you_are_currently_not_logged_in_please_login_again
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.alarmClock.AlarmClock
@@ -39,6 +42,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.log
 import kotlin.time.Duration.Companion.minutes
 
 fun getNextDay(): LocalDate {
@@ -194,7 +198,7 @@ fun Context.sendLoggedOutNotif() {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    val label = getString(R.string.not_logged_in)
+    val label = getString(not_logged_in)
 
     val audioAttributes = AudioAttributes.Builder()
         .setUsage(AudioAttributes.USAGE_ALARM)
@@ -217,13 +221,14 @@ fun Context.sendLoggedOutNotif() {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
     val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
+        .setSmallIcon(ic_login_vector)
         .setContentTitle(label)
-        .setContentText(getString(R.string.you_are_currently_not_logged_in_please_login_again))
+        .setContentText(getString(you_are_currently_not_logged_in_please_login_again))
         .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
         .setDefaults(Notification.DEFAULT_LIGHTS)
         .setAutoCancel(true)
         .setChannelId(NOT_LOGGED_IN_CHANNEL_ID)
-        .addAction(R.drawable.ic_login_vector, getString(R.string.login), loginPendingIntent)
+        .setContentIntent(loginPendingIntent)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
     val notification = builder.build()
@@ -234,7 +239,7 @@ fun Context.sendLoggedOutNotif() {
     try {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
     } catch (e: Exception) {
-        Log.i("Context", "uhhh")
+        Log.i("Context", e.toString())
     }
 } //todo add implementation
 fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
