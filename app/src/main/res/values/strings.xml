@@ -72,4 +72,7 @@
     <string name="no_success">No success</string>
     <string name="warning_notifications_are_not_enabled_please_enable_them_for_the_app_to_work_properly">Warning: Notifications are not enabled, please enable them for the App to work properly.</string>
     <string name="silent">Silent</string>
+    <string name="may_not_be_empty">May not be empty</string>
+    <string name="school_must_be_selected">School must be selected</string>
+    <string name="unable_to_load_address">Unable to load Address</string>
 </resources>
