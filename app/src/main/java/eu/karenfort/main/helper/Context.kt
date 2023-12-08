@@ -25,6 +25,9 @@ import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.R
+import com.carlkarenfort.test.R.drawable.ic_login_vector
+import com.carlkarenfort.test.R.string.not_logged_in
+import com.carlkarenfort.test.R.string.you_are_currently_not_logged_in_please_login_again
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.alarmClock.AlarmClock
@@ -39,6 +42,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.log
 import kotlin.time.Duration.Companion.minutes
 
 fun getNextDay(): LocalDate {
@@ -184,6 +188,60 @@ fun Context.grantReadUriPermission(uri: Uri) {
         Log.i("Context", "ERRRRRROR")
     }
 }
+
+fun Context.sendLoggedOutNotif() {
+    // create Intent that sends user to login screen
+    val pendingIntent = PendingIntent.getActivity(
+        this,
+        0,
+        Intent(this, MainActivity::class.java),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+
+    val label = getString(not_logged_in)
+
+    val audioAttributes = AudioAttributes.Builder()
+        .setUsage(AudioAttributes.USAGE_ALARM)
+        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+        .setLegacyStreamType(AudioManager.STREAM_ALARM)
+        .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+        .build()
+
+    val importance = NotificationManager.IMPORTANCE_HIGH
+    NotificationChannel(NOT_LOGGED_IN_CHANNEL_ID, label, importance).apply {
+        notificationManager.createNotificationChannel(this)
+    }
+
+
+    val loginIntent = Intent(this, MainActivity::class.java)
+    val loginPendingIntent = PendingIntent.getActivity(
+        this,
+        0,
+        loginIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+    val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
+        .setSmallIcon(ic_login_vector)
+        .setContentTitle(label)
+        .setContentText(getString(you_are_currently_not_logged_in_please_login_again))
+        .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
+        .setDefaults(Notification.DEFAULT_LIGHTS)
+        .setAutoCancel(true)
+        .setChannelId(NOT_LOGGED_IN_CHANNEL_ID)
+        .setContentIntent(loginPendingIntent)
+        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
+    val notification = builder.build()
+    notification.flags = notification.flags or Notification.FLAG_INSISTENT
+
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    try {
+        notificationManager.notify(ALARM_CLOCK_ID, notification)
+    } catch (e: Exception) {
+        Log.i("Context", e.toString())
+    }
+} //todo add implementation
 fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     var soundUri: Uri?
     var vibrate: Boolean

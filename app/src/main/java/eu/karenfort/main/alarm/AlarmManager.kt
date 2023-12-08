@@ -14,6 +14,7 @@ import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.isOnline
+import eu.karenfort.main.helper.sendLoggedOutNotif
 import eu.karenfort.main.notifications.WarningNotifications
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
@@ -75,7 +76,7 @@ class AlarmManager {
                     if (context.isUiContext) {
                         Log.i(TAG, "loading preview for alarmPreview in Main Activity")
                         if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                            WarningNotifications.sendLoggedOutNotif()
+                            context.sendLoggedOutNotif()
                             Log.i(TAG, "not logged in")
                             setNew("error", null, context)
                             return null
@@ -99,7 +100,7 @@ class AlarmManager {
                     if (MainActivity.active) {
                         Log.i(TAG, "loading preview for alarmPreview in Main Activity")
                         if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                            WarningNotifications.sendLoggedOutNotif()
+                            context.sendLoggedOutNotif()
                             Log.i(TAG, "not logged in")
                             setNew("error", null, context)
                             return null
@@ -129,7 +130,7 @@ class AlarmManager {
             }
 
             if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                WarningNotifications.sendLoggedOutNotif()
+                context.sendLoggedOutNotif()
                 Log.i(TAG, "not logged in")
                 setNew("error", null, context)
                 return null
