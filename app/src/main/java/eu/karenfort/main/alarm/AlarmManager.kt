@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.StrictMode
 import android.util.Log
 import androidx.compose.ui.res.integerArrayResource
 import eu.karenfort.main.StoreData
@@ -14,6 +15,7 @@ import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
+import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.ensureBackgroundThread
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.notifications.WarningNotifications
@@ -58,6 +60,7 @@ class AlarmManager {
                 //debug: alarmClockArray = arrayOf(6, 43)
             }
 
+
             if (tbs == null) {
                 //should never happen
                 tbs = 60 //just settings default value, should fix itself next time user opens app
@@ -81,17 +84,17 @@ class AlarmManager {
                             setNew("error", null, context)
                             return null
                         }
-                        var schoolStart: LocalDateTime? = null
-                        ensureBackgroundThread {
-                            val untisApiCalls = UntisApiCalls(
-                                loginData[0]!!,
-                                loginData[1]!!,
-                                loginData[2]!!,
-                                loginData[3]!!
-                            )
+                        var schoolStart: LocalDateTime?
 
-                            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
-                        }
+                        StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+                        val untisApiCalls = UntisApiCalls(
+                            loginData[0]!!,
+                            loginData[1]!!,
+                            loginData[2]!!,
+                            loginData[3]!!
+                        )
+
+                        schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
                         return schoolStart!!.minusMinutes(tbs!!.toLong())
 
@@ -106,16 +109,16 @@ class AlarmManager {
                             return null
                         }
                         var schoolStart: LocalDateTime? = null
-                        ensureBackgroundThread {
-                            val untisApiCalls = UntisApiCalls(
-                                loginData[0]!!,
-                                loginData[1]!!,
-                                loginData[2]!!,
-                                loginData[3]!!
-                            )
 
-                            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
-                        }
+                        StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+                        val untisApiCalls = UntisApiCalls(
+                            loginData[0]!!,
+                            loginData[1]!!,
+                            loginData[2]!!,
+                            loginData[3]!!
+                        )
+
+                        schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
                         return schoolStart!!.minusMinutes(tbs!!.toLong())
                     }
@@ -136,17 +139,16 @@ class AlarmManager {
                 return null
             }
 
-            var schoolStart: LocalDateTime? = null
-            ensureBackgroundThread {
-                val untisApiCalls = UntisApiCalls(
-                    loginData[0]!!,
-                    loginData[1]!!,
-                    loginData[2]!!,
-                    loginData[3]!!
-                )
+            var schoolStart: LocalDateTime?
+            StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+            val untisApiCalls = UntisApiCalls(
+                loginData[0]!!,
+                loginData[1]!!,
+                loginData[2]!!,
+                loginData[3]!!
+            )
 
-                schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
-            }
+            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
 
             if (schoolStart == null) {

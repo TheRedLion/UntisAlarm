@@ -6,6 +6,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Looper
+import android.os.StrictMode
 import androidx.annotation.ChecksSdkIntAtLeast
 import com.carlkarenfort.test.R
 import java.util.Calendar
@@ -47,6 +48,8 @@ const val MAX_ALARM_DURATION = 60
 
 const val ALARM_SOUND_DEFAULT_TITLE = "Default Alarm"
 val ALARM_SOUND_DEFAULT: String = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
+
+val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 
 const val IVG_DEFAULT = false
 val SILENT_URI: Uri = Uri.parse(SILENT)

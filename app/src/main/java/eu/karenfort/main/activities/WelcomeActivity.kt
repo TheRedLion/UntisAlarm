@@ -19,7 +19,7 @@ import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
 import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputLayout
-import eu.karenfort.main.helper.ensureBackgroundThread
+import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.isOnline
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -133,14 +133,13 @@ class WelcomeActivity : AppCompatActivity() {
             return false
         }
         try {
-            ensureBackgroundThread {
-                untisApiCalls = UntisApiCalls(
-                    untisUserName.text.toString(),
-                    untisPassword.text.toString(),
-                    server!!, //!! should be fine
-                    schoolName!! //hopefully
-                )
-            }
+            StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+            untisApiCalls = UntisApiCalls(
+                untisUserName.text.toString(),
+                untisPassword.text.toString(),
+                server!!, //!! should be fine
+                schoolName!! //hopefully
+            )
         } catch (e: IOException) {
             Log.i(TAG, "login failed")
         }
