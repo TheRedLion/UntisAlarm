@@ -4,15 +4,16 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.compose.ui.res.integerArrayResource
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
-import eu.karenfort.main.helper.NEW_ALARM_CLOCK_TIME
 import eu.karenfort.main.helper.ensureBackgroundThread
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.notifications.WarningNotifications
@@ -24,18 +25,18 @@ class AlarmManager {
     companion object {
         private val TAG = "AlarmManager"
 
-        fun main(context: Context) {
-            main(context, null)
+        fun main(context: Context): LocalDateTime? {
+            return main(context, null)
         }
 
-        fun main(context: Context, isActive: Boolean?) {
+        fun main(context: Context, isActive: Boolean?): LocalDateTime? {
             Log.i(TAG ,"called main")
 
 
             if (!context.isOnline()) {
                 Log.i(TAG, "Phone has no internet connectivity")
                 WarningNotifications.sendNoInternetNotif(context)
-                return
+                return null
             }
 
             val storeData = StoreData(context)
@@ -71,14 +72,14 @@ class AlarmManager {
                 Log.i(TAG, "alarm is not active (${MainActivity.active})")
 
                 //the following will load and display the time an alarm would have
-                if (MainActivity.active) {
-                    Log.i(TAG, "loading preview for alarmPreview in Main Activity")
-                    if (!MainActivity.diableAlarmPreviewUpdate) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (context.isUiContext) {
+                        Log.i(TAG, "loading preview for alarmPreview in Main Activity")
                         if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
                             WarningNotifications.sendLoggedOutNotif()
                             Log.i(TAG, "not logged in")
                             setNew("error", null, context)
-                            return
+                            return null
                         }
                         var schoolStart: LocalDateTime? = null
                         ensureBackgroundThread {
@@ -92,37 +93,47 @@ class AlarmManager {
                             schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
                         }
 
-                        if (schoolStart != null) {
-                            val alarmClockDateTime = schoolStart!!.minusMinutes(tbs!!.toLong())
+                        return schoolStart!!.minusMinutes(tbs!!.toLong())
 
-                            val intent1 = Intent(context, MainActivity::class.java)
-                            intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                            intent1.putExtra(
-                                NEW_ALARM_CLOCK_TIME,
-                                MainActivity.getAlarmPreviewString(alarmClockDateTime)
-                            )
-                            MainActivity.diableAlarmPreviewUpdate = true
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                MainActivity.diableAlarmPreviewUpdate = false
-                            }, 5000) //this is to avoid a loop due to intents triggering onCreate
-                            context.startActivity(intent1)
+                    }
+                } else {
+                    if (MainActivity.active) {
+                        Log.i(TAG, "loading preview for alarmPreview in Main Activity")
+                        if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
+                            WarningNotifications.sendLoggedOutNotif()
+                            Log.i(TAG, "not logged in")
+                            setNew("error", null, context)
+                            return null
                         }
+                        var schoolStart: LocalDateTime? = null
+                        ensureBackgroundThread {
+                            val untisApiCalls = UntisApiCalls(
+                                loginData[0]!!,
+                                loginData[1]!!,
+                                loginData[2]!!,
+                                loginData[3]!!
+                            )
+
+                            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+                        }
+
+                        return schoolStart!!.minusMinutes(tbs!!.toLong())
                     }
                 }
-                return
+                return null
             }
 
             if (storedAlarmClockEdited) {
                 Log.i(TAG, "Alarm was edited or snoozed")
                 setNew("noAlarmToday", null, context)
-                return
+                return null
             }
 
             if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
                 WarningNotifications.sendLoggedOutNotif()
                 Log.i(TAG, "not logged in")
                 setNew("error", null, context)
-                return
+                return null
             }
 
             var schoolStart: LocalDateTime? = null
@@ -143,7 +154,7 @@ class AlarmManager {
                 Log.i(TAG, "schoolStart is null")
 
                 setNew("noAlarmToday", null, context)
-                return
+                return null
             }
 
             val alarmClockDateTime = schoolStart!!.minusMinutes(tbs!!.toLong())
@@ -153,19 +164,20 @@ class AlarmManager {
 
                 AlarmClock.setAlarm(alarmClockDateTime, context)
                 setNew("normal", schoolStart, context)
-                return
+                return alarmClockDateTime
             }
 
             if (isAlarmClockSetProperly(alarmClockDateTime, storedAlarmClockDateTime)) {
                 Log.i(TAG, "Alarm clock set properly")
                 setNew("normal", alarmClockDateTime, context)
-                return
+                return alarmClockDateTime
             }
 
             AlarmClock.cancelAlarm(context)
             AlarmClock.setAlarm(alarmClockDateTime, context)
 
             setNew("normal", schoolStart, context)
+            return alarmClockDateTime
         }
 
         private fun isAlarmClockSetProperly(

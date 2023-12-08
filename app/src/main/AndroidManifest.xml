@@ -41,9 +41,6 @@
         </service>
 
         <activity
-            android:name="eu.karenfort.main.activities.ChooseSoundFileActivity"
-            android:exported="false" />
-        <activity
             android:name="eu.karenfort.main.activities.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"

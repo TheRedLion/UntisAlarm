@@ -37,6 +37,8 @@ import kotlinx.coroutines.runBlocking
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.TextStyle
+import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 
 fun getNextDay(): LocalDate {
@@ -50,6 +52,42 @@ fun getNextDay(): LocalDate {
     }
     return nextDay
 }
+
+fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
+    if (DateFormat.is24HourFormat(this)) {
+        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
+        return "${
+            alarmClockDateTime.dayOfWeek.getDisplayName(
+                TextStyle.SHORT,
+                Locale.getDefault()
+            )
+        } ${alarmClockStrHour}:${alarmClockStrMinute}"
+    } else {
+        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
+        return "${
+            alarmClockDateTime.dayOfWeek.getDisplayName(
+                TextStyle.SHORT,
+                Locale.getDefault()
+            )
+        } ${alarmClockStrHour}:${alarmClockStrMinute}"
+    }
+
+}
+
+private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
+    val alarmClockStrHour = if (alarmClock.hour < 10) {
+        "0${alarmClock.hour}"
+    } else {
+        "${alarmClock.hour}"
+    }
+    val alarmClockStrMinute = if (alarmClock.minute < 10) {
+        "0${alarmClock.minute}"
+    } else {
+        "${alarmClock.minute}"
+    }
+    return Pair(alarmClockStrHour, alarmClockStrMinute)
+}
+
 /*
 fun Context.sendLoggedOutNotif() {
     val pendingIntent = getOpenAlarmTabIntent()

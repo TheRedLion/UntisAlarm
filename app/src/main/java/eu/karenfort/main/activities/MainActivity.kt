@@ -36,9 +36,9 @@ import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.INFO_NOTIFICARION_CHANNEL_ID
-import eu.karenfort.main.helper.NEW_ALARM_CLOCK_TIME
 import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
+import eu.karenfort.main.helper.getAlarmPreviewString
 import eu.karenfort.main.helper.isTiramisuPlus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,36 +69,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     companion object {
         var active = false
-        var diableAlarmPreviewUpdate = false //this is used to make sure that main activity is not reloaded over and over again
-
-        fun getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
-            val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
-            return "${
-                alarmClockDateTime.dayOfWeek.getDisplayName(
-                    TextStyle.SHORT,
-                    Locale.getDefault()
-                )
-            } ${alarmClockStrHour}:${alarmClockStrMinute}"
-        }
-
-        private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
-            val alarmClockStrHour = if (alarmClock.hour < 10) {
-                "0${alarmClock.hour}"
-            } else {
-                "${alarmClock.hour}"
-            }
-            val alarmClockStrMinute = if (alarmClock.minute < 10) {
-                "0${alarmClock.minute}"
-            } else {
-                "${alarmClock.minute}"
-            }
-            return Pair(alarmClockStrHour, alarmClockStrMinute)
-        }
     }
 
     //todo add pm am
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(TAG, "in onCreate")
+        Log.i(TAG, "in onCreate savedInstanceState: $savedInstanceState")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         getLayoutObjectsByID()
@@ -135,8 +110,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         CoroutineScope(Dispatchers.IO).launch {
             val (alarmClockDateTime, alarmClockEdited) = StoreData(this@MainActivity).loadAlarmClock()
             if (alarmClockDateTime == null) {
-                diableAlarmPreviewUpdate = false
-                AlarmManager.main(this@MainActivity) //this loads a preview for alarmPreview
+                currentAlarmClockDateTime = AlarmManager.main(this@MainActivity)
+                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                    currentAlarmClockDateTime!!
+                )
                 Log.e(TAG, "Loaded alarmClockDateTime is null")
                 resetAlarm.isClickable = false
                 resetAlarm.alpha = 0.4F
@@ -175,8 +152,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             Log.i(TAG, "extras was null")
             return
         }
-        val newAlarmClockTimeStr = extras.getString(NEW_ALARM_CLOCK_TIME)
-        alarmPreview.text = newAlarmClockTimeStr
 
         if (extras.getBoolean(NOTIFS_ALLOWED)) {
             notifsDisabledCard.visibility = INVISIBLE
@@ -240,9 +215,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         resetAlarm.setOnClickListener {
             StoreData(this).storeAlarmClock(false)
             if (toggleAlarm.isChecked) {
-                AlarmManager.main(this, false)
+                currentAlarmClockDateTime = AlarmManager.main(this, false)
+                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                    currentAlarmClockDateTime!!
+                )
             } else {
-                AlarmManager.main(this, false)
+                currentAlarmClockDateTime = AlarmManager.main(this, false)
+                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                    currentAlarmClockDateTime!!
+                )
             }
             resetAlarm.alpha = .4F
             resetAlarm.isClickable = false
@@ -452,8 +433,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         if (alarmClockDateTime == null) {
             Log.e(TAG, "Loaded AlarmClockDateTime is null!")
-            diableAlarmPreviewUpdate = false
-            AlarmManager.main(this)
+            currentAlarmClockDateTime = AlarmManager.main(this)
+            runOnUiThread{
+                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                    currentAlarmClockDateTime!!
+                )
+            }
             runOnUiThread {
                 alarmPreview.isClickable = true
             }

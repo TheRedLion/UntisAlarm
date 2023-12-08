@@ -4,22 +4,16 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Parcelable
 import android.util.Log
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
-import java.time.LocalTime
 import java.util.Calendar
-
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
-import eu.karenfort.main.helper.NEW_ALARM_CLOCK_TIME
 import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.TextStyle
-import java.util.Locale
 
 
 class AlarmClock {
@@ -41,8 +35,8 @@ class AlarmClock {
                 if (MainActivity.active) {
                     //make notification warning disappear on main activity
                     val intent1 = Intent(context, MainActivity::class.java)
-                    intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    //intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent1.putExtra(NOTIFS_ALLOWED, false)
                     context.startActivity(intent1)
                 }
@@ -70,15 +64,7 @@ class AlarmClock {
             if (nextAlarmClock.triggerTime > System.currentTimeMillis()) {
                 StoreData(context).storeAlarmClock(alarmClockDateTime)
 
-                //update UI in mainActivity
-                if (MainActivity.active) {
-                    val intent1 = Intent(context, MainActivity::class.java)
-                    intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    intent1.putExtra(
-                        NEW_ALARM_CLOCK_TIME, MainActivity.getAlarmPreviewString(alarmClockDateTime)
-                    )
-                    context.startActivity(intent1)
-                }
+                //todo check if update of alarmPreview in main activity is necessary
             }
         }
 
@@ -104,18 +90,7 @@ class AlarmClock {
 
             StoreData(context).storeAlarmClock(LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault()), true)
 
-            if (MainActivity.active) {
-                //update UI in mainActivity
-                val intent1 = Intent(context, MainActivity::class.java)
-                intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                val alarmClockDateTime = LocalDateTime.now().plusSeconds(timeInS.toLong())
-                intent1.putExtra(
-                    NEW_ALARM_CLOCK_TIME,
-                    MainActivity.getAlarmPreviewString(alarmClockDateTime)
-                )
-                context.startActivity(intent1)
-            }
+            //todo check if update of alarmPreview in main activity is necessary
         }
 
 
