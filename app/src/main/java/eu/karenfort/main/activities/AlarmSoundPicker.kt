@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
@@ -17,8 +18,16 @@ import eu.karenfort.main.helper.parcelable
 
 class AlarmSoundPicker : AppCompatActivity() {
     val TAG = "AlarmSoundPicker"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        val callback = onBackPressedDispatcher.addCallback(this) {
+            // create a new intent to send back to settings
+            val intent = Intent(this@AlarmSoundPicker, SettingsActivity::class.java)
+            startActivity(intent)
+        }
         setContentView(R.layout.activity_alarm_sound_picker)
 
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
@@ -52,10 +61,11 @@ class AlarmSoundPicker : AppCompatActivity() {
                         finish()
                     }
                 }
+            } else {
+                Toast.makeText(this, getString(R.string.no_success), Toast.LENGTH_LONG).show()
+                finish()
             }
         }
         ringtonePickerLauncher.launch(intent)
     }
-
-
 }

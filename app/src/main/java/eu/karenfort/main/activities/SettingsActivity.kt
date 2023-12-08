@@ -1,5 +1,6 @@
 package eu.karenfort.main.activities
 
+import android.app.UiModeManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.LocaleListCompat
 import com.carlkarenfort.test.R
@@ -246,10 +248,19 @@ class SettingsActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
                 // Change app theme to the selected theme
-                when (checkedItem) {
-                    0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                    1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                // check if api version is above 31
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                    val uiManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
+                    when (checkedItem) {
+                        1 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_NO)
+                        2 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_YES)
+                    }
+                } else {
+                    when (checkedItem) {
+                        0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
                 }
                 Log.i(TAG, "Storing $checkedItem in StoreData")
                 StoreData(this).storeDarkMode(checkedItem)
