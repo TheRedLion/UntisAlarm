@@ -12,8 +12,8 @@ import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import eu.karenfort.main.helper.NEW_ALARM_CLOCK_TIME
 import eu.karenfort.main.helper.isOnline
-import eu.karenfort.main.helper.reformatAlarmClockPreview
 import eu.karenfort.main.helper.showAlarmNotification
 import eu.karenfort.main.notifications.WarningNotifications
 import kotlinx.coroutines.runBlocking
@@ -74,34 +74,37 @@ class AlarmManager {
 
                 //the following will load and display the time an alarm would have
                 if (MainActivity.active) {
-                    if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                        WarningNotifications.sendLoggedOutNotif()
-                        Log.i(TAG, "not logged in")
-                        setNew("error", null, context)
-                        return
-                    }
+                    Log.i(TAG, "load preview for alarmPreview in Main Activity")
+                    if (!MainActivity.initAlarmPreview) {
+                        if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
+                            WarningNotifications.sendLoggedOutNotif()
+                            Log.i(TAG, "not logged in")
+                            setNew("error", null, context)
+                            return
+                        }
 
-                    StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD) //todo maybe use ensureBackgroundThread? does that work
-                    val untisApiCalls = UntisApiCalls(
-                        loginData[0]!!,
-                        loginData[1]!!,
-                        loginData[2]!!,
-                        loginData[3]!!
-                    )
-
-                    val schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
-
-                    if (schoolStart != null) {
-                        val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
-
-                        val (alarmClockStrHour, alarmClockStrMinute) = context.reformatAlarmClockPreview(alarmClockDateTime)
-
-                        val intent1 = Intent(context, MainActivity::class.java)
-                        intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        intent1.putExtra(
-                            "newAlarmClockTime", "${alarmClockDateTime.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${alarmClockStrHour}:${alarmClockStrMinute}"
+                        StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD) //todo maybe use ensureBackgroundThread? does that work
+                        val untisApiCalls = UntisApiCalls(
+                            loginData[0]!!,
+                            loginData[1]!!,
+                            loginData[2]!!,
+                            loginData[3]!!
                         )
-                        context.startActivity(intent1)
+
+                        val schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+
+                        if (schoolStart != null) {
+                            val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
+
+                            val intent1 = Intent(context, MainActivity::class.java)
+                            intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                            intent1.putExtra(
+                                NEW_ALARM_CLOCK_TIME,
+                                MainActivity.getAlarmPreviewString(alarmClockDateTime)
+                            )
+                            MainActivity.initAlarmPreview = true
+                            context.startActivity(intent1)
+                        }
                     }
                 }
                 return

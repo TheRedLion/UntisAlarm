@@ -177,8 +177,6 @@ class WelcomeActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(text: Editable?) {
-                Log.i(TAG, "text changed")
-
                 if (text.isNullOrEmpty()) {
                     untisSchoolInputLayout.error = getString(R.string.may_not_be_empty)
                     return
@@ -218,6 +216,7 @@ class WelcomeActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    untisSelectInputLayout.hint = getString(R.string.select_school)
                     //there are not
                     val schoolNames =
                         schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
@@ -233,15 +232,12 @@ class WelcomeActivity : AppCompatActivity() {
             }
         })
         untisPassword.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            Log.i(TAG, "focus changed")
             if(b){
                 //entered in the edit text
-                Log.i(TAG, "enterd edittext")
             } else {
                 //left edit text
-                Log.i(TAG, "left edit untisUsername")
                 if (!untisUserName.text.isNullOrEmpty() && !untisPassword.text.isNullOrEmpty()) {
-                    Log.i(TAG, "veryfiying login data")
+                    Log.i(TAG, "verifying login data")
                     CoroutineScope(Dispatchers.IO).launch {
                         verifyLoginData()
                     }
@@ -249,13 +245,10 @@ class WelcomeActivity : AppCompatActivity() {
             }
         }
         untisUserName.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            Log.i(TAG, "focus changed")
             if(b){
                 //entered in the edit text
-                Log.i(TAG, "entered edit username")
             } else {
                 //left edit text
-                Log.i(TAG, "left edit untisUsername")
                 if (!untisUserName.text.isNullOrEmpty() && !untisPassword.text.isNullOrEmpty()) {
                     Log.i(TAG, "veryfiying login data")
                     CoroutineScope(Dispatchers.IO).launch {

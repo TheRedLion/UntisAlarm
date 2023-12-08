@@ -13,6 +13,10 @@ import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
 
+//intent extra keys
+const val NEW_ALARM_CLOCK_TIME = "newAlarmClockTime"
+const val NOTIFS_ALLOWED = "notifsAllowed"
+
 //reminder Activity notifs / alarm notifs
 const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
 const val INFO_NOTIFICATION_CHANNEL_ID = "info_channel"

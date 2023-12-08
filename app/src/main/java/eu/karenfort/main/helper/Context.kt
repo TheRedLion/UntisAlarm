@@ -96,20 +96,6 @@ fun Context.sendLoggedOutNotif() {
     }
 }*/
 
-fun Context.reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
-    val alarmClockStrHour = if (alarmClock.hour < 10) {
-        "0${alarmClock.hour}"
-    } else {
-        "${alarmClock.hour}"
-    }
-    val alarmClockStrMinute = if (alarmClock.minute < 10) {
-        "0${alarmClock.minute}"
-    } else {
-        "${alarmClock.minute}"
-    }
-    return Pair(alarmClockStrHour, alarmClockStrMinute)
-}
-
 fun Context.isOnline(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
