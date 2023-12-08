@@ -212,7 +212,13 @@ class WelcomeActivity : AppCompatActivity() {
                                 }
                                 return@launch
                             }
+                        } else {
+                            Log.i(TAG, "schools is empty")
+                            return@launch
                         }
+                    } else {
+                        Log.i(TAG, "schools is empty")
+                        return@launch
                     }
                     untisSelectInputLayout.hint = getString(R.string.select_school)
                     //there are not
