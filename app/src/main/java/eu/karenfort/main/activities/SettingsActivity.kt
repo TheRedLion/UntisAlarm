@@ -37,7 +37,7 @@ import kotlinx.coroutines.runBlocking
 class SettingsActivity : AppCompatActivity() {
     private val TAG = "SettingsActivity"
     private lateinit var languageSettings: ConstraintLayout
-    private lateinit var colorSchemeSettings: ConstraintLayout
+    //private lateinit var colorSchemeSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
     private lateinit var darkModeSettings: ConstraintLayout
     private lateinit var ivgToggle: MaterialCheckBox
@@ -64,7 +64,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun getLayoutObjectsByID() {
         languageSettings = findViewById(R.id.language_settings)
-        colorSchemeSettings = findViewById(R.id.color_scheme_settings)
+        //colorSchemeSettings = findViewById(R.id.color_scheme_settings)
         darkModeSettings = findViewById(R.id.dark_mode_settings)
         alarmSoundSettings = findViewById(R.id.alarm_settings)
         alarmName = findViewById(R.id.alarm_sound_name)
@@ -79,7 +79,7 @@ class SettingsActivity : AppCompatActivity() {
         makeSilent = findViewById(R.id.makeSilent)
     }
 
-    private fun setListener() { //todo make selectors have the stored value selected when loaded
+    private fun setListener() {
         cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
         cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
         snoozeInputLayout.setEndIconOnClickListener { _: View? -> handleSetSnooze() }
@@ -89,7 +89,7 @@ class SettingsActivity : AppCompatActivity() {
         darkModeSettings.setOnClickListener { darkModeDialog() }
         alarmSoundSettings.setOnClickListener { alarmSoundDialog() }
         languageSettings.setOnClickListener { languageDialog() }
-        colorSchemeSettings.setOnClickListener { colorDialog() }
+        //colorSchemeSettings.setOnClickListener { colorDialog() }
         makeSilent.setOnClickListener {
             StoreData(this).storeSound(SILENT_TITLE, SILENT_URI)
         }
@@ -103,7 +103,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun enableClicking() {
         runOnUiThread {
             languageSettings.isClickable = true
-            colorSchemeSettings.isClickable = true
+            //colorSchemeSettings.isClickable = true
             darkModeSettings.isClickable = true
             alarmSoundSettings.isClickable = true
             ivgToggle.isClickable = true
@@ -115,7 +115,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun disableClicking() {
         languageSettings.isClickable = false
-        colorSchemeSettings.isClickable = false
+        //colorSchemeSettings.isClickable = false
         darkModeSettings.isClickable = false
         alarmSoundSettings.isClickable = false
         ivgToggle.isClickable = false
@@ -157,6 +157,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    /*
     private fun colorDialog() {
         val listItems = arrayOf("System Default", "Red", "Blue", "Green", "Orange")
         var checkedItem = 0
@@ -175,6 +176,7 @@ class SettingsActivity : AppCompatActivity() {
                 Log.i(TAG, "$which, $checkedItem")
             }.show()
     }
+     */
 
     private fun languageDialog() {
         val listItems = arrayOf("System Default", "English", "German")

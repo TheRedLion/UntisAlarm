@@ -263,6 +263,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!--
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -289,7 +290,7 @@
                     style="@style/settings_image_view"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
+            -->
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.core.widget.NestedScrollView>
 

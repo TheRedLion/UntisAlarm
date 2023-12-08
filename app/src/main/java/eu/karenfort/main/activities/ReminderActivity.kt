@@ -115,7 +115,7 @@ class ReminderActivity : AppCompatActivity() {
             initialDraggableX = binding.reminderDraggable.left.toFloat()
         }
 
-        binding.reminderDraggable.setOnTouchListener { v, event ->
+        binding.reminderDraggable.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     dragDownX = event.x
@@ -278,7 +278,7 @@ class ReminderActivity : AppCompatActivity() {
         runBlocking {
             snoozeTime = StoreData(applicationContext).loadSnoozeTime() ?: return@runBlocking
         }
-        eu.karenfort.main.alarmClock.AlarmClock.setAlarm(LocalDateTime.now().plusMinutes(5), this)
+        eu.karenfort.main.alarmClock.AlarmClock.snoozeAlarm(snoozeTime, this)
         wasAlarmSnoozed = true
         finishActivity()
     }

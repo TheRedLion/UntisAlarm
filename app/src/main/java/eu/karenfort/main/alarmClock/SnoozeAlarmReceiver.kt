@@ -1,6 +1,5 @@
 package eu.karenfort.main.alarmClock
 
-import android.app.IntentService
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent

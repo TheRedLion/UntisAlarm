@@ -5,18 +5,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.os.StrictMode
 import android.util.Log
-import androidx.compose.ui.res.integerArrayResource
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
-import eu.karenfort.main.helper.ensureBackgroundThread
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.notifications.WarningNotifications
 import kotlinx.coroutines.runBlocking
@@ -108,7 +104,7 @@ class AlarmManager {
                             setNew("error", null, context)
                             return null
                         }
-                        var schoolStart: LocalDateTime? = null
+                        var schoolStart: LocalDateTime?
 
                         StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
                         val untisApiCalls = UntisApiCalls(
@@ -159,7 +155,7 @@ class AlarmManager {
                 return null
             }
 
-            val alarmClockDateTime = schoolStart!!.minusMinutes(tbs!!.toLong())
+            val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
 
             if (storedAlarmClockDateTime == null) {
                 Log.i(TAG, "No alarm clock set, setting a new one")
@@ -247,12 +243,12 @@ class AlarmManager {
                 }
 
                 "error" -> {
-                    Log.i(TAG, "error") //todo: error handling
+                    Log.e(TAG, "error")
                     setNew("normal", null, context)
                 }
 
                 else -> {
-                    Log.i(TAG, "no matich reason") //todo: error handling
+                    Log.i(TAG, "no matich reason")
                     setNew("normal", null, context)
                 }
             }

@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         var active = false
     }
 
-    //todo add pm am
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "in onCreate savedInstanceState: $savedInstanceState")
         super.onCreate(savedInstanceState)

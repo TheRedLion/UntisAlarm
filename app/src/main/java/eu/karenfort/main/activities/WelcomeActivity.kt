@@ -168,7 +168,6 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun schoolFieldListener() {
-        // TODO: 2 fields is unnecessary 1 field better - true but how
         untisSchool.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
