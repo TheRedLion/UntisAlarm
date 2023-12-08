@@ -76,13 +76,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         getLayoutObjectsByID()
         disableClicking() //disabling clicks until everything was properly loaded to stop errors
         createNotificationChannel()
-        sendToWelcomeActivity()
+        sendToWelcomeActivity() //send user to welcomeActivity if they have not logged in yet
         CoroutineScope(Dispatchers.IO).launch {
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
         }
         setListener()
         updateNotifsDisabledWarning()
+        //request Notification Permission after 1 second if it was not granted yet
         Handler(Looper.getMainLooper()).postDelayed({
             requestNotificationPermission()
         }, 1000)
