@@ -32,14 +32,12 @@ class AlarmClock {
             //only one alarm may be active at any time
             cancelAlarm(context)
 
-            val intent = Intent(context, AlarmClockReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!context.areNotificationsEnabled()) {
                 Log.i(TAG, "this is bad")
 
                 if (MainActivity.active) {
+                    //make notification warning disappear on main activity
                     val intent1 = Intent(context, MainActivity::class.java)
                     intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -57,9 +55,11 @@ class AlarmClock {
                 set(Calendar.MINUTE, alarmClockDateTime.minute)
                 set(Calendar.SECOND, 0)
             }
-
             val calendarMills = calendar.timeInMillis
 
+
+            val intent = Intent(context, AlarmClockReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
 
             val nextAlarmClock: AlarmManager.AlarmClockInfo = alarmManager.nextAlarmClock

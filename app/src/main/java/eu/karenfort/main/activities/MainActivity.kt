@@ -15,10 +15,9 @@ import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.res.integerArrayResource
 import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -130,22 +129,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    private fun isAlarmClockTime(string: String) =
-        string.equals(alarmClockHourKey) || string.equals(alarmClockMinuteKey) || string.equals(alarmClockEditedKey) || string.equals(alarmClockYearKey) || string.equals(alarmClockMonthKey) || string.equals(alarmClockDayKey)
-
-
     override fun onResume() {
         Log.i(TAG, "resuming")
         super.onResume()
         updateNotifsDisabledWarning()
-    }
-
-    private fun updateNotifsDisabledWarning() {
-        if (areNotificationsEnabled()) {
-            notifsDisabledCard.visibility = INVISIBLE
-        } else {
-            notifsDisabledCard.visibility = VISIBLE
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -174,6 +161,46 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.top_right_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.settings -> {
+                Log.i(TAG, "should go to welcomeActivity")
+                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.logout -> {
+                startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
+                deleteLoginData()
+            }
+
+            R.id.about_us -> {
+                val uri = Uri.parse("https://github.com/TheRedLion/UntisAlarm")
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+
+    private fun isAlarmClockTime(string: String) =
+        string.equals(alarmClockHourKey) || string.equals(alarmClockMinuteKey) || string.equals(alarmClockEditedKey) || string.equals(alarmClockYearKey) || string.equals(alarmClockMonthKey) || string.equals(alarmClockDayKey)
+
+    private fun updateNotifsDisabledWarning() {
+        if (areNotificationsEnabled()) {
+            notifsDisabledCard.visibility = INVISIBLE
+        } else {
+            notifsDisabledCard.visibility = VISIBLE
+        }
+    }
+
     private fun getLayoutObjectsByID() {
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
@@ -196,17 +223,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         }
         notifsDisabledCard.setOnClickListener {
+            //send user to notification settings of app
             val intent = Intent()
             intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.putExtra("android.provider.extra.APP_PACKAGE", packageName);
-            startActivity(intent);
+            intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
+            startActivity(intent)
         }
     }
 
     private fun handleEditAlarmToday() {
-        //todo does not work, just resets itself
-
         val clockFormat = if (is24HourFormat(this)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
 
         val hour = currentAlarmClockDateTime?.hour ?: LocalDateTime.now().hour
@@ -306,8 +332,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         calendar.timeInMillis = today
 
-        val startDate = calendar.timeInMillis
-        return startDate
+        return calendar.timeInMillis
     }
 
     private fun createNotificationChannel() {
@@ -358,7 +383,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun requestNotificationPermission() {
         Log.i(TAG, "requesting Notification permission")
         if (!isTiramisuPlus()) return
-        if (!areNotificationsEnabled()) return
+        if (!areNotificationsEnabled()) {
+            Log.w(TAG, "Notifications are enabled. Should not request Notification Permission.")
+            return
+        }
 
         ActivityCompat.requestPermissions(
             this,
@@ -413,33 +441,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private suspend fun hasLoggedIn() : Boolean {
         val storeData = StoreData(applicationContext)
         return storeData.loadLoginData()[0] == null || storeData.loadID() == null
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.top_right_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.settings -> {
-                Log.i(TAG, "should go to welcomeActivity")
-                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-            }
-
-            R.id.logout -> {
-                startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
-                deleteLoginData()
-            }
-
-            R.id.about_us -> {
-                val uri = Uri.parse("https://github.com/TheRedLion/UntisAlarm")
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                startActivity(intent)
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun deleteLoginData() {

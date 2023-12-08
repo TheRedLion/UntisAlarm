@@ -33,7 +33,7 @@ const val INFO_NOTIFICARION_CHANNEL_ID = "Info_Notifs_Channel"
 const val SILENT_TITLE = "Silent"
 const val SILENT = "content://silent"
 
-const val LANGUAGE_SYSTEM_DEFAULT = "default" //todo wtf why are there two
+const val LANGUAGE_SYSTEM_DEFAULT = "default"
 const val LANGUAGE_DEFAULT = LANGUAGE_SYSTEM_DEFAULT
 const val TBS_DEFAULT = 60
 const val VIBRATE_DEFAULT = true

@@ -1,15 +1,12 @@
 package eu.karenfort.main.activities
 
 import android.content.Intent
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +18,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarm.AlarmManager
-import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
@@ -63,6 +59,7 @@ class SettingsActivity : AppCompatActivity() {
         disableClicking() //disabling clicks until everything was properly loaded
         loadAndDisplayStoredStates()
         setListener()
+
     }
 
     private fun getLayoutObjectsByID() {
@@ -128,6 +125,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun loadAndDisplayStoredStates() {
+
         CoroutineScope(Dispatchers.IO).launch {
             val storeData = StoreData(applicationContext)
 
@@ -182,7 +180,7 @@ class SettingsActivity : AppCompatActivity() {
         val listItems = arrayOf("System Default", "English", "German")
         // load checkedItem from StoreData
         var checkedItem = 0
-        runBlocking {
+        runBlocking {//todo take language loaded when states were set
             val storeData = StoreData(this@SettingsActivity)
             val language = storeData.loadLanguage()
             if (language != null) {

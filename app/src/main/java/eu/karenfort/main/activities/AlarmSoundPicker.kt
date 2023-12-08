@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
+import eu.karenfort.main.helper.parcelable
 
 class AlarmSoundPicker : AppCompatActivity() {
     val TAG = "AlarmSoundPicker"
@@ -27,9 +28,8 @@ class AlarmSoundPicker : AppCompatActivity() {
 
         val ringtonePickerLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ) {result ->
+        ) { result ->
             if (result.resultCode == RESULT_OK) {
-                // There are no request codes
                 val data = result.data
                 if (data != null) {
                     val uri = data.parcelable<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
@@ -40,6 +40,7 @@ class AlarmSoundPicker : AppCompatActivity() {
                         if (title != null) {
                             StoreData(this).storeSound(title, uri)
                         } else {
+                            //storing default alarm
                             StoreData(this).storeSound(
                                 getString(R.string.alarm_sound),
                                 uri
@@ -56,8 +57,5 @@ class AlarmSoundPicker : AppCompatActivity() {
         ringtonePickerLauncher.launch(intent)
     }
 
-    inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
-        SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
-        else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
-    }
+
 }
