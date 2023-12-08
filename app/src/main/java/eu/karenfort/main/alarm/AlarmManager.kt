@@ -25,10 +25,14 @@ class AlarmManager {
         private val TAG = "AlarmManager"
 
         fun main(context: Context): LocalDateTime? {
-            return main(context, null)
+            return main(context, null, null)
         }
 
         fun main(context: Context, isActive: Boolean?): LocalDateTime? {
+            return main(context, isActive, null)
+        }
+
+        fun main(context: Context, isActive: Boolean?, edited: Boolean?): LocalDateTime? {
             Log.i(TAG ,"called main")
 
 
@@ -43,7 +47,7 @@ class AlarmManager {
             var loginData: Array<String?>
             var tbs: Int?
             val storedAlarmClockDateTime: LocalDateTime?
-            val storedAlarmClockEdited: Boolean
+            var storedAlarmClockEdited: Boolean
             var alarmActive: Boolean
 
             runBlocking {
@@ -55,6 +59,10 @@ class AlarmManager {
                 storedAlarmClockEdited = pair.second
                 alarmActive = storeData.loadAlarmActive()?: false
                 //debug: alarmClockArray = arrayOf(6, 43)
+            }
+
+            if (edited != null) {
+                storedAlarmClockEdited = edited
             }
 
 
@@ -81,7 +89,7 @@ class AlarmManager {
                             setNew("error", null, context)
                             return null
                         }
-                        var schoolStart: LocalDateTime?
+                        val schoolStart: LocalDateTime?
 
                         StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
                         val untisApiCalls = UntisApiCalls(
@@ -105,7 +113,7 @@ class AlarmManager {
                             setNew("error", null, context)
                             return null
                         }
-                        var schoolStart: LocalDateTime?
+                        val schoolStart: LocalDateTime?
 
                         StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
                         val untisApiCalls = UntisApiCalls(
@@ -136,7 +144,7 @@ class AlarmManager {
                 return null
             }
 
-            var schoolStart: LocalDateTime?
+            val schoolStart: LocalDateTime?
             StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
             val untisApiCalls = UntisApiCalls(
                 loginData[0]!!,

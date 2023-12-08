@@ -229,12 +229,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun handleResetAlarm() {
         StoreData(this).storeAlarmClock(false)
         if (toggleAlarm.isChecked) {
-            currentAlarmClockDateTime = AlarmManager.main(this)
+            currentAlarmClockDateTime = AlarmManager.main(this, null, false)
             if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                 currentAlarmClockDateTime!!
             )
         } else {
-            currentAlarmClockDateTime = AlarmManager.main(this)
+            currentAlarmClockDateTime = AlarmManager.main(this, null, false)
             if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                 currentAlarmClockDateTime!!
             )
