@@ -279,7 +279,13 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         if (storeData.loadDarkMode() == null) {
             storeData.storeDarkMode(0)
         }
-        darkmode = storeData.loadDarkMode()!!
+        darkmode = storeData.loadDarkMode()?: 0
+        if (darkmode == 1) {
+            isDark = false
+        }
+        if (darkmode == 2) {
+            isDark = true
+        }
         if (darkmode == 0) {
            // check if system default is dark mode
             val currentNightMode = applicationContext.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
@@ -371,23 +377,6 @@ fun Context.formatTo12HourFormat(showSeconds: Boolean, hours: Int, minutes: Int,
     val appendable = if (hours >= 12) "pm" else "am"
     val newHours = if (hours == 0 || hours == 12) 12 else hours % 12
     return "${formatTime(showSeconds, false, newHours, minutes, seconds)} $appendable"
-}
-
-fun Context.setupAlarmClock(triggerInSeconds: Int) {
-    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    val targetMS = System.currentTimeMillis() + triggerInSeconds * 1000
-    try {
-        AlarmClock.snoozeAlarm(triggerInSeconds, applicationContext)
-        // show a notification to allow dismissing the alarm 10 minutes before it actually triggers
-        val dismissalTriggerTime = if (targetMS - System.currentTimeMillis() < 10.minutes.inWholeMilliseconds) {
-            System.currentTimeMillis() + 500
-        } else {
-            targetMS - 10.minutes.inWholeMilliseconds
-        }
-        AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, 0, dismissalTriggerTime, getEarlyAlarmDismissalIntent())
-    } catch (e: Exception) {
-        showErrorToast(e)
-    }
 }
 
 fun Context.getAlarmIntent(): PendingIntent {
