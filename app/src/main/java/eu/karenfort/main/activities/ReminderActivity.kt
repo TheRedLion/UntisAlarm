@@ -273,12 +273,13 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun snoozeAlarm() {
+        Log.i(TAG, "called snoozeAlarm()")
         destroyEffects()
         var snoozeTime = 5
         runBlocking {
             snoozeTime = StoreData(applicationContext).loadSnoozeTime() ?: return@runBlocking
         }
-        eu.karenfort.main.alarmClock.AlarmClock.snoozeAlarm(snoozeTime, this)
+        eu.karenfort.main.alarmClock.AlarmClock.snoozeAlarm(snoozeTime*60, this)
         wasAlarmSnoozed = true
         finishActivity()
     }

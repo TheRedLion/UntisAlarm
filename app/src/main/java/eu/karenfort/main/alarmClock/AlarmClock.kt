@@ -4,13 +4,17 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivity
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
 import java.util.Calendar
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
+import eu.karenfort.main.helper.hideNotification
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -69,6 +73,7 @@ class AlarmClock {
         }
 
         fun snoozeAlarm(timeInS: Int, context: Context) {
+            Log.i(TAG, "called snoozeAlarm")
 
             if (timeInS < 0) return
 
@@ -90,7 +95,13 @@ class AlarmClock {
 
             StoreData(context).storeAlarmClock(LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault()), true)
 
-            //todo check if update of alarmPreview in main activity is necessary
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent3 = Intent(context, MainActivity::class.java)
+                intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent3)
+            }, 1000)
+
         }
 
 

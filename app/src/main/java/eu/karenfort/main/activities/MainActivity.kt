@@ -308,6 +308,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     if (toggleAlarm.isChecked) {
                         AlarmClock.cancelAlarm(this)
                         AlarmClock.setAlarm(selectedDateTime, this)
+                        currentAlarmClockDateTime = selectedDateTime
+                        if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                            currentAlarmClockDateTime!!
+                        )
                     } else {
                         Toast.makeText(this, "Alarms are disabled", Toast.LENGTH_SHORT).show()
                     }
