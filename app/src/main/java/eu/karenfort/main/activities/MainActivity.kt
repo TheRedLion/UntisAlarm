@@ -40,6 +40,7 @@ import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
 import eu.karenfort.main.helper.getAlarmPreviewString
 import eu.karenfort.main.helper.isTiramisuPlus
+import eu.karenfort.main.helper.sendLoggedOutNotif
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
