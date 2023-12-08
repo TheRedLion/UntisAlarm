@@ -217,15 +217,18 @@ class WelcomeActivity : AppCompatActivity() {
                     }
                     untisSelectInputLayout.hint = getString(R.string.select_school)
                     //there are not
-                    val schoolNames =
-                        schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }.toTypedArray()
-
-                    Log.i(TAG, schoolNames.toString())
-                    val arrayAdapter =
-                        ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
-                    val autocompleteTV = autoCompleteTextView
-                    runOnUiThread {
-                        autocompleteTV.setAdapter(arrayAdapter)
+                    try{
+                        val schoolNames =
+                            schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }
+                                .toTypedArray()
+                        Log.i(TAG, schoolNames.toString())
+                        val arrayAdapter =
+                            ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
+                        val autocompleteTV = autoCompleteTextView
+                        runOnUiThread {
+                            autocompleteTV.setAdapter(arrayAdapter)
+                        }
+                    } catch (_: ArrayIndexOutOfBoundsException) {
                     }
                 }
             }

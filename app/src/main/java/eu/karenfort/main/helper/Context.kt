@@ -63,15 +63,31 @@ fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
             )
         } ${alarmClockStrHour}:${alarmClockStrMinute}"
     } else {
-        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
+        val alarmClockHour = alarmClockDateTime.hour%12
+        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockHour, alarmClockDateTime.minute)
+        val ampm = if (alarmClockDateTime.hour >= 12) getString(R.string.pm) else getString(R.string.am)
         return "${
             alarmClockDateTime.dayOfWeek.getDisplayName(
                 TextStyle.SHORT,
                 Locale.getDefault()
             )
-        } ${alarmClockStrHour}:${alarmClockStrMinute}"
+        } ${alarmClockStrHour}:${alarmClockStrMinute} $ampm"
     }
 
+}
+
+private fun reformatAlarmClockPreview(hour: Int, minute: Int): Pair<String, String> {
+    val alarmClockStrHour = if (hour < 10) {
+        "0$hour"
+    } else {
+        "$hour"
+    }
+    val alarmClockStrMinute = if (minute < 10) {
+        "0$minute"
+    } else {
+        "$minute"
+    }
+    return Pair(alarmClockStrHour, alarmClockStrMinute)
 }
 
 private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
@@ -87,52 +103,6 @@ private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, S
     }
     return Pair(alarmClockStrHour, alarmClockStrMinute)
 }
-
-/*
-fun Context.sendLoggedOutNotif() {
-    val pendingIntent = getOpenAlarmTabIntent()
-
-    val label = getString(R.string.not_logged_in)
-
-    val audioAttributes = AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_ALARM)
-        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-        .setLegacyStreamType(AudioManager.STREAM_ALARM)
-        .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-        .build()
-
-    val importance = NotificationManager.IMPORTANCE_HIGH
-    NotificationChannel(NOT_LOGGED_IN_CHANNEL_ID, label, importance).apply {
-        notificationManager.createNotificationChannel(this)
-    }
-
-
-    val loginIntent = Intent(this, WelcomeActivity::class.java)
-    loginIntent.(Intent.FLAG_ACTIVITY_NEW_TASK)
-    val loginPendingIntent = PendingIntent.get
-    val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
-        .setContentTitle(label)
-        .setContentText(getString(R.string.you_are_currently_not_logged_in_please_login_again))
-        .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
-        .setDefaults(Notification.DEFAULT_LIGHTS)
-        .setAutoCancel(true)
-        .setChannelId(NOT_LOGGED_IN_CHANNEL_ID)
-        .addAction(R.drawable.ic_login_vector, getString(R.string.cancel), loginPendingIntent)
-        .addAction(R.drawable.ic_cancel_vector, getString(R.string.login), cancelPendingIntent)
-        .setDeleteIntent(cancelPendingIntent)
-        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
-    val notification = builder.build()
-    notification.flags = notification.flags or Notification.FLAG_INSISTENT
-
-    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-    try {
-        notificationManager.notify(ALARM_CLOCK_ID, notification)
-    } catch (e: Exception) {
-        Log.i("Context", "uhhh")
-    }
-}*/
 
 fun Context.isOnline(): Boolean {
     val connectivityManager =

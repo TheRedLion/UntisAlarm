@@ -49,9 +49,8 @@ class UntisApiCalls(
     }
 
     fun getSchoolStartForDay(id: Int): LocalDateTime? {
+        Log.i(TAG, "getting schoolstart")
         try {
-            val today = LocalDate.now()
-            //val today = LocalDate.of(2023, 11, 6) //tod: remove debugging string
             val nextDay = getNextDay()
             val timetable: Timetable = session.getTimetableFromPersonId(
                 nextDay,
@@ -66,7 +65,6 @@ class UntisApiCalls(
 
             timetable.sortByDate()
             timetable.sortByStartTime()
-            //Log.i(TAG, timetable.toString())
             for (i in timetable){
                 if (!lessonIsCancelled(i)) {
                     val firstLessonStartTime: LocalDateTime = LocalDateTime.of(nextDay, i.startTime)
@@ -83,7 +81,6 @@ class UntisApiCalls(
     }
 
     private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
-        Log.i(TAG, lesson.toString())
         return lesson.teachers.isEmpty() && lesson.teachers != null
     }
 }

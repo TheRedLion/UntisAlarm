@@ -75,4 +75,6 @@
     <string name="may_not_be_empty">May not be empty</string>
     <string name="school_must_be_selected">School must be selected</string>
     <string name="unable_to_load_address">Unable to load Address</string>
+    <string name="pm">PM</string>
+    <string name="am">AM</string>
 </resources>

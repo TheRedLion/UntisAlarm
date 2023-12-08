@@ -21,6 +21,7 @@ class AlarmScheduler(
     fun schedule(context: Context, isActive: Boolean?) {
         Log.i(TAG, "scheduled Alarm")
         eu.karenfort.main.alarm.AlarmManager.main(context, isActive)
+
         val intent = Intent(context, AlarmReceiver::class.java).also {
             it.action = Intent.ACTION_CALL
         }

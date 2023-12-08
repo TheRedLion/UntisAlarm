@@ -375,6 +375,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             if (areNotificationsEnabled()) {
                 Log.i(TAG, "should schedule")
                 AlarmScheduler(this).schedule(this, true)
+                currentAlarmClockDateTime = AlarmManager.main(this, true)
+                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                    currentAlarmClockDateTime!!
+                )
             } else {
                 toggleAlarm.isChecked = false
                 Toast.makeText(this, getString(R.string.enable_notifications), Toast.LENGTH_SHORT).show()

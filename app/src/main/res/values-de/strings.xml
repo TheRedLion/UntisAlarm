@@ -63,4 +63,18 @@
     <string name="alarm_clock_notifications">Wecker Benachrichtigungen</string>
     <string name="time_before_school_hint">Zeit vor Schulbeginn</string>
     <string name="loading">Lädt…</string>
+    <string name="no_file_was_selected">Es wurde keine Datei ausgewählt.</string>
+    <string name="your_alarms_might_not_be_set_properly_please_make_sure_that_they_are">Dein Wecker ist eventuell nicht richtig eingestellt. Bitte stelle sicher, dass er passend eingestellt ist.</string>
+    <string name="alarm_notifications_channel_name">Wecker Benachrichtigungen</string>
+    <string name="info_notifications_channel_name">Informationen</string>
+    <string name="enable_notifications">Benachrichtigungen müssen erlaubt sein.</string>
+    <string name="alarm_sound">Wecker Ton</string>
+    <string name="no_success">Kein Erfolg</string>
+    <string name="warning_notifications_are_not_enabled_please_enable_them_for_the_app_to_work_properly">Warnung: Notifications sind nicht erlaubt. Bitte erlaube diese damit die App richtig funktioniert.</string>
+    <string name="silent">Stumm</string>
+    <string name="may_not_be_empty">Darf nicht leer sein.</string>
+    <string name="school_must_be_selected">Es muss eine Schule ausgewählt sein.</string>
+    <string name="unable_to_load_address">Adresse konnte nicht geladen werden.</string>
+    <string name="pm">PM</string>
+    <string name="am">AM</string>
 </resources>
