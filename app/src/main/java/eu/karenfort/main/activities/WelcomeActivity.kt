@@ -12,16 +12,14 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
 import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputLayout
-import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import eu.karenfort.main.helper.ensureBackgroundThread
 import eu.karenfort.main.helper.isOnline
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -131,17 +129,18 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun verifyLoginData(): Boolean {
-        StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
         if (server == null || schoolName == null || untisUserName.text.isNullOrEmpty() || untisPassword.text.isNullOrEmpty()) {
             return false
         }
         try {
-            untisApiCalls = UntisApiCalls(
-                untisUserName.text.toString(),
-                untisPassword.text.toString(),
-                server!!, //!! should be fine
-                schoolName!! //hopefully
-            )
+            ensureBackgroundThread {
+                untisApiCalls = UntisApiCalls(
+                    untisUserName.text.toString(),
+                    untisPassword.text.toString(),
+                    server!!, //!! should be fine
+                    schoolName!! //hopefully
+                )
+            }
         } catch (e: IOException) {
             Log.i(TAG, "login failed")
         }

@@ -32,7 +32,6 @@ class UntisApiCalls(
             throw e // IO exeption throw is used to check if login data was valid
         }
     }
-    //todo: i think the functions need to be suspending
 
     fun getID(): Int? {
         var id: Int? = null

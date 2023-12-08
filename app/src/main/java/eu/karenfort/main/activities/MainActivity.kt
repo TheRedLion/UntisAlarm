@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     companion object {
         var active = false
-        var initAlarmPreview = false //this is used to make sure that main activity is not reloaded over and over again
+        var diableAlarmPreviewUpdate = false //this is used to make sure that main activity is not reloaded over and over again
 
         fun getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
             val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
@@ -129,16 +129,19 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     @SuppressLint("SetTextI18n")
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
+        Log.i(TAG, "shared Preferences Changed")
         if (string == null) return //dont know when this would happen
         if (!isAlarmClockTime(string)) return
         CoroutineScope(Dispatchers.IO).launch {
-            val (alarmClockDateTime, alarmClockEdited) = StoreData(applicationContext).loadAlarmClock()
-            runOnUiThread {
-                if (alarmClockDateTime == null) {
-                    alarmPreview.text = getString(R.string.error)
-                    resetAlarm.isClickable = false
-                    resetAlarm.alpha = 0.4F
-                } else {
+            val (alarmClockDateTime, alarmClockEdited) = StoreData(this@MainActivity).loadAlarmClock()
+            if (alarmClockDateTime == null) {
+                diableAlarmPreviewUpdate = false
+                AlarmManager.main(this@MainActivity) //this loads a preview for alarmPreview
+                Log.e(TAG, "Loaded alarmClockDateTime is null")
+                resetAlarm.isClickable = false
+                resetAlarm.alpha = 0.4F
+            } else {
+                runOnUiThread {
                     alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
                     Log.i(TAG, "setting curren alarm clock datetime to $alarmClockDateTime")
                     currentAlarmClockDateTime = alarmClockDateTime
@@ -448,9 +451,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         if (alarmClockDateTime == null) {
+            Log.e(TAG, "Loaded AlarmClockDateTime is null!")
+            diableAlarmPreviewUpdate = false
+            AlarmManager.main(this)
             runOnUiThread {
-                alarmPreview.text = getString(R.string.error)
-                AlarmManager.main(this)
                 alarmPreview.isClickable = true
             }
             return

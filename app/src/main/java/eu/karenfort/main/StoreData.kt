@@ -2,6 +2,7 @@ package eu.karenfort.main
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -21,6 +22,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("u
 class StoreData (
     private val context: Context
 ) {
+    private val TAG = "StoreData"
     private val idKey = intPreferencesKey("id")
     private val usernameKey = stringPreferencesKey("username")
     private val passwordKey = stringPreferencesKey("password")
@@ -182,7 +184,10 @@ class StoreData (
         val minute = preferences[alarmClockMinuteKey]
         val edited: Boolean = preferences[alarmClockEditedKey] == true
 
-        if (year == -1) return Pair(null, edited)
+        if (year == -1) {
+            Log.i(TAG, "year was -1")
+            return Pair(null, edited)
+        }
 
         if (year == null || month == null || day == null || hour == null || minute == null) {
             return Pair(null, edited)
@@ -190,7 +195,7 @@ class StoreData (
 
         return Pair(LocalDateTime.of(year, month, day, hour, minute), edited)
     }
-    fun storeAlarmClock(alarmClockDayTime: LocalDateTime) {
+    fun storeAlarmClock(alarmClockDayTime: LocalDateTime?) {
         storeAlarmClock(alarmClockDayTime, false)
     }
 
@@ -202,15 +207,28 @@ class StoreData (
         }
     }
 
-    fun storeAlarmClock(alarmClockDayTime: LocalDateTime, edited: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
-            context.dataStore.edit { settings ->
-                settings[alarmClockYearKey] = alarmClockDayTime.year
-                settings[alarmClockMonthKey] = alarmClockDayTime.monthValue
-                settings[alarmClockDayKey] = alarmClockDayTime.dayOfMonth
-                settings[alarmClockHourKey] = alarmClockDayTime.hour
-                settings[alarmClockMinuteKey] = alarmClockDayTime.minute
-                settings[alarmClockEditedKey] = edited
+    fun storeAlarmClock(alarmClockDayTime: LocalDateTime?, edited: Boolean) {
+        if (alarmClockDayTime == null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                context.dataStore.edit { settings ->
+                    settings[alarmClockYearKey] = -1
+                    settings[alarmClockMonthKey] = 0
+                    settings[alarmClockDayKey] = 0
+                    settings[alarmClockHourKey] = 0
+                    settings[alarmClockMinuteKey] = 0
+                    settings[alarmClockEditedKey] = edited
+                }
+            }
+        } else {
+            CoroutineScope(Dispatchers.IO).launch {
+                context.dataStore.edit { settings ->
+                    settings[alarmClockYearKey] = alarmClockDayTime.year
+                    settings[alarmClockMonthKey] = alarmClockDayTime.monthValue
+                    settings[alarmClockDayKey] = alarmClockDayTime.dayOfMonth
+                    settings[alarmClockHourKey] = alarmClockDayTime.hour
+                    settings[alarmClockMinuteKey] = alarmClockDayTime.minute
+                    settings[alarmClockEditedKey] = edited
+                }
             }
         }
     }

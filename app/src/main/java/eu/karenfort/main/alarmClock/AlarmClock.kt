@@ -132,7 +132,7 @@ class AlarmClock {
             alarmManager.cancel(pendingIntent)
 
             val storeData = StoreData(context)
-            storeData.storeAlarmClock(LocalDateTime.of(-1,1,1,1,1), false)
+            storeData.storeAlarmClock(null, false)
         }
     }
 }
