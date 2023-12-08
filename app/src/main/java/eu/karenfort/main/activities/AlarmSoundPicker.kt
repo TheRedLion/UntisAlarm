@@ -22,12 +22,6 @@ class AlarmSoundPicker : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        val callback = onBackPressedDispatcher.addCallback(this) {
-            // create a new intent to send back to settings
-            val intent = Intent(this@AlarmSoundPicker, SettingsActivity::class.java)
-            startActivity(intent)
-        }
         setContentView(R.layout.activity_alarm_sound_picker)
 
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
