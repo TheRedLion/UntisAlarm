@@ -3,14 +3,11 @@ package eu.karenfort.main.activities
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build.VERSION.SDK_INT
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI

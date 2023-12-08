@@ -1,13 +1,8 @@
 package eu.karenfort.main.activities
 
-import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
-import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 
 
 class CancelledMessageInfo : AppCompatActivity() {

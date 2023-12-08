@@ -40,7 +40,6 @@ import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
 import eu.karenfort.main.helper.getAlarmPreviewString
 import eu.karenfort.main.helper.isTiramisuPlus
-import eu.karenfort.main.helper.sendLoggedOutNotif
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,9 +47,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
-import java.time.format.TextStyle
 import java.util.Calendar
-import java.util.Locale
 import java.util.TimeZone
 
 
@@ -105,10 +102,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("SetTextI18n")
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
         Log.i(TAG, "shared Preferences Changed")
+
         if (string == null) return //dont know when this would happen
-        if (!isAlarmClockTime(string)) return
+
+        if (!isAlarmClockTime(string)) return //only respond if alarmClockTime was edited
+
         CoroutineScope(Dispatchers.IO).launch {
             val (alarmClockDateTime, alarmClockEdited) = StoreData(this@MainActivity).loadAlarmClock()
+            //update UI accordingly
             if (alarmClockDateTime == null) {
                 currentAlarmClockDateTime = AlarmManager.main(this@MainActivity)
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
@@ -212,31 +213,34 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun setListener() {
         alarmPreview.setOnClickListener { handleEditAlarmToday() }
         toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
-        resetAlarm.setOnClickListener {
-            StoreData(this).storeAlarmClock(false)
-            if (toggleAlarm.isChecked) {
-                currentAlarmClockDateTime = AlarmManager.main(this, false)
-                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
-                    currentAlarmClockDateTime!!
-                )
-            } else {
-                currentAlarmClockDateTime = AlarmManager.main(this, false)
-                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
-                    currentAlarmClockDateTime!!
-                )
-            }
-            resetAlarm.alpha = .4F
-            resetAlarm.isClickable = false
+        resetAlarm.setOnClickListener { handleResetAlarm() }
+        notifsDisabledCard.setOnClickListener { handleNotifsDisabledCardClick() }
+    }
 
+    private fun handleNotifsDisabledCardClick() {
+        //send user to notification settings of app
+        val intent = Intent()
+        intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
+        startActivity(intent)
+    }
+
+    private fun handleResetAlarm() {
+        StoreData(this).storeAlarmClock(false)
+        if (toggleAlarm.isChecked) {
+            currentAlarmClockDateTime = AlarmManager.main(this, true)
+            if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                currentAlarmClockDateTime!!
+            )
+        } else {
+            currentAlarmClockDateTime = AlarmManager.main(this, false)
+            if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                currentAlarmClockDateTime!!
+            )
         }
-        notifsDisabledCard.setOnClickListener {
-            //send user to notification settings of app
-            val intent = Intent()
-            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
-            startActivity(intent)
-        }
+        resetAlarm.alpha = .4F
+        resetAlarm.isClickable = false
     }
 
     private fun handleEditAlarmToday() {
