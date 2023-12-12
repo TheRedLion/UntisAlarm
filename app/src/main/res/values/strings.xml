@@ -77,4 +77,8 @@
     <string name="unable_to_load_address">Unable to load Address</string>
     <string name="pm">PM</string>
     <string name="am">AM</string>
+    <string name="ringing_clock">Ringing clock</string>
+    <string name="globe">globe</string>
+    <string name="moon">moon</string>
+    <string name="bell">bell</string>
 </resources>

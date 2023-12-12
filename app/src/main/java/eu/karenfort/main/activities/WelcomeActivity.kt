@@ -202,8 +202,8 @@ class WelcomeActivity : AppCompatActivity() {
                     Log.i(TAG, "schools is not null")
 
                     //check if there are too many results
-                    if (!schools!!.isEmpty()) {
-                        if (!schools!![0].isEmpty()) {
+                    if (schools!!.isNotEmpty()) {
+                        if (schools!![0].isNotEmpty()) {
                             if (schools!![0][0] == "too many results") {
                                 Log.i(TAG, "too many results")
                                 runOnUiThread {

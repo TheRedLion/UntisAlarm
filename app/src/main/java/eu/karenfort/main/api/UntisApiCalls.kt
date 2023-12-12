@@ -2,13 +2,10 @@ package eu.karenfort.main.api
 
 import android.util.Log
 import eu.karenfort.main.helper.getNextDay
-import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 
 class UntisApiCalls(

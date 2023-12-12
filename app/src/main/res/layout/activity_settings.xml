@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -174,7 +173,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_alarm_tone_bell"
-                    style="@style/settings_image_view"/>
+                    style="@style/settings_image_view"
+                    android:contentDescription="@string/bell" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -232,7 +232,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_language"
-                    style="@style/settings_image_view"/>
+                    style="@style/settings_image_view"
+                    android:contentDescription="@string/globe" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -259,7 +260,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_dark_mode"
-                    style="@style/settings_image_view"/>
+                    style="@style/settings_image_view"
+                    android:contentDescription="@string/moon" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

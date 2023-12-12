@@ -11,13 +11,16 @@ class App: Application() {
         // check if api version below 31 and load dark mode from storedata to apply it if needed
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
             runBlocking {
-                val darkMode = StoreData(this@App).loadDarkMode()
-                if (darkMode == 0) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                } else if (darkMode == 1) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                } else if (darkMode == 2) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                when (StoreData(this@App).loadDarkMode()) {
+                    0 -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    }
+                    1 -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                    2 -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
                 }
             }
         }

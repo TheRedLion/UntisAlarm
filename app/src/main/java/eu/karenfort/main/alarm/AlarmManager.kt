@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 class AlarmManager {
 
     companion object {
-        private val TAG = "AlarmManager"
+        private const val TAG = "AlarmManager"
 
         fun main(context: Context): LocalDateTime? {
             return main(context, null, null)

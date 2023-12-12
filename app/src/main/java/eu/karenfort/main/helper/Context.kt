@@ -21,7 +21,6 @@ import android.text.format.DateFormat
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.R
@@ -42,8 +41,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlin.math.log
-import kotlin.time.Duration.Companion.minutes
 
 fun getNextDay(): LocalDate {
     //Log.i(TAG, "called getNextDay()")
@@ -310,7 +307,10 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     val dismissIntent = getHideAlarmPendingIntent()
     val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
         .setContentTitle(label)
-        .setContentText(getFormattedTime(getPassedSeconds(), false, false))
+        .setContentText(getFormattedTime(getPassedSeconds(),
+            showSeconds = false,
+            makeAmPmSmaller = false
+        ))
         .setSmallIcon(R.drawable.ic_alarm_vector)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationManager.IMPORTANCE_HIGH)
@@ -373,7 +373,7 @@ fun Context.getFormattedTime(passedSeconds: Int, showSeconds: Boolean, makeAmPmS
     }
 }
 
-fun Context.formatTo12HourFormat(showSeconds: Boolean, hours: Int, minutes: Int, seconds: Int): String {
+fun formatTo12HourFormat(showSeconds: Boolean, hours: Int, minutes: Int, seconds: Int): String {
     val appendable = if (hours >= 12) "pm" else "am"
     val newHours = if (hours == 0 || hours == 12) 12 else hours % 12
     return "${formatTime(showSeconds, false, newHours, minutes, seconds)} $appendable"

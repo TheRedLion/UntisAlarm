@@ -14,7 +14,7 @@ import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.parcelable
 
 class AlarmSoundPicker : AppCompatActivity() {
-    val TAG = "AlarmSoundPicker"
+    private val TAG = "AlarmSoundPicker"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

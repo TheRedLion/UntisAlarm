@@ -37,7 +37,6 @@ import eu.karenfort.main.helper.isOreoPlus
 import eu.karenfort.main.helper.notificationManager
 import eu.karenfort.main.helper.viewBinding
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 
 class ReminderActivity : AppCompatActivity() {
     private val TAG = "ReminderActivity"
@@ -67,7 +66,10 @@ class ReminderActivity : AppCompatActivity() {
         //updateStatusbarColor(getProperBackgroundColor())
 
         binding.reminderTitle.text = getString(R.string.app_name)
-        binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(), false, false) else getString(
+        binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(),
+            showSeconds = false,
+            makeAmPmSmaller = false
+        ) else getString(
             R.string.time_expired
         )
 
@@ -138,7 +140,8 @@ class ReminderActivity : AppCompatActivity() {
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    binding.reminderDraggable.x = Math.min(maxDragX, Math.max(minDragX, event.rawX - dragDownX))
+                    binding.reminderDraggable.x =
+                        maxDragX.coerceAtMost(minDragX.coerceAtLeast(event.rawX - dragDownX))
                     if (binding.reminderDraggable.x >= maxDragX - 50f) {
                         if (!didVibrate) {
                             binding.reminderDraggable.performHapticFeedback()

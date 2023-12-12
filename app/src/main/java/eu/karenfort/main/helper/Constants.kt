@@ -1,14 +1,12 @@
 package eu.karenfort.main.helper
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Looper
 import android.os.StrictMode
 import androidx.annotation.ChecksSdkIntAtLeast
-import com.carlkarenfort.test.R
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
