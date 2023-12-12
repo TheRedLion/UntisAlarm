@@ -94,7 +94,7 @@ class ReminderActivity : AppCompatActivity() {
             }
         })
     }
-    private fun View.performHapticFeedback() = performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+    private fun View.performHapticFeedback() = performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupAlarmButtons() {
@@ -297,8 +297,6 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun showOverLockscreen() {
         window.addFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                     WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
         )
