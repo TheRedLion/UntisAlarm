@@ -37,13 +37,7 @@ In future versions, we plan to:
 - Enhance the user interface and user experience.
 - Implement new features based on user feedback.
 
-# Contributing
- 
-Any type of contribution via GitHub Pull Requests is welcome: new features, bug fixes, etc.
-
 ## How to Contribute
-
-First off, thanks for taking the time to contribute! ❤️
 
 To get up and running, follow these steps:
 
