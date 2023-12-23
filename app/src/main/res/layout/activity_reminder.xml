@@ -46,7 +46,8 @@
         app:layout_constraintEnd_toStartOf="@+id/reminder_draggable"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/reminder_draggable" />
+        app:layout_constraintTop_toTopOf="@+id/reminder_draggable"
+        android:contentDescription="@string/snooze" />
 
     <ImageView
         android:id="@+id/reminder_draggable_background"
@@ -73,7 +74,8 @@
         app:layout_constraintEnd_toStartOf="@+id/reminder_dismiss"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/reminder_snooze"
-        app:layout_constraintTop_toBottomOf="@+id/reminder_text" />
+        app:layout_constraintTop_toBottomOf="@+id/reminder_text"
+        android:contentDescription="@string/ringing_clock" />
 
     <TextView
         android:id="@+id/snooze_label"
@@ -98,7 +100,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/reminder_draggable"
-        app:layout_constraintTop_toTopOf="@+id/reminder_draggable" />
+        app:layout_constraintTop_toTopOf="@+id/reminder_draggable"
+        android:contentDescription="@string/dismiss_alarm" />
 
     <TextView
         android:id="@+id/dismiss_label"
@@ -133,6 +136,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="TODO" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

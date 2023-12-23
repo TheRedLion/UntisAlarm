@@ -72,7 +72,10 @@ class ReminderActivity : AppCompatActivity() {
         showOverLockscreen()
 
         binding.reminderTitle.text = getString(R.string.app_name)
-        binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(), false, false) else getString(
+        binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(),
+            showSeconds = false,
+            makeAmPmSmaller = false
+        ) else getString(
             R.string.time_expired
         )
 
@@ -97,7 +100,7 @@ class ReminderActivity : AppCompatActivity() {
             }
         })
     }
-    private fun View.performHapticFeedback() = performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+    private fun View.performHapticFeedback() = performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupAlarmButtons() {
@@ -137,7 +140,8 @@ class ReminderActivity : AppCompatActivity() {
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    binding.reminderDraggable.x = Math.min(maxDragX, Math.max(minDragX, event.rawX - dragDownX))
+                    binding.reminderDraggable.x =
+                        maxDragX.coerceAtMost(minDragX.coerceAtLeast(event.rawX - dragDownX))
                     if (binding.reminderDraggable.x >= maxDragX - 50f) {
                         if (!didVibrate) {
                             binding.reminderDraggable.performHapticFeedback()
@@ -293,8 +297,6 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun showOverLockscreen() {
         window.addFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                     WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
         )

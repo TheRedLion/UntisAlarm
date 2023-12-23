@@ -67,7 +67,6 @@
     <string name="alarm_notifications_channel_name">Alarm Notifications</string>
     <string name="info_notifications_channel_name">Info Notifications</string>
     <string name="enable_notifications">You first need to enable notifications.</string>
-    <string name="temop">temop</string>
     <string name="alarm_sound">Alarm Sound</string>
     <string name="no_success">No success</string>
     <string name="warning_notifications_are_not_enabled_please_enable_them_for_the_app_to_work_properly">Warning: Notifications are not enabled, please enable them for the App to work properly.</string>
@@ -79,4 +78,8 @@
     <string name="am">AM</string>
     <string name="skip">Skip</string>
     <string name="set_how_much_time_you_need_before_school_starts">Set how much time you need before School starts.</string>
+    <string name="ringing_clock">Ringing clock</string>
+    <string name="globe">globe</string>
+    <string name="moon">moon</string>
+    <string name="bell">bell</string>
 </resources>
