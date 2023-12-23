@@ -18,9 +18,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.StrictMode
 import android.text.format.DateFormat.is24HourFormat
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.INVISIBLE
@@ -40,12 +38,11 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
 import com.google.android.material.timepicker.TimeFormat
 import eu.karenfort.main.StoreData
-import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
-import eu.karenfort.main.api.UntisApiCalls
+import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
-import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
 import eu.karenfort.main.helper.INFO_NOTIFICARION_CHANNEL_ID
 import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
@@ -86,7 +83,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         disableClicking() //disabling clicks until everything was properly loaded to stop errors
         createNotificationChannel()
         sendToWelcomeActivity() //send user to welcomeActivity if they have not logged in yet
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
         }
@@ -111,13 +108,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     @SuppressLint("SetTextI18n")
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
-        Log.i(TAG, "shared Preferences Changed")
-
         if (string == null) return //don't know when this would happen
 
         if (!isAlarmClockTime(string)) return //only respond if alarmClockTime was edited
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             val (alarmClockDateTime, alarmClockEdited) = StoreData(this@MainActivity).loadAlarmClock()
             //update UI accordingly
             if (alarmClockDateTime == null) {
@@ -125,13 +120,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                     currentAlarmClockDateTime!!
                 )
-                Log.e(TAG, "Loaded alarmClockDateTime is null")
                 resetAlarm.isClickable = false
                 resetAlarm.alpha = 0.4F
             } else {
                 runOnUiThread {
                     alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
-                    Log.i(TAG, "setting curren alarm clock datetime to $alarmClockDateTime")
                     currentAlarmClockDateTime = alarmClockDateTime
                     if (alarmClockEdited) {
                         resetAlarm.isClickable = true
@@ -146,23 +139,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     override fun onResume() {
-        Log.i(TAG, "resuming")
         super.onResume()
         updateNotifsDisabledWarning()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.i(TAG, "intent received")
         if (intent == null) {
-            Log.i(TAG, "intent was null")
             return
         }
-        val extras = intent.extras
-        if (extras == null) {
-            Log.i(TAG, "extras was null")
-            return
-        }
+        val extras = intent.extras ?: return
 
         if (extras.getBoolean(NOTIFS_ALLOWED)) {
             notifsDisabledCard.visibility = INVISIBLE
@@ -182,7 +168,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
-                Log.i(TAG, "should go to welcomeActivity")
                 val intent = Intent(this@MainActivity, SettingsActivity::class.java)
                 startActivity(intent)
             }
@@ -387,11 +372,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     @SuppressLint("SetTextI18n")
     private fun handleToggleAlarm(isChecked: Boolean) {
         StoreData(this).storeAlarmActive(isChecked)
-
-        Log.i(TAG, "entered listener")
         if (isChecked) {
             if (areNotificationsEnabled()) {
-                Log.i(TAG, "should schedule")
                 AlarmScheduler(this).schedule(this, true)
                 currentAlarmClockDateTime = AlarmClockSetter.main(this, true)
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
@@ -402,7 +384,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 Toast.makeText(this, getString(R.string.enable_notifications), Toast.LENGTH_SHORT).show()
             }
         } else {
-            Log.i(TAG, "cancelling")
             AlarmClock.cancelAlarm(this)
             AlarmScheduler(this).cancel()
         }
@@ -410,10 +391,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
 
     private fun requestNotificationPermission() {
-        Log.i(TAG, "requesting Notification permission")
         if (!isTiramisuPlus()) return
         if (areNotificationsEnabled()) {
-            Log.w(TAG, "Notifications are enabled. Should not request Notification Permission.")
             return
         }
 
@@ -454,7 +433,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
 
         if (alarmClockDateTime == null) {
-            Log.e(TAG, "Loaded AlarmClockDateTime is null!")
             currentAlarmClockDateTime = AlarmClockSetter.main(this)
             runOnUiThread{
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
@@ -466,7 +444,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
             return
         }
-        Log.i(TAG, "setting current Alarm CLock Date time to $alarmClockDateTime")
         currentAlarmClockDateTime = alarmClockDateTime
         runOnUiThread {
             alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
@@ -486,7 +463,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun sendToWelcomeActivity() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             if (!hasLoggedIn()) return@launch
             intent = Intent(this@MainActivity, WelcomeActivity::class.java)
             startActivity(intent)

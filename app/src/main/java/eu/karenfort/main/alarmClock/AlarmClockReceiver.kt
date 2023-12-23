@@ -18,7 +18,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
@@ -36,22 +35,17 @@ class AlarmClockReceiver : BroadcastReceiver() {
     private val TAG = "AlarmClockReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "called alarmclock receiver with intent: $intent")
-
         context.hideNotification(EARLY_ALARM_NOTIF_ID) // hide early dismissal notification if not already dismissed
 
         StoreData(context).storeAlarmClock(false)
 
         if (context.isScreenOn()) {
-            Log.i(TAG, "showing screen notification alarm")
             context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
-                Log.i(TAG, "UN-showing screen notification alarm")
                 AlarmClockSetter.main(context) // load new alarmClock
             }, 10000)
         } else {
-            Log.i(TAG, "showing full activity view")
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             if (notificationManager.getNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID) == null) {

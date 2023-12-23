@@ -66,7 +66,6 @@ class ReminderActivity : AppCompatActivity() {
     private var finished = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i("ReminderActivity", "creating ReminderActivity")
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         showOverLockscreen()
@@ -195,7 +194,6 @@ class ReminderActivity : AppCompatActivity() {
         }
 
         try {
-            Log.i("ReminderActivity", "Playing sound with Sound Uri: $soundUri")
             mediaPlayer = MediaPlayer()
             mediaPlayer!!.setAudioAttributes(AudioAttributes.Builder()
                 .setLegacyStreamType(AudioManager.STREAM_ALARM)
@@ -216,7 +214,7 @@ class ReminderActivity : AppCompatActivity() {
                 scheduleVolumeIncrease(MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS.toFloat(), initialAlarmVolume!!.toFloat(), 0)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to play Alarm Clock Sounds!")
+            Log.i(TAG, "Failed to play Alarm Clock Sounds!")
         }
     }
 
@@ -276,7 +274,6 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun snoozeAlarm() {
-        Log.i(TAG, "called snoozeAlarm()")
         destroyEffects()
         var snoozeTime = 5
         runBlocking {

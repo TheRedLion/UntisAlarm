@@ -51,17 +51,6 @@ import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
-fun getNextDay(): LocalDate {
-    //Log.i(TAG, "called getNextDay()")
-    var nextDay = LocalDate.now()
-    nextDay = nextDay.plusDays(1)
-
-    // Check if the next day is a weekend (Saturday or Sunday)
-    while (nextDay.dayOfWeek == DayOfWeek.SATURDAY || nextDay.dayOfWeek == DayOfWeek.SUNDAY) {
-        nextDay = nextDay.plusDays(1)
-    }
-    return nextDay
-}
 
 fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
     if (DateFormat.is24HourFormat(this)) {
@@ -165,7 +154,6 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
             }
         }
     } catch (e: Exception) {
-        Log.i("Context", e.toString())
     }
 }
 fun Context.showErrorToast(msg: String, length: Int = Toast.LENGTH_LONG) {

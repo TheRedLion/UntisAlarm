@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Looper
 import android.os.StrictMode
 import androidx.annotation.ChecksSdkIntAtLeast
+import kotlinx.coroutines.CoroutineExceptionHandler
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
@@ -58,6 +59,10 @@ val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPol
 const val IVG_DEFAULT = false
 val SILENT_URI: Uri = Uri.parse(SILENT)
 val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+
+val COROUTINE_EXEPTION_HANDLER = CoroutineExceptionHandler{_, throwable ->
+    throwable.printStackTrace()
+}
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
 fun ensureBackgroundThread(callback: () -> Unit) {

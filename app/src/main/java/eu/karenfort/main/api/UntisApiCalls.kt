@@ -9,11 +9,11 @@
 package eu.karenfort.main.api
 
 import android.util.Log
-import eu.karenfort.main.helper.getNextDay
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.UntisUtils
 import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -55,15 +55,21 @@ class UntisApiCalls(
 
     fun getSchoolStartForDay(id: Int): LocalDateTime? {
         try {
-            val nextDay = getNextDay()
-            val timetable: Timetable = session.getTimetableFromPersonId(
+            var nextDay = LocalDate.now().plusDays(1)
+            var timetable: Timetable = session.getTimetableFromPersonId(
                 nextDay,
                 nextDay,
                 id
             )
 
-            if (timetable.isEmpty()) {
-                return null
+
+            while (timetable.isEmpty()) {
+                nextDay = nextDay.plusDays(1)
+                timetable = session.getTimetableFromPersonId(
+                    nextDay,
+                    nextDay,
+                    id
+                )
             }
 
             timetable.sortByDate()
@@ -72,7 +78,6 @@ class UntisApiCalls(
                 if (!lessonIsCancelled(i)) {
                     val firstLessonStartTime: LocalDateTime = LocalDateTime.of(nextDay, i.startTime)
                     session.logout()
-                    getNextDay()
                     return firstLessonStartTime
                 }
             }
@@ -86,10 +91,12 @@ class UntisApiCalls(
     private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
         if (lesson.teachers.isEmpty() && lesson.teachers != null) {
             return true
-        }
+        } //if there is no teacher assigned there is no school
+
         if (lesson.code == UntisUtils.LessonCode.CANCELLED) {
             return true
         }
+        //todo implement that CancelledMessage is checked
         return false
     }
 }

@@ -10,7 +10,6 @@ package eu.karenfort.main.activities
 import android.app.UiModeManager
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -28,6 +27,7 @@ import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
+import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.LANGUAGE_DEFAULT
@@ -133,7 +133,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun loadAndDisplayStoredStates() {
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             val storeData = StoreData(applicationContext)
 
             val tbs: Int = storeData.loadTBS() ?: initTBS()
@@ -145,7 +145,6 @@ class SettingsActivity : AppCompatActivity() {
             if (storeData.loadLanguage() == null) initLanguage()
             if (storeData.loadDarkMode() == null) initDarkMode()
 
-            Log.i(TAG, alarmSoundTitle?:"")
 
             runOnUiThread {
                 tbsInputLayout.hint =
@@ -166,7 +165,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun languageDialog() {
         val listItems = arrayOf("System Default", "English", "German")
-        // load checkedItem from StoreData
+
         var checkedItem = 0
         runBlocking {//todo take language loaded when states were set
             val storeData = StoreData(this@SettingsActivity)
@@ -190,7 +189,6 @@ class SettingsActivity : AppCompatActivity() {
             }
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
-                Log.i(TAG, "Storing $checkedItem in StoreData")
 
                 // Change app language to the selected language
                 val language = when (checkedItem) {
@@ -210,7 +208,6 @@ class SettingsActivity : AppCompatActivity() {
                     // restart the activity
                     checkedItem = which
                     StoreData(this).storeLanguage(listItems[which])
-                    Log.i(TAG, "$which, $checkedItem")
                 }
             }.show()
     }
@@ -225,7 +222,6 @@ class SettingsActivity : AppCompatActivity() {
                 checkedItem = storeData.loadDarkMode()!!
             }
         }
-        Log.i(TAG, "Loaded $checkedItem from StoreData")
         MaterialAlertDialogBuilder(this)
             .setTitle("Choose Alarm Sound")
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
@@ -248,12 +244,10 @@ class SettingsActivity : AppCompatActivity() {
                         2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                     }
                 }
-                Log.i(TAG, "Storing $checkedItem in StoreData")
                 StoreData(this).storeDarkMode(checkedItem)
             }
             .setSingleChoiceItems(listItems, checkedItem) { _, which ->
                 checkedItem = which
-                Log.i(TAG, "$which, $checkedItem")
             }.show()
     }
 

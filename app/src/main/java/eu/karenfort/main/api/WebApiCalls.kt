@@ -7,7 +7,7 @@
  */
 package eu.karenfort.main.api
 
-import android.util.Log
+import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -22,10 +22,8 @@ class WebApiCalls {
     private val TAG = "WebApiCalls"
 
     suspend fun getSchools(searchSchoolString: String): Array<Array<String>>? {
-        Log.i(TAG, "in getSchools")
-
         val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
-        val connection = withContext(Dispatchers.IO) {
+        val connection = withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER + COROUTINE_EXEPTION_HANDLER) {
             url.openConnection()
         } as HttpURLConnection
 
@@ -52,26 +50,24 @@ class WebApiCalls {
         connection.doOutput = true
         val os: OutputStream = connection.outputStream
 
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
             os.write(data.toByteArray(StandardCharsets.UTF_8))
         }
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
             os.close()
         }
-
-        Log.i(TAG, "in getSchools2")
 
         val responseCode = connection.responseCode
         if (responseCode == HttpURLConnection.HTTP_OK) {
             val reader = BufferedReader(InputStreamReader(connection.inputStream))
             val response = StringBuilder()
             var line: String?
-            while (withContext(Dispatchers.IO) {
+            while (withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
                     reader.readLine()
                 }.also { line = it } != null) {
                 response.append(line)
             }
-            withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
                 reader.close()
             }
 
@@ -92,7 +88,6 @@ class WebApiCalls {
     }
 
     private fun parseSchoolData(jsonResponse: String): Array<Array<String>> {
-        Log.i(TAG, "parseSchoolData")
         val json = JSONObject(jsonResponse)
 
         if (json.has("result")) {

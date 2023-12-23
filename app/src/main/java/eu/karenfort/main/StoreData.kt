@@ -9,7 +9,6 @@ package eu.karenfort.main
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -18,6 +17,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
+import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -52,7 +52,7 @@ class StoreData (
     private val cancelledMessageKey = stringPreferencesKey("cancelledMessage")
 
     fun storeCancelledMessage(cancellationMessage: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[cancelledMessageKey] = cancellationMessage
             }
@@ -65,7 +65,7 @@ class StoreData (
     }
 
     fun storeLanguage(language: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[languageKey] = language
             }
@@ -82,7 +82,7 @@ class StoreData (
         if (isDarkModeEnabled > 2 || isDarkModeEnabled <= -1) {
             return
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[darkModeKey] = isDarkModeEnabled
             }
@@ -95,7 +95,7 @@ class StoreData (
         return preferences[darkModeKey]
     }
     fun storeSnoozeTime(snoozeTime: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[snoozeTimeKey] = snoozeTime
             }
@@ -107,7 +107,7 @@ class StoreData (
         return preferences[snoozeTimeKey]
     }
     fun storeIncreaseVolumeGradually(vibrate: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[increaseVolumeGraduallyKey] = vibrate
             }
@@ -120,7 +120,7 @@ class StoreData (
     }
 
     fun storeVibrate(vibrate: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[vibrateKey] = vibrate
             }
@@ -147,7 +147,7 @@ class StoreData (
     }
 
     fun storeSound(soundTitle: String, soundUri: Uri) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[soundTitleKey] = soundTitle
                 settings[soundUriKey] = soundUri.toString()
@@ -191,7 +191,6 @@ class StoreData (
         val edited: Boolean = preferences[alarmClockEditedKey] == true
 
         if (year == -1) {
-            Log.i(TAG, "year was -1")
             return Pair(null, edited)
         }
 
@@ -206,7 +205,7 @@ class StoreData (
     }
 
     fun storeAlarmClock(edited: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[alarmClockEditedKey] = edited
             }
@@ -215,7 +214,7 @@ class StoreData (
 
     fun storeAlarmClock(alarmClockDayTime: LocalDateTime?, edited: Boolean) {
         if (alarmClockDayTime == null) {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
                 context.dataStore.edit { settings ->
                     settings[alarmClockYearKey] = -1
                     settings[alarmClockMonthKey] = 0
@@ -226,7 +225,7 @@ class StoreData (
                 }
             }
         } else {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
                 context.dataStore.edit { settings ->
                     settings[alarmClockYearKey] = alarmClockDayTime.year
                     settings[alarmClockMonthKey] = alarmClockDayTime.monthValue
@@ -240,7 +239,7 @@ class StoreData (
     }
 
     fun storeID(id: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[idKey] = id
             }
@@ -248,7 +247,7 @@ class StoreData (
     }
 
     fun storeLoginData(username: String, password: String, server: String, school: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[usernameKey] = username
                 settings[passwordKey] = password
@@ -259,7 +258,7 @@ class StoreData (
     }
 
     fun storeTBS(timeBeforeSchool: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[timeBeforeSchoolKey] = timeBeforeSchool
             }
@@ -267,7 +266,7 @@ class StoreData (
     }
 
     fun storeAlarmActive(aa: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[alarmActiveKey] = aa
             }

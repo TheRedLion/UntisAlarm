@@ -21,18 +21,18 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.carlkarenfort.test.R
+import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
-import com.carlkarenfort.test.R
-import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
 import eu.karenfort.main.helper.isOnline
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.lang.IndexOutOfBoundsException
 
 
 class WelcomeActivity : AppCompatActivity() {
@@ -146,8 +146,7 @@ class WelcomeActivity : AppCompatActivity() {
                 server!!, //!! should be fine
                 schoolName!! //hopefully
             )
-        } catch (e: IOException) {
-            Log.i(TAG, "login failed")
+        } catch (_: IOException) {
         }
 
         if (untisApiCalls == null) {
@@ -195,34 +194,27 @@ class WelcomeActivity : AppCompatActivity() {
                     return
                 }
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    Log.i(TAG, "started coroutine")
+                CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
                     val webApiCalls = WebApiCalls()
                     schools = webApiCalls.getSchools("$text")
-                    Log.i(TAG, schools.toString())
 
                     if (schools == null) {
-                        Log.i(TAG, "schools is null")
                         return@launch
                     }
-                    Log.i(TAG, "schools is not null")
 
                     //check if there are too many results
                     if (schools!!.isNotEmpty()) {
                         if (schools!![0].isNotEmpty()) {
                             if (schools!![0][0] == "too many results") {
-                                Log.i(TAG, "too many results")
                                 runOnUiThread {
                                     untisSelectInputLayout.hint = "Too many results"
                                 }
                                 return@launch
                             }
                         } else {
-                            Log.i(TAG, "schools is empty")
                             return@launch
                         }
                     } else {
-                        Log.i(TAG, "schools is empty")
                         return@launch
                     }
                     untisSelectInputLayout.hint = getString(R.string.select_school)
@@ -231,7 +223,6 @@ class WelcomeActivity : AppCompatActivity() {
                         val schoolNames =
                             schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }
                                 .toTypedArray()
-                        Log.i(TAG, schoolNames.toString())
                         val arrayAdapter =
                             ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
                         val autocompleteTV = autoCompleteTextView
@@ -249,8 +240,7 @@ class WelcomeActivity : AppCompatActivity() {
             } else {
                 //left edit text
                 if (!untisUserName.text.isNullOrEmpty() && !untisPassword.text.isNullOrEmpty()) {
-                    Log.i(TAG, "verifying login data")
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
                         verifyLoginData()
                     }
                 }
@@ -262,8 +252,7 @@ class WelcomeActivity : AppCompatActivity() {
             } else {
                 //left edit text
                 if (!untisUserName.text.isNullOrEmpty() && !untisPassword.text.isNullOrEmpty()) {
-                    Log.i(TAG, "veryfiying login data")
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
                         verifyLoginData()
                     }
                 }

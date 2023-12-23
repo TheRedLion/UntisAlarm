@@ -15,7 +15,6 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.helper.EARLY_ALARM_DISMISSAL_CHANNEL_ID
@@ -27,7 +26,6 @@ import eu.karenfort.main.helper.isOreoPlus
 class EarlyAlarmDismissalReceiver : BroadcastReceiver() {
     private val TAG = "EarlyAlarmDismissalReceiver"
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "in onReceive")
         triggerEarlyDismissalNotification(context)
     }
 
@@ -47,20 +45,20 @@ class EarlyAlarmDismissalReceiver : BroadcastReceiver() {
 
         val dismissIntent = context.getDismissAlarmPendingIntent()
         val contentIntent = context.getOpenAlarmTabIntent()
-        val notification = NotificationCompat.Builder(context,EARLY_ALARM_DISMISSAL_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, EARLY_ALARM_DISMISSAL_CHANNEL_ID)
             .setContentTitle(context.getString(R.string.upcoming_alarm))
             .setContentText("Upcoming Alarm. Press dismiss to dismiss the alarm early.")
             .setSmallIcon(R.drawable.ic_alarm_vector)
             .addAction(0, context.getString(R.string.dismiss_alarm), dismissIntent)
             .setDeleteIntent(dismissIntent)
             .setContentIntent(contentIntent)
+            .setPriority(NotificationManager.IMPORTANCE_LOW)
             .setSound(null)
             .setAutoCancel(true)
             .setChannelId(EARLY_ALARM_DISMISSAL_CHANNEL_ID)
             .build()
 
         notificationManager.notify(EARLY_ALARM_NOTIF_ID, notification)
-        NotificationManager.IMPORTANCE_LOW
     }
 
 }

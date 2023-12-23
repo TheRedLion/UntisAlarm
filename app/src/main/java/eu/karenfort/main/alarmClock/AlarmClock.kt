@@ -31,8 +31,6 @@ class AlarmClock {
         private const val TAG = "AlarmClock"
 
         fun setAlarm(alarmClockDateTime: LocalDateTime, context: Context) {
-            Log.i(TAG, "setting alarm Clock for $alarmClockDateTime")
-
             //only one alarm may be active at any time
             cancelAlarm(context)
 
@@ -77,11 +75,7 @@ class AlarmClock {
         }
 
         fun snoozeAlarm(timeInS: Int, context: Context) {
-            Log.i(TAG, "called snoozeAlarm")
-
             if (timeInS < 0) return
-
-            Log.i(TAG, "setting alarm clock for in $timeInS seconds or ${timeInS/60}")
 
             //only one alarm may be active at any time
             cancelAlarm(context)
@@ -91,7 +85,7 @@ class AlarmClock {
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!context.areNotificationsEnabled()) {
-                Log.i(TAG, "notifications are not enabled")
+                //that is to bad
             }
 
             val triggerTime = System.currentTimeMillis() + timeInS * 1000
@@ -110,7 +104,6 @@ class AlarmClock {
 
 
         fun cancelAlarm(context: Context) {
-            Log.i(TAG, "canceling")
             val intent2 = Intent(context, AlarmClockReceiver::class.java)
             intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 

@@ -88,60 +88,35 @@ class AlarmClockSetter {
 
                 //the following will load and display the time an alarm would have
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { //isUiContext requires Android API 31
-                    if (context.isUiContext && MainActivity.active) {
-                        Log.i(TAG, "loading preview for alarmPreview in Main Activity")
-                        if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                            context.sendLoggedOutNotif()
-                            Log.i(TAG, "not logged in")
-                            setNew("error", null, context)
-                            return null
-                        }
-                        val schoolStart: LocalDateTime?
+                    if (!context.isUiContext) return null
+                }
 
-                        StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
-                        val untisApiCalls = UntisApiCalls(
-                            loginData[0]!!,
-                            loginData[1]!!,
-                            loginData[2]!!,
-                            loginData[3]!!
-                        )
-
-                        schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
-
-                        if (schoolStart == null) return null
-
-                        return schoolStart.minusMinutes(tbs!!.toLong())
+                if (MainActivity.active) {
+                    if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
+                        context.sendLoggedOutNotif()
+                        setNew("error", null, context)
+                        return null
                     }
-                } else {
-                    if (MainActivity.active) {
-                        Log.i(TAG, "loading preview for alarmPreview in Main Activity")
-                        if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                            context.sendLoggedOutNotif()
-                            Log.i(TAG, "not logged in")
-                            setNew("error", null, context)
-                            return null
-                        }
-                        val schoolStart: LocalDateTime?
+                    val schoolStart: LocalDateTime?
 
-                        StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
-                        val untisApiCalls = UntisApiCalls(
-                            loginData[0]!!,
-                            loginData[1]!!,
-                            loginData[2]!!,
-                            loginData[3]!!
-                        )
+                    StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+                    val untisApiCalls = UntisApiCalls(
+                        loginData[0]!!,
+                        loginData[1]!!,
+                        loginData[2]!!,
+                        loginData[3]!!
+                    )
 
-                        schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+                    schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
-                        if (schoolStart == null) return null
-                        return schoolStart.minusMinutes(tbs!!.toLong())
-                    }
+                    if (schoolStart == null) return null
+
+                    return schoolStart.minusMinutes(tbs!!.toLong())
                 }
                 return null
             }
 
             if (storedAlarmClockEdited) {
-                Log.i(TAG, "Alarm was edited or snoozed")
                 setNew("noAlarmToday", null, context)
                 return null
             }
@@ -256,7 +231,7 @@ class AlarmClockSetter {
                 }
 
                 "error" -> {
-                    Log.e(TAG, "error") //todo add implementation
+                    Log.i(TAG, "error") //todo add implementation
                     setNew("normal", null, context)
                 }
 
