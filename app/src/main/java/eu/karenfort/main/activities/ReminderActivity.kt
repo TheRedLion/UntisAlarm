@@ -1,3 +1,13 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Code originally from https://github.com/SimpleMobileTools/Simple-Clock
+ * but modified.
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This activity is shown when an alarm goes off.
+ */
 package eu.karenfort.main.activities
 
 import android.annotation.SuppressLint
@@ -24,7 +34,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
 import com.carlkarenfort.test.databinding.ActivityReminderBinding
 import eu.karenfort.main.StoreData
-import eu.karenfort.main.alarm.AlarmManager
+import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
@@ -37,7 +47,6 @@ import eu.karenfort.main.helper.isOreoPlus
 import eu.karenfort.main.helper.notificationManager
 import eu.karenfort.main.helper.viewBinding
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 
 class ReminderActivity : AppCompatActivity() {
     private val TAG = "ReminderActivity"
@@ -48,7 +57,6 @@ class ReminderActivity : AppCompatActivity() {
     private var isAlarmReminder = false
     private var didVibrate = false
     private var wasAlarmSnoozed = false
-    //private var alarm: Alarm? = null
     private var audioManager: AudioManager? = null
     private var mediaPlayer: MediaPlayer? = null
     private var vibrator: Vibrator? = null
@@ -59,12 +67,9 @@ class ReminderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i("ReminderActivity", "creating ReminderActivity")
-        //isMaterialActivity = true
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         showOverLockscreen()
-        //updateTextColors(binding.root)
-        //updateStatusbarColor(getProperBackgroundColor())
 
         binding.reminderTitle.text = getString(R.string.app_name)
         binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(), false, false) else getString(
@@ -98,12 +103,6 @@ class ReminderActivity : AppCompatActivity() {
     private fun setupAlarmButtons() {
         binding.reminderStop.beGone()
         binding.reminderDraggableBackground.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulsing_animation))
-        //binding.reminderDraggableBackground.applyColorFilter(getProperPrimaryColor())
-
-        //val textColor = getProperTextColor()
-        //binding.reminderDismiss.applyColorFilter(textColor)
-        //binding.reminderDraggable.applyColorFilter(textColor)
-        //binding.reminderSnooze.applyColorFilter(textColor)
 
         var minDragX = 0f
         var maxDragX = 0f
@@ -144,7 +143,7 @@ class ReminderActivity : AppCompatActivity() {
                             binding.reminderDraggable.performHapticFeedback()
                             didVibrate = true
                             finishActivity()
-                            AlarmManager.main(this)
+                            AlarmClockSetter.main(this)
                         }
 
                         if (isOreoPlus()) {
@@ -288,7 +287,7 @@ class ReminderActivity : AppCompatActivity() {
         finished = true
         destroyEffects()
         finish()
-        AlarmManager.main(this)
+        AlarmClockSetter.main(this)
         overridePendingTransition(0, 0)
     }
 

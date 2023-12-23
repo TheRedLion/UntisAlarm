@@ -1,3 +1,13 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Code originally from https://github.com/SimpleMobileTools/Simple-Clock
+ * but modified.
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This Receiver is called when the alarm is supposed to go off.
+ */
 package eu.karenfort.main.alarmClock
 
 import android.app.NotificationChannel
@@ -13,7 +23,6 @@ import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.ReminderActivity
-import eu.karenfort.main.alarm.AlarmManager
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.ALARM_NOTIF_ID
@@ -39,7 +48,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
                 Log.i(TAG, "UN-showing screen notification alarm")
-                AlarmManager.main(context) // load new alarmClock
+                AlarmClockSetter.main(context) // load new alarmClock
             }, 10000)
         } else {
             Log.i(TAG, "showing full activity view")

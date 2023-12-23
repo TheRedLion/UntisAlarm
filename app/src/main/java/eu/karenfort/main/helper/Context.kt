@@ -1,3 +1,12 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Most functions from https://github.com/SimpleMobileTools/Simple-Clock
+ * but modified.
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ */
 package eu.karenfort.main.helper
 
 import android.app.Activity

@@ -1,3 +1,13 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Code originally from https://github.com/SimpleMobileTools/Simple-Clock
+ * but modified.
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: Is called when an alarm is snoozed.
+ */
 package eu.karenfort.main.alarmClock
 
 import android.content.BroadcastReceiver

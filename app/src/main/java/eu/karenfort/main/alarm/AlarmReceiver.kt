@@ -1,23 +1,27 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This Receiver calls AlarmClockSetter.
+ */
 package eu.karenfort.main.alarm
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import eu.karenfort.main.alarmClock.AlarmClockSetter
 
 
 class AlarmReceiver: BroadcastReceiver() {
     private val TAG = "AlarmReceiver"
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i(TAG, "called onReceive with intent: $intent")
 
-        val actualAction = intent.action
-        if (actualAction != null && actualAction != Intent.ACTION_BOOT_COMPLETED) {
-            if (actualAction != Intent.ACTION_CALL) {
-                Log.i(TAG, "no allowed intent")
-                return
-            }
+        //intent check necessary to prevent spoofed intents since this receiver is called upon phone restart
+        val action = intent.action
+        if (action != null && action != Intent.ACTION_BOOT_COMPLETED && action != Intent.ACTION_CALL) {
+            return
         }
-        AlarmManager.main(context)
+        AlarmClockSetter.main(context)
     }
 }

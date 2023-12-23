@@ -1,3 +1,10 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This Class is responsible for requesting school names from Websites.
+ */
 package eu.karenfort.main.api
 
 import android.util.Log

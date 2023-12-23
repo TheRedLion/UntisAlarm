@@ -1,3 +1,10 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This activity is used to let the user select a custom ringtone.
+ */
 package eu.karenfort.main.activities
 
 import android.content.Intent

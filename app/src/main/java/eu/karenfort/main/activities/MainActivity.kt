@@ -1,3 +1,11 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This Activity is the Main screen of the App and allows the user to activate and
+ *      deactivate the alarm as well as edit the alarm set for tomorrow.
+ */
 package eu.karenfort.main.activities
 
 import android.Manifest
@@ -10,6 +18,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.StrictMode
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.Menu
@@ -31,10 +40,12 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
 import com.google.android.material.timepicker.TimeFormat
 import eu.karenfort.main.StoreData
-import eu.karenfort.main.alarm.AlarmManager
+import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
+import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
+import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.INFO_NOTIFICARION_CHANNEL_ID
 import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
@@ -49,7 +60,6 @@ import java.time.LocalTime
 import java.time.ZoneOffset
 import java.util.Calendar
 import java.util.TimeZone
-
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "MainActivity"
@@ -70,7 +80,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(TAG, "in onCreate savedInstanceState: $savedInstanceState")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         getLayoutObjectsByID()
@@ -104,7 +113,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
         Log.i(TAG, "shared Preferences Changed")
 
-        if (string == null) return //dont know when this would happen
+        if (string == null) return //don't know when this would happen
 
         if (!isAlarmClockTime(string)) return //only respond if alarmClockTime was edited
 
@@ -112,7 +121,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             val (alarmClockDateTime, alarmClockEdited) = StoreData(this@MainActivity).loadAlarmClock()
             //update UI accordingly
             if (alarmClockDateTime == null) {
-                currentAlarmClockDateTime = AlarmManager.main(this@MainActivity)
+                currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity)
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                     currentAlarmClockDateTime!!
                 )
@@ -230,12 +239,12 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private fun handleResetAlarm() {
         StoreData(this).storeAlarmClock(false)
         if (toggleAlarm.isChecked) {
-            currentAlarmClockDateTime = AlarmManager.main(this, null, false)
+            currentAlarmClockDateTime = AlarmClockSetter.main(this, null, false)
             if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                 currentAlarmClockDateTime!!
             )
         } else {
-            currentAlarmClockDateTime = AlarmManager.main(this, null, false)
+            currentAlarmClockDateTime = AlarmClockSetter.main(this, null, false)
             if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                 currentAlarmClockDateTime!!
             )
@@ -384,7 +393,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             if (areNotificationsEnabled()) {
                 Log.i(TAG, "should schedule")
                 AlarmScheduler(this).schedule(this, true)
-                currentAlarmClockDateTime = AlarmManager.main(this, true)
+                currentAlarmClockDateTime = AlarmClockSetter.main(this, true)
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                     currentAlarmClockDateTime!!
                 )
@@ -446,7 +455,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         if (alarmClockDateTime == null) {
             Log.e(TAG, "Loaded AlarmClockDateTime is null!")
-            currentAlarmClockDateTime = AlarmManager.main(this)
+            currentAlarmClockDateTime = AlarmClockSetter.main(this)
             runOnUiThread{
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                     currentAlarmClockDateTime!!

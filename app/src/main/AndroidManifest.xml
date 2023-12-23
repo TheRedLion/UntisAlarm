@@ -26,6 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name="eu.karenfort.main.activities.FirstSettingActivity"
+            android:exported="false" />
+        <activity
             android:name="eu.karenfort.main.activities.AlarmSoundPicker"
             android:exported="false" />
 

@@ -1,3 +1,10 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: Activity to change settings.
+ */
 package eu.karenfort.main.activities
 
 import android.app.UiModeManager
@@ -18,7 +25,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.StoreData
-import eu.karenfort.main.alarm.AlarmManager
+import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
@@ -38,7 +45,6 @@ import kotlinx.coroutines.runBlocking
 class SettingsActivity : AppCompatActivity() {
     private val TAG = "SettingsActivity"
     private lateinit var languageSettings: ConstraintLayout
-    //private lateinit var colorSchemeSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
     private lateinit var darkModeSettings: ConstraintLayout
     private lateinit var ivgToggle: MaterialCheckBox
@@ -157,27 +163,6 @@ class SettingsActivity : AppCompatActivity() {
             enableClicking()
         }
     }
-
-    /*
-    private fun colorDialog() {
-        val listItems = arrayOf("System Default", "Red", "Blue", "Green", "Orange")
-        var checkedItem = 0
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Choose Alarm Sound")
-            .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
-                dialog.dismiss()
-                Log.i(TAG, "Storing $checkedItem in StoreData")
-            }
-            .setSingleChoiceItems(listItems, checkedItem) { _, which ->
-                checkedItem = which
-                Log.i(TAG, "$which, $checkedItem")
-            }.show()
-    }
-     */
 
     private fun languageDialog() {
         val listItems = arrayOf("System Default", "English", "German")
@@ -386,7 +371,7 @@ class SettingsActivity : AppCompatActivity() {
                 aaState = aaStateNullable
             }
             if (aaState) {
-                AlarmManager.main(this@SettingsActivity)
+                AlarmClockSetter.main(this@SettingsActivity)
             }
         }
     }

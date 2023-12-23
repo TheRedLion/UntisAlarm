@@ -1,3 +1,13 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Code originally from https://github.com/SimpleMobileTools/Simple-Clock
+ * but modified.
+ * 
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: Shows a notification that allows you to dismiss an alarm Early
+ */
 package eu.karenfort.main.alarmClock
 
 import android.app.Notification

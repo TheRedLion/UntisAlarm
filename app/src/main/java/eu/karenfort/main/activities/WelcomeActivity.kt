@@ -1,3 +1,10 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This activity lets the user select a school and log in.
+ */
 package eu.karenfort.main.activities
 
 import android.content.Intent
@@ -122,8 +129,7 @@ class WelcomeActivity : AppCompatActivity() {
                 schoolName!!
             )
             storeData.storeID(untisID)
-
-            intent = Intent(this@WelcomeActivity, MainActivity::class.java)
+            intent = Intent(this@WelcomeActivity, FirstSettingActivity::class.java)
             startActivity(intent)
         }
     }
@@ -284,7 +290,7 @@ class WelcomeActivity : AppCompatActivity() {
 
             override fun afterTextChanged(text: Editable?) {
                 if (text.isNullOrEmpty()) {
-                    getString(R.string.may_not_be_empty)
+                    untisUserName.error = getString(R.string.may_not_be_empty)
                     return
                 }
                 untisPasswordInputLayout.error = null

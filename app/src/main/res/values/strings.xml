@@ -77,4 +77,6 @@
     <string name="unable_to_load_address">Unable to load Address</string>
     <string name="pm">PM</string>
     <string name="am">AM</string>
+    <string name="skip">Skip</string>
+    <string name="set_how_much_time_you_need_before_school_starts">Set how much time you need before School starts.</string>
 </resources>

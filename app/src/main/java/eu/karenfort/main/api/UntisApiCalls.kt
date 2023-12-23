@@ -1,9 +1,18 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This class is responsible for sending API calls to the WebUntis API.
+ *      We are using the Untis4J library https://github.com/untisapi/untis4j.
+ */
 package eu.karenfort.main.api
 
 import android.util.Log
 import eu.karenfort.main.helper.getNextDay
 import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
+import org.bytedream.untis4j.UntisUtils
 import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
 import java.time.LocalDate
@@ -29,13 +38,12 @@ class UntisApiCalls(
                 schoolName
             )
         } catch (e: IOException) {
-            throw e // IO exeption throw is used to check if login data was valid
+            throw e // IO exception is used to check if login data was valid
         }
     }
 
     fun getID(): Int? {
         var id: Int? = null
-        //has to stop main thread since it is called during welcome activity
 
         try {
             //login to API
@@ -49,7 +57,6 @@ class UntisApiCalls(
     }
 
     fun getSchoolStartForDay(id: Int): LocalDateTime? {
-        Log.i(TAG, "getting schoolstart")
         try {
             val nextDay = getNextDay()
             val timetable: Timetable = session.getTimetableFromPersonId(
@@ -59,7 +66,6 @@ class UntisApiCalls(
             )
 
             if (timetable.isEmpty()) {
-                Log.i(TAG, "timetable is empty")
                 return null
             }
 
@@ -81,6 +87,12 @@ class UntisApiCalls(
     }
 
     private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
-        return lesson.teachers.isEmpty() && lesson.teachers != null
+        if (lesson.teachers.isEmpty() && lesson.teachers != null) {
+            return true
+        }
+        if (lesson.code == UntisUtils.LessonCode.CANCELLED) {
+            return true
+        }
+        return false
     }
 }

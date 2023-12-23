@@ -1,4 +1,11 @@
-package eu.karenfort.main.alarm
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: This class checks if the Alarm Clock is set properly and adjusts accordingly.
+ */
+package eu.karenfort.main.alarmClock
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -9,7 +16,7 @@ import android.os.StrictMode
 import android.util.Log
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
-import eu.karenfort.main.alarmClock.AlarmClock
+import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
@@ -19,10 +26,15 @@ import eu.karenfort.main.notifications.WarningNotifications
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
-class AlarmManager {
+class AlarmClockSetter {
 
     companion object {
-        private val TAG = "AlarmManager"
+        private val TAG = "AlarmClockSetter"
+
+        /* isActive and isEdited is used to override stored data, necessary because storing is
+            done on a different thread and thus takes time. Used when a new state is set and the
+            AlarmClock needs to be adjusted right after that for example to update UI
+         */
 
         fun main(context: Context): LocalDateTime? {
             return main(context, null, null)
@@ -32,16 +44,16 @@ class AlarmManager {
             return main(context, isActive, null)
         }
 
-        fun main(context: Context, isActive: Boolean?, edited: Boolean?): LocalDateTime? {
-            Log.i(TAG ,"called main")
+        fun main(context: Context, isActive: Boolean?, isEdited: Boolean?): LocalDateTime? {
 
-
+            //rest unnecessary without being able to make API calls
             if (!context.isOnline()) {
-                Log.i(TAG, "Phone has no internet connectivity")
                 WarningNotifications.sendNoInternetNotif(context)
+                setNew("normal", null, context)
                 return null
             }
 
+            //load data
             val storeData = StoreData(context)
             var id: Int?
             var loginData: Array<String?>
@@ -49,7 +61,6 @@ class AlarmManager {
             val storedAlarmClockDateTime: LocalDateTime?
             var storedAlarmClockEdited: Boolean
             var alarmActive: Boolean
-
             runBlocking {
                 id = storeData.loadID()
                 loginData = storeData.loadLoginData()
@@ -58,30 +69,26 @@ class AlarmManager {
                 storedAlarmClockDateTime = pair.first
                 storedAlarmClockEdited = pair.second
                 alarmActive = storeData.loadAlarmActive()?: false
-                //debug: alarmClockArray = arrayOf(6, 43)
             }
 
-            if (edited != null) {
-                storedAlarmClockEdited = edited
+            if (isEdited != null) {
+                storedAlarmClockEdited = isEdited
             }
-
+            if (isActive != null) {
+                alarmActive  = isActive
+            }
 
             if (tbs == null) {
                 //should never happen
                 tbs = 60 //just settings default value, should fix itself next time user opens app
             }
 
-            if (isActive != null) {
-                alarmActive  = isActive
-            }
-
             if (!alarmActive) {
                 AlarmClock.cancelAlarm(context)
-                Log.i(TAG, "alarm is not active (${MainActivity.active})")
 
                 //the following will load and display the time an alarm would have
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (context.isUiContext) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { //isUiContext requires Android API 31
+                    if (context.isUiContext && MainActivity.active) {
                         Log.i(TAG, "loading preview for alarmPreview in Main Activity")
                         if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
                             context.sendLoggedOutNotif()
@@ -101,8 +108,9 @@ class AlarmManager {
 
                         schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
-                        return schoolStart!!.minusMinutes(tbs!!.toLong())
+                        if (schoolStart == null) return null
 
+                        return schoolStart.minusMinutes(tbs!!.toLong())
                     }
                 } else {
                     if (MainActivity.active) {
@@ -125,7 +133,8 @@ class AlarmManager {
 
                         schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
-                        return schoolStart!!.minusMinutes(tbs!!.toLong())
+                        if (schoolStart == null) return null
+                        return schoolStart.minusMinutes(tbs!!.toLong())
                     }
                 }
                 return null
@@ -155,11 +164,8 @@ class AlarmManager {
 
             schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
-
             if (schoolStart == null) {
                 //probably holiday or something
-                Log.i(TAG, "schoolStart is null")
-
                 setNew("noAlarmToday", null, context)
                 return null
             }
@@ -167,15 +173,12 @@ class AlarmManager {
             val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
 
             if (storedAlarmClockDateTime == null) {
-                Log.i(TAG, "No alarm clock set, setting a new one")
-
                 AlarmClock.setAlarm(alarmClockDateTime, context)
                 setNew("normal", schoolStart, context)
                 return alarmClockDateTime
             }
 
             if (isAlarmClockSetProperly(alarmClockDateTime, storedAlarmClockDateTime)) {
-                Log.i(TAG, "Alarm clock set properly")
                 setNew("normal", alarmClockDateTime, context)
                 return alarmClockDateTime
             }
@@ -206,7 +209,6 @@ class AlarmManager {
                         PendingIntent.FLAG_IMMUTABLE
                     )
 
-                    Log.i(TAG, "setting new Alarm")
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC,
                         System.currentTimeMillis() + 10800000,
@@ -227,14 +229,17 @@ class AlarmManager {
                     )
                     if (schoolStart != null) {
                         if (LocalDateTime.now().isBefore(schoolStart.minusHours(2))) {
-                            Log.i(TAG, "setting new Alarm for in 15 minutes to an hour.")
                             alarmManager.setAndAllowWhileIdle(
                                 AlarmManager.RTC,
                                 System.currentTimeMillis() + 900000,
                                 pendingIntent
                             )
                         } else {
-                            Log.i(TAG, "set new Alarm for in 15 minutes")
+                            /* Since when using setAndAllowWileIdle the alarm is called during
+                                a one hour time frame after the specified time. To make sure the
+                                Alarm CLock time is checked shortly before the Alarm Clock goes of.
+                                That is why setExact is used.
+                             */
                             alarmManager.setExactAndAllowWhileIdle(
                                 AlarmManager.RTC,
                                 System.currentTimeMillis() + 900000,
@@ -242,7 +247,6 @@ class AlarmManager {
                             )
                         }
                     } else {
-                        Log.i(TAG, "set new Alarm for in 15 minutes")
                         alarmManager.setExactAndAllowWhileIdle(
                             AlarmManager.RTC,
                             System.currentTimeMillis() + 900000,
@@ -252,12 +256,13 @@ class AlarmManager {
                 }
 
                 "error" -> {
-                    Log.e(TAG, "error")
+                    Log.e(TAG, "error") //todo add implementation
                     setNew("normal", null, context)
                 }
 
                 else -> {
-                    Log.i(TAG, "no matich reason")
+                    //there is an error in the code
+                    Log.i(TAG, "no matching reason")
                     setNew("normal", null, context)
                 }
             }
