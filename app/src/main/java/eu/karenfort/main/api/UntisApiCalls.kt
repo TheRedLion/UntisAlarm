@@ -9,6 +9,7 @@
 package eu.karenfort.main.api
 
 import android.util.Log
+import eu.karenfort.main.helper.TAG
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.UntisUtils
 import org.bytedream.untis4j.responseObjects.Timetable
@@ -23,7 +24,6 @@ class UntisApiCalls(
     server: String,
     schoolName: String
 ){
-    private val TAG = "UntisApiCalls"
     private val session: Session
 
     init {
@@ -93,11 +93,7 @@ class UntisApiCalls(
             return true
         } //if there is no teacher assigned there is no school
 
-        if (lesson.code == UntisUtils.LessonCode.CANCELLED) {
-            return true
-        }
-
+        return lesson.code == UntisUtils.LessonCode.CANCELLED
         //todo implement that CancelledMessage is checked
-        return false
     }
 }

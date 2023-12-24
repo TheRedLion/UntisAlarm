@@ -14,7 +14,6 @@ import eu.karenfort.main.alarmClock.AlarmClockSetter
 
 
 class AlarmReceiver: BroadcastReceiver() {
-    private val TAG = "AlarmReceiver"
     override fun onReceive(context: Context, intent: Intent) {
 
         //intent check necessary to prevent spoofed intents since this receiver is called upon phone restart

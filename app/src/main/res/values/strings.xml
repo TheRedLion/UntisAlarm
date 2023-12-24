@@ -78,11 +78,12 @@
     <string name="am">AM</string>
     <string name="skip">Skip</string>
     <string name="set_how_much_time_you_need_before_school_starts">Set how much time you need before School starts.</string>
-    <string name="ringing_clock">Ringing clock</string>
-    <string name="globe">globe</string>
-    <string name="moon">moon</string>
-    <string name="bell">bell</string>
+    <string name="selector">Selector</string>
+    <string name="globe">Language</string>
     <string name="choose_alarm_sound">Choose Alarm Sound</string>
     <string name="select_language">Select Language</string>
-    <string name="change_app_theme">Change App Theme</string>
+    <string name="change_app_theme">Change Dark Mode</string>
+    <string name="you_have_no_internet_connection">You have no internet connection!</string>
+    <string name="bell">Alarm Sound</string>
+    <string name="moon">Dark Mode</string>
 </resources>

@@ -24,23 +24,17 @@ const val NOTIFS_ALLOWED = "notifsAllowed"
 
 //notification channels
 const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
-const val NOT_LOGGED_IN_CHANNEL_ID = "Not_logged_in_id"
 const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
-const val INFO_NOTIFICARION_CHANNEL_ID = "Info_Notifs_Channel"
+const val INFO_NOTIFICATION_CHANNEL_ID = "Info_Notifs_Channel"
 const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
-const val INFO_NOTIFICATION_CHANNEL_ID = "info_channel"
 
 //codes
 const val ALARM_REQUEST_CODE = 73295871
-const val PICKFILE_RESULT_CODE = 7890
 
-//ids
-const val ALARM_ID = "alarm_id"
 const val ALARM_NOTIF_ID = 9998
 const val EARLY_ALARM_NOTIF_ID = 10003
 const val ALARM_CLOCK_ID = 543
 const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
-const val NOTIFICATION_ID = "notification_id"
 
 //settings default
 const val TBS_DEFAULT = 60
@@ -53,7 +47,6 @@ const val MAX_ALARM_DURATION = 60
 val SUPPORTED_LANGUAGES = arrayOf("System Default", "English", "German")
 val SUPPORTED_LANGUAGES_TAG = arrayOf("system", "en", "de")
 
-const val ALARM_SOUND_DEFAULT_TITLE = "Default Alarm"
 val ALARM_SOUND_DEFAULT: String = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
 
 val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
@@ -65,9 +58,12 @@ const val SILENT = "content://silent"
 val SILENT_URI: Uri = Uri.parse(SILENT)
 val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
-val COROUTINE_EXEPTION_HANDLER = CoroutineExceptionHandler{_, throwable ->
+val COROUTINE_EXCEPTION_HANDLER = CoroutineExceptionHandler{ _, throwable ->
     throwable.printStackTrace()
 }
+
+const val TAG = "UntisAlarm"
+
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
 
 fun ensureBackgroundThread(callback: () -> Unit) {

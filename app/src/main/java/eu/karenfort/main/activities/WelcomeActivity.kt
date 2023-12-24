@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -27,7 +26,7 @@ import eu.karenfort.main.StoreData
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
-import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
+import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.isOnline
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +35,6 @@ import java.io.IOException
 
 
 class WelcomeActivity : AppCompatActivity() {
-
-    private var TAG: String = "WelcomeActivity"
-
     private lateinit var untisSchool: EditText
     private lateinit var untisPassword: EditText
     private lateinit var untisUserName: EditText
@@ -194,7 +190,7 @@ class WelcomeActivity : AppCompatActivity() {
                     return
                 }
 
-                CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
+                CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
                     val webApiCalls = WebApiCalls()
                     schools = webApiCalls.getSchools("$text")
 
@@ -240,7 +236,7 @@ class WelcomeActivity : AppCompatActivity() {
             } else {
                 //left edit text
                 if (!untisUserName.text.isNullOrEmpty() && !untisPassword.text.isNullOrEmpty()) {
-                    CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
+                    CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
                         verifyLoginData()
                     }
                 }
@@ -252,7 +248,7 @@ class WelcomeActivity : AppCompatActivity() {
             } else {
                 //left edit text
                 if (!untisUserName.text.isNullOrEmpty() && !untisPassword.text.isNullOrEmpty()) {
-                    CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
+                    CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
                         verifyLoginData()
                     }
                 }

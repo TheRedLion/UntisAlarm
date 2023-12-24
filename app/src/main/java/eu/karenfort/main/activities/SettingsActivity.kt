@@ -7,7 +7,6 @@
  */
 package eu.karenfort.main.activities
 
-import android.app.UiModeManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -27,7 +26,7 @@ import eu.karenfort.main.StoreData
 import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
-import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
+import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.SILENT_TITLE
@@ -37,15 +36,14 @@ import eu.karenfort.main.helper.SUPPORTED_LANGUAGES
 import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
+import eu.karenfort.main.helper.changeDarkMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.lang.Error
 
 
 class SettingsActivity : AppCompatActivity() {
-    private val TAG = "SettingsActivity"
 
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
@@ -141,7 +139,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun loadAndDisplayStoredStates() {
 
-        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             val storeData = StoreData(applicationContext)
 
             val tbs: Int = storeData.loadTBS() ?: initTBS()
@@ -231,19 +229,7 @@ class SettingsActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
                 // Change app theme to the selected theme
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                    val uiManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
-                    when (checkedItem) {
-                        1 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_NO)
-                        2 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_YES)
-                    }
-                } else {
-                    when (checkedItem) {
-                        0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
+                this.changeDarkMode(checkedItem)
                 StoreData(this).storeDarkMode(checkedItem)
             }
             .setSingleChoiceItems(listItems, checkedItem) { _, which ->

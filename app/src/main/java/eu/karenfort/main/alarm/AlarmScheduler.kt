@@ -12,20 +12,16 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import eu.karenfort.main.alarmClock.AlarmClock
+import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 
 class AlarmScheduler(
     private val context: Context
 ) {
-    private val TAG = "AlarmScheduler"
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
 
     fun schedule(context: Context) {
-        schedule(context, null)
-    }
-
-    fun schedule(context: Context, isActive: Boolean?) {
-        eu.karenfort.main.alarmClock.AlarmClockSetter.main(context, isActive)
+        AlarmClockSetter.main(context, true) //is always active if alarm was just scheduled
 
         val intent = Intent(context, AlarmReceiver::class.java).also {
             it.action = Intent.ACTION_CALL

@@ -7,26 +7,30 @@ package eu.karenfort.main
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import com.google.android.material.color.DynamicColors
-import kotlinx.coroutines.runBlocking
+import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
+import eu.karenfort.main.helper.SUPPORTED_LANGUAGES
+import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
+import eu.karenfort.main.helper.changeDarkMode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class App: Application() {
     override fun onCreate() {
         super.onCreate()
-        // check if api version below 31 and load dark mode from storedata to apply it if needed
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
-            runBlocking {
-                when (StoreData(this@App).loadDarkMode()) {
-                    0 -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                    }
-                    1 -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                    2 -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+            val storeData = StoreData(this@App)
+
+            val darkMode = storeData.loadDarkMode()?: 0
+            this@App.changeDarkMode(darkMode)
+
+            val language = storeData.loadLanguage()
+            if (language != null) {
+                val languageTag = SUPPORTED_LANGUAGES_TAG[SUPPORTED_LANGUAGES.indexOf(language)]
+                val appLocale = LocaleListCompat.forLanguageTags(languageTag)
+                AppCompatDelegate.setApplicationLocales(appLocale)
             }
         }
         DynamicColors.applyToActivitiesIfAvailable(this)

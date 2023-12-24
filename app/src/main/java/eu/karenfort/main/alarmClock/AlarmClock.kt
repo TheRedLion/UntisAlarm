@@ -76,38 +76,38 @@ class AlarmClock {
 
         fun snoozeAlarm(timeInS: Int, context: Context) {
             if (timeInS < 0) return
+            if (!context.areNotificationsEnabled()) {
+                return
+            }
 
             //only one alarm may be active at any time
             cancelAlarm(context)
 
-            val intent2 = Intent(context, AlarmClockReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            val intent = Intent(context, AlarmClockReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            if (!context.areNotificationsEnabled()) {
-                //that is to bad
-            }
 
             val triggerTime = System.currentTimeMillis() + timeInS * 1000
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerTime, pendingIntent), pendingIntent)
 
-            StoreData(context).storeAlarmClock(LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault()), true)
-
+            val alarmClockTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault())
+            StoreData(context).storeAlarmClock(alarmClockTime, true) //edited so it does not get overridden
 
             Handler(Looper.getMainLooper()).postDelayed({
-                val intent3 = Intent(context, MainActivity::class.java)
-                intent3.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent3)
+                val intent2 = Intent(context, MainActivity::class.java)
+                intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent2)
             }, 1000)
 
         }
 
 
         fun cancelAlarm(context: Context) {
-            val intent2 = Intent(context, AlarmClockReceiver::class.java)
-            intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            val intent = Intent(context, AlarmClockReceiver::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
 
-            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent2,
+            val pendingIntent = PendingIntent.getBroadcast(context, ALARM_CLOCK_ID, intent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

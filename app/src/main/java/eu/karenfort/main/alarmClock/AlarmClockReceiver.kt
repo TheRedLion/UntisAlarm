@@ -32,8 +32,6 @@ import eu.karenfort.main.helper.showAlarmNotification
 import eu.karenfort.main.helper.showErrorToast
 
 class AlarmClockReceiver : BroadcastReceiver() {
-    private val TAG = "AlarmClockReceiver"
-
     override fun onReceive(context: Context, intent: Intent) {
         context.hideNotification(EARLY_ALARM_NOTIF_ID) // hide early dismissal notification if not already dismissed
 

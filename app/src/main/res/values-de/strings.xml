@@ -77,4 +77,14 @@
     <string name="unable_to_load_address">Adresse konnte nicht geladen werden.</string>
     <string name="pm">PM</string>
     <string name="am">AM</string>
+    <string name="skip">Überspringen</string>
+    <string name="set_how_much_time_you_need_before_school_starts">Bestimme wie viel Zeit vor dem Schulstart benötigt wird.</string>
+    <string name="globe">Sprache</string>
+    <string name="moon">Dunkler Modus</string>
+    <string name="bell">Wecker Ton</string>
+    <string name="choose_alarm_sound">Wähle Wecker Ton</string>
+    <string name="select_language">Wähle eine Sprache</string>
+    <string name="change_app_theme">Ändere den dunklen Modus</string>
+    <string name="you_have_no_internet_connection">Kein Internet Empfang!</string>
+    <string name="selector">Auswahl</string>
 </resources>

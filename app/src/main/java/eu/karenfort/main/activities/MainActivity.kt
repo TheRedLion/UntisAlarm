@@ -42,8 +42,8 @@ import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
-import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
-import eu.karenfort.main.helper.INFO_NOTIFICARION_CHANNEL_ID
+import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
+import eu.karenfort.main.helper.INFO_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.NOTIFS_ALLOWED
 import eu.karenfort.main.helper.areNotificationsEnabled
 import eu.karenfort.main.helper.getAlarmPreviewString
@@ -59,7 +59,6 @@ import java.util.Calendar
 import java.util.TimeZone
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
-    private val TAG = "MainActivity"
     private lateinit var alarmPreview: Button
     private lateinit var toggleAlarm: MaterialSwitch
     private lateinit var notifsDisabledCard: MaterialCardView
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         disableClicking() //disabling clicks until everything was properly loaded to stop errors
         createNotificationChannel()
         sendToWelcomeActivity() //send user to welcomeActivity if they have not logged in yet
-        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
         }
@@ -112,7 +111,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         if (!isAlarmClockTime(string)) return //only respond if alarmClockTime was edited
 
-        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             val (alarmClockDateTime, alarmClockEdited) = StoreData(this@MainActivity).loadAlarmClock()
             //update UI accordingly
             if (alarmClockDateTime == null) {
@@ -253,7 +252,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 .setInputMode(INPUT_MODE_CLOCK)
                 .build()
 
-        timePicker.show(supportFragmentManager, TAG)
+        timePicker.show(supportFragmentManager, null)
 
         timePicker.addOnPositiveButtonClickListener {
             timePicker.dismiss()
@@ -357,7 +356,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val notificationManager2 =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager2.createNotificationChannel(NotificationChannel(
-            INFO_NOTIFICARION_CHANNEL_ID,
+            INFO_NOTIFICATION_CHANNEL_ID,
             getString(R.string.info_notifications_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT
         ))
@@ -374,7 +373,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         StoreData(this).storeAlarmActive(isChecked)
         if (isChecked) {
             if (areNotificationsEnabled()) {
-                AlarmScheduler(this).schedule(this, true)
+                AlarmScheduler(this).schedule(this)
                 currentAlarmClockDateTime = AlarmClockSetter.main(this, true)
                 if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                     currentAlarmClockDateTime!!
@@ -463,7 +462,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     private fun sendToWelcomeActivity() {
-        CoroutineScope(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER).launch {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             if (!hasLoggedIn()) return@launch
             intent = Intent(this@MainActivity, WelcomeActivity::class.java)
             startActivity(intent)

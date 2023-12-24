@@ -24,7 +24,6 @@ import eu.karenfort.main.helper.getOpenAlarmTabIntent
 import eu.karenfort.main.helper.isOreoPlus
 
 class EarlyAlarmDismissalReceiver : BroadcastReceiver() {
-    private val TAG = "EarlyAlarmDismissalReceiver"
     override fun onReceive(context: Context, intent: Intent) {
         triggerEarlyDismissalNotification(context)
     }

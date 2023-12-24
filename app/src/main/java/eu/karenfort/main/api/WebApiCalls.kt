@@ -7,7 +7,7 @@
  */
 package eu.karenfort.main.api
 
-import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
+import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -19,11 +19,9 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 
 class WebApiCalls {
-    private val TAG = "WebApiCalls"
-
     suspend fun getSchools(searchSchoolString: String): Array<Array<String>>? {
         val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
-        val connection = withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER + COROUTINE_EXEPTION_HANDLER) {
+        val connection = withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER + COROUTINE_EXCEPTION_HANDLER) {
             url.openConnection()
         } as HttpURLConnection
 
@@ -50,10 +48,10 @@ class WebApiCalls {
         connection.doOutput = true
         val os: OutputStream = connection.outputStream
 
-        withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
+        withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER) {
             os.write(data.toByteArray(StandardCharsets.UTF_8))
         }
-        withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
+        withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER) {
             os.close()
         }
 
@@ -62,12 +60,12 @@ class WebApiCalls {
             val reader = BufferedReader(InputStreamReader(connection.inputStream))
             val response = StringBuilder()
             var line: String?
-            while (withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
+            while (withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER) {
                     reader.readLine()
                 }.also { line = it } != null) {
                 response.append(line)
             }
-            withContext(Dispatchers.IO + COROUTINE_EXEPTION_HANDLER) {
+            withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER) {
                 reader.close()
             }
 

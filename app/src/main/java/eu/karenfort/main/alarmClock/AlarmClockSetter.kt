@@ -20,6 +20,7 @@ import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import eu.karenfort.main.helper.TAG
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.helper.sendLoggedOutNotif
 import eu.karenfort.main.notifications.WarningNotifications
@@ -29,8 +30,6 @@ import java.time.LocalDateTime
 class AlarmClockSetter {
 
     companion object {
-        private val TAG = "AlarmClockSetter"
-
         /* isActive and isEdited is used to override stored data, necessary because storing is
             done on a different thread and thus takes time. Used when a new state is set and the
             AlarmClock needs to be adjusted right after that for example to update UI
@@ -123,7 +122,6 @@ class AlarmClockSetter {
 
             if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
                 context.sendLoggedOutNotif()
-                Log.i(TAG, "not logged in")
                 setNew("error", null, context)
                 return null
             }
@@ -231,7 +229,7 @@ class AlarmClockSetter {
                 }
 
                 "error" -> {
-                    Log.i(TAG, "error") //todo add exeptions
+                    Log.i(TAG, "error") //todo add exceptions
                     setNew("normal", null, context)
                 }
 

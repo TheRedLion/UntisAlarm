@@ -1,7 +1,7 @@
 /**
  * Project: https://github.com/TheRedLion/UntisAlarm
  *
- * Most functions from https://github.com/SimpleMobileTools/Simple-Clock
+ * Some functions from https://github.com/SimpleMobileTools/Simple-Clock
  * but modified.
  *
  * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
@@ -15,6 +15,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.UiModeManager
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -22,6 +23,7 @@ import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
@@ -30,6 +32,8 @@ import android.text.format.DateFormat
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.carlkarenfort.test.R
@@ -45,12 +49,25 @@ import eu.karenfort.main.alarmClock.EarlyAlarmDismissalReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
 import eu.karenfort.main.alarmClock.SnoozeAlarmReceiver
 import kotlinx.coroutines.runBlocking
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Locale
 
+fun Context.changeDarkMode(checkedItem: Int) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val uiManager = getSystemService(AppCompatActivity.UI_MODE_SERVICE) as UiModeManager
+        when (checkedItem) {
+            1 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_NO)
+            2 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_YES)
+        }
+    } else {
+        when (checkedItem) {
+            0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
+    }
+}
 
 fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
     if (DateFormat.is24HourFormat(this)) {
@@ -72,7 +89,6 @@ fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
             )
         } ${alarmClockStrHour}:${alarmClockStrMinute} $ampm"
     }
-
 }
 
 private fun reformatAlarmClockPreview(hour: Int, minute: Int): Pair<String, String> {
@@ -121,7 +137,6 @@ fun Context.isOnline(): Boolean {
 }
 fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
 
-fun Context.getDefaultAlarmTitle() = this.getString(R.string.default_alarm)
 fun Context.areNotificationsEnabled(): Boolean {
     return NotificationManagerCompat.from(this).areNotificationsEnabled()
 }
@@ -153,8 +168,7 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
                 doToast(this, msg, length)
             }
         }
-    } catch (e: Exception) {
-    }
+    } catch (_: Exception) {}
 }
 fun Context.showErrorToast(msg: String, length: Int = Toast.LENGTH_LONG) {
     toast(String.format("error", msg), length)
@@ -177,36 +191,26 @@ fun Context.getLaunchIntent() = packageManager.getLaunchIntentForPackage("eu.kar
 fun Context.grantReadUriPermission(uri: Uri) {
     try {
         // ensure custom reminder sounds play well
-        grantUriPermission("com.android.systemui", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        grantUriPermission("com.android.systemUI", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
     } catch (ignored: Exception) {
-        Log.i("Context", "ERRRRRROR")
+        Log.i("Context", "Error")
     }
 }
 
 fun Context.sendLoggedOutNotif() {
-    // create Intent that sends user to login screen
-    val pendingIntent = PendingIntent.getActivity(
-        this,
-        0,
-        Intent(this, MainActivity::class.java),
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
 
-    val label = getString(not_logged_in)
-
-    val audioAttributes = AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_ALARM)
-        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-        .setLegacyStreamType(AudioManager.STREAM_ALARM)
-        .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-        .build()
-
-    val importance = NotificationManager.IMPORTANCE_HIGH
-    NotificationChannel(NOT_LOGGED_IN_CHANNEL_ID, label, importance).apply {
+    NotificationChannel(
+        INFO_NOTIFICATION_CHANNEL_ID,
+        getString(R.string.info_notifications_channel_name),
+        NotificationManager.IMPORTANCE_HIGH).apply {
         notificationManager.createNotificationChannel(this)
     }
 
-
+    /* send user to MainActivity instead of WelcomeActivity in case the
+        user logged in in between the notification was sent and the user
+        clicking, the user will then be redirected to WelcomeActivity if
+        he is not logged in
+     */
     val loginIntent = Intent(this, MainActivity::class.java)
     val loginPendingIntent = PendingIntent.getActivity(
         this,
@@ -214,17 +218,16 @@ fun Context.sendLoggedOutNotif() {
         loginIntent,
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
-    val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
+
+    val builder = NotificationCompat.Builder(this, INFO_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(ic_login_vector)
-        .setContentTitle(label)
+        .setContentTitle(getString(not_logged_in))
         .setContentText(getString(you_are_currently_not_logged_in_please_login_again))
         .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
         .setDefaults(Notification.DEFAULT_LIGHTS)
         .setAutoCancel(true)
-        .setChannelId(NOT_LOGGED_IN_CHANNEL_ID)
         .setContentIntent(loginPendingIntent)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
     val notification = builder.build()
     notification.flags = notification.flags or Notification.FLAG_INSISTENT
 
@@ -233,7 +236,7 @@ fun Context.sendLoggedOutNotif() {
     try {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
     } catch (_: Exception) {}
-} //todo add implementation
+}
 
 fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     var soundUri: Uri?
@@ -265,21 +268,21 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
         .build()
 
-    var darkmode: Int
+    var darkMode: Int
     var isDark = false
     runBlocking {
         val storeData = StoreData(applicationContext)    // 0: System Default, 1: Off: 2: On
         if (storeData.loadDarkMode() == null) {
             storeData.storeDarkMode(0)
         }
-        darkmode = storeData.loadDarkMode()?: 0
-        if (darkmode == 1) {
+        darkMode = storeData.loadDarkMode()?: 0
+        if (darkMode == 1) {
             isDark = false
         }
-        if (darkmode == 2) {
+        if (darkMode == 2) {
             isDark = true
         }
-        if (darkmode == 0) {
+        if (darkMode == 0) {
            // check if system default is dark mode
             val currentNightMode = applicationContext.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
             isDark = currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -289,7 +292,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     val importance = NotificationManager.IMPORTANCE_HIGH
     NotificationChannel(channelId, label, importance).apply {
         setBypassDnd(true)
-        if (isDark or (darkmode == 2)) {
+        if (isDark or (darkMode == 2)) {
             enableLights(true)
             lightColor = 0
         } else {
