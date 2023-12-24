@@ -30,20 +30,24 @@ import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXEPTION_HANDLER
 import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
-import eu.karenfort.main.helper.LANGUAGE_DEFAULT
 import eu.karenfort.main.helper.SILENT_TITLE
 import eu.karenfort.main.helper.SILENT_URI
 import eu.karenfort.main.helper.SNOOZE_DEFAULT
+import eu.karenfort.main.helper.SUPPORTED_LANGUAGES
+import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.lang.Error
 
 
 class SettingsActivity : AppCompatActivity() {
     private val TAG = "SettingsActivity"
+
+    //layout objects
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
     private lateinit var darkModeSettings: ConstraintLayout
@@ -57,6 +61,10 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var cancellationMessageLayout: TextInputLayout
     private lateinit var alarmName: TextView
     private lateinit var makeSilent: Button
+
+    //used to preload settings
+    private var storedLanguage: String? = null
+    private var storedDarkMode: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,9 +150,8 @@ class SettingsActivity : AppCompatActivity() {
             val ivg: Boolean = storeData.loadIncreaseVolumeGradually() ?: initIVG()
             val (alarmSoundTitle, _) = storeData.loadSound()
             if (alarmSoundTitle == null) initSound()
-            if (storeData.loadLanguage() == null) initLanguage()
-            if (storeData.loadDarkMode() == null) initDarkMode()
-
+            storedLanguage = storeData.loadLanguage()?: initLanguage()
+            storedDarkMode = storeData.loadDarkMode()?: initDarkMode()
 
             runOnUiThread {
                 tbsInputLayout.hint =
@@ -164,50 +171,40 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun languageDialog() {
-        val listItems = arrayOf("System Default", "English", "German")
-
         var checkedItem = 0
-        runBlocking {//todo take language loaded when states were set
-            val storeData = StoreData(this@SettingsActivity)
-            val language = storeData.loadLanguage()
-            if (language != null) {
-                checkedItem = when (language) {
-                    "System Default" -> 0
-                    "English" -> 1
-                    "German" -> 2
-                    else -> 0
+
+        if (storedLanguage != null) {
+            try {
+                checkedItem = SUPPORTED_LANGUAGES.indexOf(storedLanguage)
+            } catch (_: Error) {}
+        } else {
+            runBlocking {
+                val storeData = StoreData(this@SettingsActivity)
+                val language = storeData.loadLanguage()
+                if (language != null) {
+                    checkedItem = SUPPORTED_LANGUAGES.indexOf(language)
                 }
             }
         }
 
-
-
         MaterialAlertDialogBuilder(this)
-            .setTitle("Choose Alarm Sound")
+            .setTitle(getString(R.string.select_language))
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
 
-                // Change app language to the selected language
-                val language = when (checkedItem) {
-                    0 -> "system"
-                    1 -> "en"
-                    2 -> "de"
-                    else -> "system"
-                }
-
-                val appLocale = LocaleListCompat.forLanguageTags(language) // or use "xx-YY"
-
+                // Change app language
+                val languageTag = SUPPORTED_LANGUAGES_TAG[checkedItem]
+                val appLocale = LocaleListCompat.forLanguageTags(languageTag)
                 AppCompatDelegate.setApplicationLocales(appLocale)
+
+                StoreData(this).storeLanguage(SUPPORTED_LANGUAGES[checkedItem])
             }
-            .setSingleChoiceItems(listItems, checkedItem) { _, which ->
-                // check if the user selected a different language
+            .setSingleChoiceItems(SUPPORTED_LANGUAGES, checkedItem) { _, which ->
                 if (checkedItem != which) {
-                    // restart the activity
                     checkedItem = which
-                    StoreData(this).storeLanguage(listItems[which])
                 }
             }.show()
     }
@@ -216,21 +213,24 @@ class SettingsActivity : AppCompatActivity() {
         val listItems = arrayOf("System Default", "Lite", "Dark")
         // load checkedItem from StoreData
         var checkedItem = 0
-        runBlocking {
-            val storeData = StoreData(this@SettingsActivity)
-            if (storeData.loadDarkMode() != null) {
-                checkedItem = storeData.loadDarkMode()!!
+        if (storedDarkMode != null) {
+            checkedItem = storedDarkMode!! //is never set to null
+        } else {
+            runBlocking {
+                val storeData = StoreData(this@SettingsActivity)
+                if (storeData.loadDarkMode() != null) {
+                    checkedItem = storeData.loadDarkMode()!!
+                }
             }
         }
         MaterialAlertDialogBuilder(this)
-            .setTitle("Choose Alarm Sound")
+            .setTitle(getString(R.string.change_app_theme))
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
                 // Change app theme to the selected theme
-                // check if api version is above 31
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                     val uiManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
                     when (checkedItem) {
@@ -256,13 +256,14 @@ class SettingsActivity : AppCompatActivity() {
         startActivity(intent2)
     }
 
-    private fun initDarkMode() {
+    private fun initDarkMode(): Int {
         StoreData(this).storeDarkMode(DARK_MODE_DEFAULT)
+        return DARK_MODE_DEFAULT
     }
 
     private fun initLanguage(): String {
-        StoreData(this).storeLanguage(LANGUAGE_DEFAULT)
-        return LANGUAGE_DEFAULT
+        StoreData(this).storeLanguage(SUPPORTED_LANGUAGES[0])
+        return SUPPORTED_LANGUAGES[0]
     }
 
     private fun initSound(): String {

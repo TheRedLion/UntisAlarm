@@ -232,10 +232,9 @@ fun Context.sendLoggedOutNotif() {
 
     try {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
-    } catch (e: Exception) {
-        Log.i("Context", e.toString())
-    }
+    } catch (_: Exception) {}
 } //todo add implementation
+
 fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     var soundUri: Uri?
     var vibrate: Boolean

@@ -21,35 +21,37 @@ import java.util.TimeZone
 //intent extra keys
 const val NOTIFS_ALLOWED = "notifsAllowed"
 
-//reminder Activity notifs / alarm notifs
+
+//notification channels
+const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
+const val NOT_LOGGED_IN_CHANNEL_ID = "Not_logged_in_id"
+const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
+const val INFO_NOTIFICARION_CHANNEL_ID = "Info_Notifs_Channel"
 const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
 const val INFO_NOTIFICATION_CHANNEL_ID = "info_channel"
 
+//codes
 const val ALARM_REQUEST_CODE = 73295871
+const val PICKFILE_RESULT_CODE = 7890
+
+//ids
 const val ALARM_ID = "alarm_id"
-const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
-const val NOT_LOGGED_IN_CHANNEL_ID = "Not_logged_in_id"
 const val ALARM_NOTIF_ID = 9998
 const val EARLY_ALARM_NOTIF_ID = 10003
 const val ALARM_CLOCK_ID = 543
 const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
-const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
 const val NOTIFICATION_ID = "notification_id"
-const val PICKFILE_RESULT_CODE = 7890
-const val INFO_NOTIFICARION_CHANNEL_ID = "Info_Notifs_Channel"
 
-const val SILENT_TITLE = "Silent"
-const val SILENT = "content://silent"
-
-const val LANGUAGE_SYSTEM_DEFAULT = "default"
-const val LANGUAGE_DEFAULT = LANGUAGE_SYSTEM_DEFAULT
+//settings default
 const val TBS_DEFAULT = 60
 const val VIBRATE_DEFAULT = true
 const val SNOOZE_DEFAULT = 5
-const val DARK_MODE_DEFAULT = -1
+const val DARK_MODE_DEFAULT = 0
 const val INCREASE_VOLUME_DELAY = 300L
 const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
 const val MAX_ALARM_DURATION = 60
+val SUPPORTED_LANGUAGES = arrayOf("System Default", "English", "German")
+val SUPPORTED_LANGUAGES_TAG = arrayOf("system", "en", "de")
 
 const val ALARM_SOUND_DEFAULT_TITLE = "Default Alarm"
 val ALARM_SOUND_DEFAULT: String = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
@@ -57,6 +59,9 @@ val ALARM_SOUND_DEFAULT: String = RingtoneManager.getDefaultUri(RingtoneManager.
 val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 
 const val IVG_DEFAULT = false
+
+const val SILENT_TITLE = "Silent"
+const val SILENT = "content://silent"
 val SILENT_URI: Uri = Uri.parse(SILENT)
 val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 

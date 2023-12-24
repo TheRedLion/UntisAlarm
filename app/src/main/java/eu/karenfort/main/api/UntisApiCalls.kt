@@ -96,6 +96,7 @@ class UntisApiCalls(
         if (lesson.code == UntisUtils.LessonCode.CANCELLED) {
             return true
         }
+
         //todo implement that CancelledMessage is checked
         return false
     }

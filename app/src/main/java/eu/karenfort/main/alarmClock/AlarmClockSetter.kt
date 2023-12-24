@@ -231,7 +231,7 @@ class AlarmClockSetter {
                 }
 
                 "error" -> {
-                    Log.i(TAG, "error") //todo add implementation
+                    Log.i(TAG, "error") //todo add exeptions
                     setNew("normal", null, context)
                 }
 
