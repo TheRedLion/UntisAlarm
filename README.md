@@ -9,8 +9,7 @@ UntisAlarm is an Android application developed in Kotlin that helps you manage y
 ## Features
 
 - Timetable integration: Automatically fetches your daily timetable from WebUntis.
-- Smart alarm clock: Adjusts your wake-up time based on your schedule.
-- Supports Android API version 8.0 (Android 8.0 Oreo) and higher.
+- Supports Android 8.0 (Oreo) and API version 26 and higher.
 
 ## Installation (Release Version)
 
