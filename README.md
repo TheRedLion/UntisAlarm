@@ -4,35 +4,22 @@
 
 ## Introduction
 
-UntisAlarm is an Android application developed in Kotlin that helps you manage your timetable and ensures you wake up at the right time based on your daily schedule. It is currently in the alpha state and supports Web Untis for fetching timetable data. In the future, we aim to expand our support for other timetable programs and for IOS.
+UntisAlarm is an Android application developed in Kotlin that ensures you wake up at the right time based on your timetable. It currently supports Web Untis for fetching timetable data.
 
-## Features
+## Requirementa
 
-- Timetable integration: Automatically fetches your daily timetable from WebUntis.
-- Supports Android 8.0 (Oreo) and API version 26 and higher.
+Supports Android Oreo, 8.0 (API version 26) and higher.
 
 ## Installation (Release Version)
 
-To install the release version of UntisAlarm, follow these steps:
-
-1. Visit the [Releases](https://github.com/TheRedLion/UntisAlarm/releases) section of our GitHub repository.
-
-2. Download the latest release APK file from the available assets.
-
-3. Transfer the APK file to your Android device, if it's not already there.
-
-4. Locate and tap on the downloaded APK file to begin the installation process.
-
-5. Follow the on-screen prompts to complete the installation.
-
-6. Once the installation is complete, you can open UntisAlarm from your app drawer.
-
-7. Set up your Web Untis credentials in the app to fetch your timetable data and start waking up!
+Download from the [Releases](https://github.com/TheRedLion/UntisAlarm/releases) section of our GitHub repository.
 
 ## Future Enhancements
 In future versions, we plan to:
 
 - Add support for additional timetable programs.
+
+- Possibly build an IOS App
 
 ## How to Contribute
 
