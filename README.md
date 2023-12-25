@@ -34,8 +34,6 @@ To install the release version of UntisAlarm, follow these steps:
 In future versions, we plan to:
 
 - Add support for additional timetable programs.
-- Enhance the user interface and user experience.
-- Implement new features based on user feedback.
 
 ## How to Contribute
 
@@ -58,4 +56,6 @@ UntisAlarm is licensed under the GNU General Public License, version 3.0 (GPL-3.
 If you encounter any issues or have questions, please feel free to open an issue on our GitHub repository.
 
 ## Acknowledgments
-We would like to express our gratitude to the open-source community, especially to the [Simple-Clock](https://github.com/SimpleMobileTools/Simple-Clock) project since some of our code is inspired by them, and all the contributors who have helped make this project possible.
+We would like to thank the [Simple-Clock](https://github.com/SimpleMobileTools/Simple-Clock) project since some of our code related to the Alarm Clock is taken from them.
+
+This project is not related to the [UntisAlarm](https://www.rala.io/app/untisAlarm), the app has also not been updated in the last four years. It also only works for selected schools.
