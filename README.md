@@ -23,17 +23,9 @@ In future versions, we plan to:
 
 ## How to Contribute
 
-To get up and running, follow these steps:
+To contribute, frork from this repisitory and submit a pull request.
 
-1. Clone this repository to your local machine.
-
-```shell
-git clone https://github.com/TheRedLion/UntisAlarm.git
-```
-Open the project in Android Studio.
-
-Build and run the app on the Android device or emulator to ensure that the environment is working and start coding!
-If you have any issues, feel free to open an issue!
+If you want to work with Android Studio, you can follow [this](https://getstream.io/blog/use-github-android-studio/) tutorial.
 
 ## License
 UntisAlarm is licensed under the GNU General Public License, version 3.0 (GPL-3.0).
@@ -44,4 +36,4 @@ If you encounter any issues or have questions, please feel free to open an issue
 ## Acknowledgments
 We would like to thank the [Simple-Clock](https://github.com/SimpleMobileTools/Simple-Clock) project since some of our code related to the Alarm Clock is taken from them.
 
-This project is not related to the [UntisAlarm](https://www.rala.io/app/untisAlarm), the app has also not been updated in the last four years. It also only works for selected schools.
+This project is not related to the [UntisAlarm](https://www.rala.io/app/untisAlarm) from rala.
