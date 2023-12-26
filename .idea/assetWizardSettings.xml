@@ -104,7 +104,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Karen\Downloads" />
+                                                <entry key="imagePath" value="C:\Users\Karen\Desktop\UntisAlarm Icons\UntisAlarm Icon transparent.png" />
+                                                <entry key="scalingPercent" value="75" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -139,8 +140,8 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="000000" />
-                                      <entry key="foregroundAssetType" value="CLIP_ART" />
                                       <entry key="legacyIconShape" value="NONE" />
+                                      <entry key="previewDensity" value="HIGH" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -306,6 +307,11 @@
                                       </entry>
                                     </map>
                                   </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="previewDensity" value="HIGH" />
+                                    </map>
+                                  </option>
                                 </PersistentState>
                               </value>
                             </entry>
@@ -334,7 +340,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/edit/baseline_edit_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/stop_circle/baseline_stop_circle_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -345,7 +351,7 @@
                         <option name="values">
                           <map>
                             <entry key="opacityPercent" value="0" />
-                            <entry key="outputName" value="ic_reset" />
+                            <entry key="outputName" value="ic_stop_vector" />
                             <entry key="sourceFile" value="C:\Users\Karen\AndroidStudioProjects\UntisAlarm" />
                           </map>
                         </option>

@@ -16,11 +16,12 @@
         android:layout_marginTop="100dp"
         android:textColor="@color/white"
         android:textSize="32sp"
+        android:text="@string/good_morning"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Time expired" />
+         />
 
     <TextView
         android:id="@+id/reminder_text"
@@ -29,7 +30,6 @@
         android:paddingTop="16dp"
         android:textColor="@color/white"
         android:textSize="26sp"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reminder_title"
@@ -61,7 +61,8 @@
         app:layout_constraintEnd_toStartOf="@+id/reminder_dismiss"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/reminder_snooze"
-        app:layout_constraintTop_toBottomOf="@+id/reminder_text" />
+        app:layout_constraintTop_toBottomOf="@+id/reminder_text"
+        android:contentDescription="@string/draggable_selector" />
 
     <ImageView
         android:id="@+id/reminder_draggable"
@@ -107,7 +108,7 @@
         android:id="@+id/dismiss_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dismiss"
+        android:text="@string/dismiss"
         android:textColor="@color/white"
 
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,7 +120,7 @@
         android:id="@+id/reminder_guide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Swipe right to dismiss"
+        android:text="@string/swipe_right_to_dismiss"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -137,6 +138,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/close_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

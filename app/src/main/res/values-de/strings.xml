@@ -87,4 +87,9 @@
     <string name="change_app_theme">Ändere den dunklen Modus</string>
     <string name="you_have_no_internet_connection">Kein Internet Empfang!</string>
     <string name="selector">Auswahl</string>
+    <string name="dismiss">Verwerfen</string>
+    <string name="swipe_right_to_dismiss">Nach rechts wischen zum verwerfen</string>
+    <string name="close_view">Fenster Schließen</string>
+    <string name="draggable_selector">Ziehbare Auswahl</string>
+    <string name="good_morning">Guten Morgen!</string>
 </resources>

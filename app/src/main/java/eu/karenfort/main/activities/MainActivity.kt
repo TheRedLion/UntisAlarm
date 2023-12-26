@@ -469,5 +469,4 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             finish()
         }
     }
-
 }

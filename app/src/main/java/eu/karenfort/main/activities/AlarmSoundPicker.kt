@@ -22,14 +22,13 @@ import eu.karenfort.main.helper.parcelable
 class AlarmSoundPicker : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_alarm_sound_picker)
 
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone")
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ALARM_SOUND_DEFAULT_URI)
-        // this is the intent that will be called when the user selects the alarm sound
+
         val ringtonePickerLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -42,11 +41,7 @@ class AlarmSoundPicker : AppCompatActivity() {
                         if (title != null) {
                             StoreData(this).storeSound(title, uri)
                         } else {
-                            //storing default alarm
-                            StoreData(this).storeSound(
-                                getString(R.string.alarm_sound),
-                                uri
-                            )
+                            StoreData(this).storeSound(getString(R.string.alarm_sound), uri)
                         }
                         finish()
                     } else {

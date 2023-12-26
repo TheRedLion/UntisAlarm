@@ -17,11 +17,13 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibratorManager
 import android.provider.AlarmClock
 import android.util.Log
 import android.view.HapticFeedbackConstants
@@ -40,6 +42,7 @@ import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
 import eu.karenfort.main.helper.MAX_ALARM_DURATION
 import eu.karenfort.main.helper.MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS
+import eu.karenfort.main.helper.TAG
 import eu.karenfort.main.helper.getFormattedTime
 import eu.karenfort.main.helper.getPassedSeconds
 import eu.karenfort.main.helper.isOreoMr1Plus
@@ -49,7 +52,6 @@ import eu.karenfort.main.helper.viewBinding
 import kotlinx.coroutines.runBlocking
 
 class ReminderActivity : AppCompatActivity() {
-    private val TAG = "ReminderActivity"
     private val increaseVolumeHandler = Handler(Looper.getMainLooper())
     private val maxReminderDurationHandler = Handler(Looper.getMainLooper())
     private val swipeGuideFadeHandler = Handler(Looper.getMainLooper())
@@ -188,7 +190,13 @@ class ReminderActivity : AppCompatActivity() {
         if (doVibrate && isOreoPlus()) {
             val pattern = LongArray(2) { 500 }
             vibrationHandler.postDelayed({
-                vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val vibratorManager =
+                        getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                    vibratorManager.defaultVibrator
+                } else {
+                    vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                }
                 vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
             }, 500)
         }
@@ -256,7 +264,6 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun destroyEffects() {
-
         var increaseVolumeGradually = false
         runBlocking {
             increaseVolumeGradually = StoreData(applicationContext).loadIncreaseVolumeGradually() ?: return@runBlocking
@@ -281,20 +288,27 @@ class ReminderActivity : AppCompatActivity() {
         }
         eu.karenfort.main.alarmClock.AlarmClock.snoozeAlarm(snoozeTime*60, this)
         wasAlarmSnoozed = true
-        finishActivity()
+        finishActivity(true)
     }
 
     private fun finishActivity() {
+        finishActivity(false)
+    }
+    private fun finishActivity(snoozed: Boolean) {
         finished = true
         destroyEffects()
         finish()
-        AlarmClockSetter.main(this)
+        if (snoozed) {
+            AlarmClockSetter.main(this, null, null) //get the next school start time
+        } else {
+            AlarmClockSetter.main(this, null, false) //get the next school start time
+        }
         overridePendingTransition(0, 0)
     }
 
     private fun showOverLockscreen() {
         window.addFlags(
-                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                     WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
         )
 

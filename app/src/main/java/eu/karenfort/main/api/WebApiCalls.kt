@@ -20,6 +20,10 @@ import java.nio.charset.StandardCharsets
 
 class WebApiCalls {
     suspend fun getSchools(searchSchoolString: String): Array<Array<String>>? {
+        if (searchSchoolString.length < 3) { //query wont ever succeed with 2 letters
+            return null
+        }
+
         val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
         val connection = withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER + COROUTINE_EXCEPTION_HANDLER) {
             url.openConnection()

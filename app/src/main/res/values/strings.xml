@@ -86,4 +86,9 @@
     <string name="you_have_no_internet_connection">You have no internet connection!</string>
     <string name="bell">Alarm Sound</string>
     <string name="moon">Dark Mode</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="swipe_right_to_dismiss">Swipe right to dismiss</string>
+    <string name="close_view">Close View</string>
+    <string name="draggable_selector">Draggable Selector</string>
+    <string name="good_morning">Good Morning!</string>
 </resources>
