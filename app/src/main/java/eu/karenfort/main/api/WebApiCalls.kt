@@ -3,7 +3,7 @@
  *
  * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
  *
- * Description: This Class is responsible for requesting school names from Websites.
+ * Description: This Class is responsible for requesting school names from Webuntis.
  */
 package eu.karenfort.main.api
 
@@ -19,23 +19,26 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 
 class WebApiCalls {
-    suspend fun getSchools(searchSchoolString: String): Array<Array<String>>? {
+    companion object {
+        const val TOO_MANY_RESULTS = "too many results"
+    }
+    suspend fun getUntisSchools(searchSchoolString: String): Array<Array<String>>? {
         if (searchSchoolString.length < 3) { //query wont ever succeed with 2 letters
             return null
         }
 
         val url = URL("https://mobile.webuntis.com/ms/schoolquery2")
-        val connection = withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER + COROUTINE_EXCEPTION_HANDLER) {
+        val connection = withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER) {
             url.openConnection()
         } as HttpURLConnection
 
+        //parameters found in html of webuntis.com
         val data = """{
         "id": "wu_schulsuche-1697008128606",
         "method": "searchSchool",
         "params": [{"search": "$searchSchoolString"}],
         "jsonrpc": "2.0"
         }"""
-
         connection.requestMethod = "POST"
         connection.setRequestProperty("Accept", "application/json, text/plain, */*")
         connection.setRequestProperty("Accept-Encoding", "gzip, deflate, br")
@@ -48,14 +51,11 @@ class WebApiCalls {
         connection.setRequestProperty("Sec-Fetch-Mode", "cors")
         connection.setRequestProperty("Sec-Fetch-Site", "same-site")
         connection.setRequestProperty("Content-Length", data.toByteArray(StandardCharsets.UTF_8).size.toString())
-
         connection.doOutput = true
-        val os: OutputStream = connection.outputStream
 
+        val os: OutputStream = connection.outputStream
         withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER) {
             os.write(data.toByteArray(StandardCharsets.UTF_8))
-        }
-        withContext(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER) {
             os.close()
         }
 
@@ -73,47 +73,41 @@ class WebApiCalls {
                 reader.close()
             }
 
-            val jsonResponse = response.toString()
-
-            if (jsonResponse == "{\"id\":\"wu_schulsuche-1697008128606\",\"error\":{\"code\":-6003,\"message\":\"too many results\"},\"jsonrpc\":\"2.0\"}") {
-                return arrayOf(arrayOf("too many results"))
+            val jsonResponseStr = response.toString()
+            if (jsonResponseStr == "{\"id\":\"wu_schulsuche-1697008128606\",\"error\":{\"code\":-6003,\"message\":\"too many results\"},\"jsonrpc\":\"2.0\"}") {
+                return arrayOf(arrayOf(TOO_MANY_RESULTS))
             }
-            val schoolData = parseSchoolData(jsonResponse)
 
             connection.disconnect()
 
-            return schoolData
+            return parseSchoolData(JSONObject(jsonResponseStr))
         } else {
             println("Request failed with response code: $responseCode")
             return null
         }
     }
 
-    private fun parseSchoolData(jsonResponse: String): Array<Array<String>> {
-        val json = JSONObject(jsonResponse)
-
-        if (json.has("result")) {
-            val result = json.getJSONObject("result")
-            if (result.length() > 0) {
-                val schools = result.getJSONArray("schools")
-                val schoolData = Array(schools.length()) { Array(4) { "" } }
-
-                for (i in 0 until schools.length()) {
-                    val school = schools.getJSONObject(i)
-                    schoolData[i][0] = school.optString("displayName")
-                    schoolData[i][1] = school.optString("address")
-                    schoolData[i][2] = school.optString("server")
-                    schoolData[i][3] = school.optString("loginName")
-                }
-
-                return schoolData
-            } else {
-                // Handle the case where "result" is an empty array
-                return emptyArray()
-            }
-        } else {
-            // Handle the case where "result" is missing in the JSON
-            return emptyArray()
+    private fun parseSchoolData(json: JSONObject): Array<Array<String>>? {
+        if (!json.has("result")) {
+            return null //null means there was some kind of error with the request
         }
+
+        val result = json.getJSONObject("result")
+        if (result.length() <= 0) {
+            return emptyArray() //empty array means there is no school
+        }
+
+        val schools = result.getJSONArray("schools")
+        val schoolData = Array(schools.length()) { Array(4) { "" } }
+
+        for (i in 0 until schools.length()) {
+            val school = schools.getJSONObject(i)
+            schoolData[i][0] = school.optString("displayName")
+            schoolData[i][1] = school.optString("address")
+            schoolData[i][2] = school.optString("server")
+            schoolData[i][3] = school.optString("loginName")
+        }
+
+        return schoolData
     }
 }

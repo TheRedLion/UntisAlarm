@@ -50,6 +50,27 @@ class StoreData (
     private val languageKey = stringPreferencesKey("language")
     private val cancelledMessageKey = stringPreferencesKey("cancelledMessage")
 
+    companion object {
+        const val DARK_MODE_DEFAULT = 0
+        const val DARK_MODE_DISABLED = 1
+        const val DARK_MODE_ENABLED = 2
+    }
+
+    fun storeDarkMode(isDarkModeEnabled: Int) {
+        if (isDarkModeEnabled != DARK_MODE_ENABLED && isDarkModeEnabled != DARK_MODE_DISABLED && isDarkModeEnabled != DARK_MODE_DEFAULT) {
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+            context.dataStore.edit { settings ->
+                settings[darkModeKey] = isDarkModeEnabled
+            }
+        }
+    }
+    suspend fun loadDarkMode(): Int? {
+        val preferences = context.dataStore.data.first()
+        return preferences[darkModeKey]
+    }
     fun storeCancelledMessage(cancellationMessage: String) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -76,23 +97,6 @@ class StoreData (
         return preferences[languageKey]
     }
 
-    // 0: System Default, 1: Off: 2: On
-    fun storeDarkMode(isDarkModeEnabled: Int) {
-        if (isDarkModeEnabled > 2 || isDarkModeEnabled <= -1) {
-            return
-        }
-        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
-            context.dataStore.edit { settings ->
-                settings[darkModeKey] = isDarkModeEnabled
-            }
-        }
-    }
-
-    // 0: System Default, 1: Off: 2: On
-    suspend fun loadDarkMode(): Int? {
-        val preferences = context.dataStore.data.first()
-        return preferences[darkModeKey]
-    }
     fun storeSnoozeTime(snoozeTime: Int) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->

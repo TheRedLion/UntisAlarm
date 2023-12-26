@@ -40,18 +40,21 @@ const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
 const val TBS_DEFAULT = 60
 const val VIBRATE_DEFAULT = true
 const val SNOOZE_DEFAULT = 5
-const val DARK_MODE_DEFAULT = 0
 const val INCREASE_VOLUME_DELAY = 300L
 const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
 const val MAX_ALARM_DURATION = 60
+const val IVG_DEFAULT = false
+
+//language
 val SUPPORTED_LANGUAGES = arrayOf("System Default", "English", "German")
 val SUPPORTED_LANGUAGES_TAG = arrayOf("system", "en", "de")
+/* tag as defined in RFC 4647, https://developer.android.com/reference/java/util/Locale
+    for more info's
+ */
 
 val ALARM_SOUND_DEFAULT: String = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
 
 val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-
-const val IVG_DEFAULT = false
 
 const val SILENT_TITLE = "Silent"
 const val SILENT = "content://silent"
@@ -61,8 +64,6 @@ val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager
 val COROUTINE_EXCEPTION_HANDLER = CoroutineExceptionHandler{ _, throwable ->
     throwable.printStackTrace()
 }
-
-const val TAG = "UntisAlarm"
 
 fun isOnMainThread() = Looper.myLooper() == Looper.getMainLooper()
 

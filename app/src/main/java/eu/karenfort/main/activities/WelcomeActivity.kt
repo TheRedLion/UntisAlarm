@@ -50,7 +50,6 @@ class WelcomeActivity : AppCompatActivity() {
     private var server: String? = null
     private var untisApiCalls: UntisApiCalls? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
@@ -59,14 +58,13 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun setListener() {
-        schoolFieldListener()
-        selectionListener()
-        runButtonListener()
+        setSchoolFieldListener()
+        setSelectionListener()
+        setRunButtonListener()
     }
 
-    private fun runButtonListener() {
+    private fun setRunButtonListener() {
         runButton.setOnClickListener { _: View? ->
-
             if (!isOnline()) {
                 Toast.makeText(this, getString(R.string.you_are_offline), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -139,8 +137,8 @@ class WelcomeActivity : AppCompatActivity() {
             untisApiCalls = UntisApiCalls(
                 untisUserName.text.toString(),
                 untisPassword.text.toString(),
-                server!!, //!! should be fine
-                schoolName!! //hopefully
+                server!!,
+                schoolName!!
             )
         } catch (_: IOException) {
         }
@@ -155,7 +153,7 @@ class WelcomeActivity : AppCompatActivity() {
         return true
     }
 
-    private fun selectionListener() {
+    private fun setSelectionListener() {
         autoCompleteTextView.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 untisSelectInputLayout.helperText = schools?.get(position)?.get(1)
@@ -168,10 +166,9 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun schoolFieldListener() {
+    private fun setSchoolFieldListener() {
         untisSchool.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(text: Editable?) {
@@ -179,40 +176,38 @@ class WelcomeActivity : AppCompatActivity() {
                     untisSchoolInputLayout.error = getString(R.string.may_not_be_empty)
                     return
                 }
-                untisSchoolInputLayout.error = null
 
                 if (!isOnline()) {
-                    Toast.makeText(
-                        applicationContext,
-                        getString(R.string.you_are_offline),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    untisSchoolInputLayout.error = getString(R.string.you_are_offline)
                     return
                 }
+                untisSchoolInputLayout.error = null
 
                 CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
                     val webApiCalls = WebApiCalls()
-                    schools = webApiCalls.getSchools("$text")
+                    schools = webApiCalls.getUntisSchools("$text")
 
                     if (schools == null) {
+                        untisSchoolInputLayout.error = getString(R.string.error_when_searching_for_schools)
                         return@launch
                     }
 
-                    //check if there are too many results
-                    if (schools!!.isNotEmpty()) {
-                        if (schools!![0].isNotEmpty()) {
-                            if (schools!![0][0] == "too many results") {
-                                runOnUiThread {
-                                    untisSelectInputLayout.hint = "Too many results"
-                                }
-                                return@launch
-                            }
-                        } else {
-                            return@launch
-                        }
-                    } else {
+                    if (schools!!.isEmpty()) {
+                        untisSchoolInputLayout.error = getString(R.string.no_school_found)
                         return@launch
                     }
+
+                    if (schools!![0].isEmpty()) {
+                        return@launch
+                    }
+
+                    if (schools!![0][0] == WebApiCalls.TOO_MANY_RESULTS) {
+                        runOnUiThread {
+                            untisSelectInputLayout.hint = getString(R.string.too_many_results)
+                        }
+                        return@launch
+                    }
+
                     untisSelectInputLayout.hint = getString(R.string.select_school)
                     //there are not
                     try{

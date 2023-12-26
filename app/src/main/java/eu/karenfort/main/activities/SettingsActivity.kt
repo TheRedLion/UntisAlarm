@@ -27,7 +27,6 @@ import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
-import eu.karenfort.main.helper.DARK_MODE_DEFAULT
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.SILENT_TITLE
 import eu.karenfort.main.helper.SILENT_URI
@@ -43,7 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
 
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
@@ -69,7 +68,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         getLayoutObjectsByID()
-        disableClicking() //disabling clicks until everything was properly loaded
+        disableClicking() //disabling clicks until everything was properly loaded to prevent errors
         loadAndDisplayStoredStates()
         setListener()
 
@@ -168,7 +167,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun languageDialog() {
+    private fun languageDialog() { //todo implement usage of Locale https://developer.android.com/reference/java/util/Locale#fields_1
         var checkedItem = 0
 
         if (storedLanguage != null) {
@@ -208,9 +207,14 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun darkModeDialog() {
-        val listItems = arrayOf("System Default", "Lite", "Dark")
+        val listItems = arrayOf(
+            getString(R.string.system_default),
+            getString(R.string.disabled),
+            getString(R.string.enabled)
+        ) //matches the states of StoreData.DARK_MODE_..., should not be changed
+
         // load checkedItem from StoreData
-        var checkedItem = 0
+        var checkedItem = StoreData.DARK_MODE_DEFAULT
         if (storedDarkMode != null) {
             checkedItem = storedDarkMode!! //is never set to null
         } else {
@@ -243,8 +247,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun initDarkMode(): Int {
-        StoreData(this).storeDarkMode(DARK_MODE_DEFAULT)
-        return DARK_MODE_DEFAULT
+        StoreData(this).storeDarkMode(StoreData.DARK_MODE_DEFAULT)
+        return StoreData.DARK_MODE_DEFAULT
     }
 
     private fun initLanguage(): String {

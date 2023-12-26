@@ -69,56 +69,6 @@ fun Context.changeDarkMode(checkedItem: Int) {
     }
 }
 
-fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
-    if (DateFormat.is24HourFormat(this)) {
-        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
-        return "${
-            alarmClockDateTime.dayOfWeek.getDisplayName(
-                TextStyle.SHORT,
-                Locale.getDefault()
-            )
-        } ${alarmClockStrHour}:${alarmClockStrMinute}"
-    } else {
-        val alarmClockHour = alarmClockDateTime.hour%12
-        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockHour, alarmClockDateTime.minute)
-        val ampm = if (alarmClockDateTime.hour >= 12) getString(R.string.pm) else getString(R.string.am)
-        return "${
-            alarmClockDateTime.dayOfWeek.getDisplayName(
-                TextStyle.SHORT,
-                Locale.getDefault()
-            )
-        } ${alarmClockStrHour}:${alarmClockStrMinute} $ampm"
-    }
-}
-
-private fun reformatAlarmClockPreview(hour: Int, minute: Int): Pair<String, String> {
-    val alarmClockStrHour = if (hour < 10) {
-        "0$hour"
-    } else {
-        "$hour"
-    }
-    val alarmClockStrMinute = if (minute < 10) {
-        "0$minute"
-    } else {
-        "$minute"
-    }
-    return Pair(alarmClockStrHour, alarmClockStrMinute)
-}
-
-private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
-    val alarmClockStrHour = if (alarmClock.hour < 10) {
-        "0${alarmClock.hour}"
-    } else {
-        "${alarmClock.hour}"
-    }
-    val alarmClockStrMinute = if (alarmClock.minute < 10) {
-        "0${alarmClock.minute}"
-    } else {
-        "${alarmClock.minute}"
-    }
-    return Pair(alarmClockStrHour, alarmClockStrMinute)
-}
-
 fun Context.isOnline(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -140,7 +90,7 @@ fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerMana
 fun Context.areNotificationsEnabled(): Boolean {
     return NotificationManagerCompat.from(this).areNotificationsEnabled()
 }
-fun Context.deleteNotificationChannel(channelId: String) {
+fun Context.deleteNotificationChannel(channelId: String) { //todo delete this and related fuctions
     if (isOreoPlus()) {
         try {
             val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -273,7 +223,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     runBlocking {
         val storeData = StoreData(applicationContext)    // 0: System Default, 1: Off: 2: On
         if (storeData.loadDarkMode() == null) {
-            storeData.storeDarkMode(0)
+            storeData.storeDarkMode(StoreData.DARK_MODE_DEFAULT)
         }
         darkMode = storeData.loadDarkMode()?: 0
         if (darkMode == 1) {
@@ -306,10 +256,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     val dismissIntent = getHideAlarmPendingIntent()
     val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
         .setContentTitle(label)
-        .setContentText(getFormattedTime(getPassedSeconds(),
-            showSeconds = false,
-            makeAmPmSmaller = false
-        ))
+        .setContentText(getAlarmPreviewString(LocalDateTime.now()))
         .setSmallIcon(R.drawable.ic_alarm_vector)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationManager.IMPORTANCE_HIGH)
@@ -354,33 +301,54 @@ fun Context.showAlarmNotification() {
     }
 }
 
-fun Context.getFormattedTime(passedSeconds: Int, showSeconds: Boolean, makeAmPmSmaller: Boolean): SpannableString {
-    val use24HourFormat = DateFormat.is24HourFormat(this)
-    val hours = (passedSeconds / 3600) % 24
-    val minutes = (passedSeconds / 60) % 60
-    val seconds = passedSeconds % 60
-
-    return if (use24HourFormat) {
-        val formattedTime = formatTime(showSeconds, true, hours, minutes, seconds)
-        SpannableString(formattedTime)
+fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
+    if (DateFormat.is24HourFormat(this)) {
+        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
+        return "${
+            alarmClockDateTime.dayOfWeek.getDisplayName(
+                TextStyle.SHORT,
+                Locale.getDefault()
+            )
+        } ${alarmClockStrHour}:${alarmClockStrMinute}"
     } else {
-        val formattedTime = formatTo12HourFormat(showSeconds, hours, minutes, seconds)
-        val spannableTime = SpannableString(formattedTime)
-        val amPmMultiplier = if (makeAmPmSmaller) 0.4f else 1f
-        spannableTime.setSpan(RelativeSizeSpan(amPmMultiplier), spannableTime.length - 3, spannableTime.length, 0)
-        spannableTime
+        val alarmClockHour = alarmClockDateTime.hour%12
+        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockHour, alarmClockDateTime.minute)
+        val ampm = if (alarmClockDateTime.hour >= 12) getString(R.string.pm) else getString(R.string.am)
+        return "${
+            alarmClockDateTime.dayOfWeek.getDisplayName(
+                TextStyle.SHORT,
+                Locale.getDefault()
+            )
+        } ${alarmClockStrHour}:${alarmClockStrMinute} $ampm"
     }
 }
 
-fun formatTo12HourFormat(showSeconds: Boolean, hours: Int, minutes: Int, seconds: Int): String {
-    val appendable = if (hours >= 12) "pm" else "am"
-    val newHours = if (hours == 0 || hours == 12) 12 else hours % 12
-    return "${formatTime(showSeconds, false, newHours, minutes, seconds)} $appendable"
+private fun reformatAlarmClockPreview(hour: Int, minute: Int): Pair<String, String> {
+    val alarmClockStrHour = if (hour < 10) {
+        "0$hour"
+    } else {
+        "$hour"
+    }
+    val alarmClockStrMinute = if (minute < 10) {
+        "0$minute"
+    } else {
+        "$minute"
+    }
+    return Pair(alarmClockStrHour, alarmClockStrMinute)
 }
 
-fun Context.getAlarmIntent(): PendingIntent {
-    val intent = Intent(this, AlarmClockReceiver::class.java)
-    return PendingIntent.getBroadcast(this, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
+    val alarmClockStrHour = if (alarmClock.hour < 10) {
+        "0${alarmClock.hour}"
+    } else {
+        "${alarmClock.hour}"
+    }
+    val alarmClockStrMinute = if (alarmClock.minute < 10) {
+        "0${alarmClock.minute}"
+    } else {
+        "${alarmClock.minute}"
+    }
+    return Pair(alarmClockStrHour, alarmClockStrMinute)
 }
 
 fun Context.getEarlyAlarmDismissalIntent(): PendingIntent {

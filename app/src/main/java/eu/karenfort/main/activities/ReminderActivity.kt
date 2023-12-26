@@ -42,14 +42,13 @@ import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
 import eu.karenfort.main.helper.MAX_ALARM_DURATION
 import eu.karenfort.main.helper.MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS
-import eu.karenfort.main.helper.TAG
-import eu.karenfort.main.helper.getFormattedTime
-import eu.karenfort.main.helper.getPassedSeconds
+import eu.karenfort.main.helper.getAlarmPreviewString
 import eu.karenfort.main.helper.isOreoMr1Plus
 import eu.karenfort.main.helper.isOreoPlus
 import eu.karenfort.main.helper.notificationManager
 import eu.karenfort.main.helper.viewBinding
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 
 class ReminderActivity : AppCompatActivity() {
     private val increaseVolumeHandler = Handler(Looper.getMainLooper())
@@ -67,18 +66,16 @@ class ReminderActivity : AppCompatActivity() {
     private val binding: ActivityReminderBinding by viewBinding(ActivityReminderBinding::inflate)
     private var finished = false
 
+    companion object {
+        const val TAG = "ReminderActivity"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         showOverLockscreen()
 
         binding.reminderTitle.text = getString(R.string.app_name)
-        binding.reminderText.text = if (isAlarmReminder) getFormattedTime(getPassedSeconds(),
-            showSeconds = false,
-            makeAmPmSmaller = false
-        ) else getString(
-            R.string.time_expired
-        )
+        binding.reminderText.text = getAlarmPreviewString(LocalDateTime.now())
 
         val maxDuration = MAX_ALARM_DURATION
         maxReminderDurationHandler.postDelayed({

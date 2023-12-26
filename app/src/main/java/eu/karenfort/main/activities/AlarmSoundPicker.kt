@@ -26,7 +26,7 @@ class AlarmSoundPicker : AppCompatActivity() {
 
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone")
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.select_alarm_sound))
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ALARM_SOUND_DEFAULT_URI)
 
         val ringtonePickerLauncher = registerForActivityResult(

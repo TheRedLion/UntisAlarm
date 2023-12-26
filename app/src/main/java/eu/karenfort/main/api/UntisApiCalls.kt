@@ -9,7 +9,6 @@
 package eu.karenfort.main.api
 
 import android.util.Log
-import eu.karenfort.main.helper.TAG
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.UntisUtils
 import org.bytedream.untis4j.responseObjects.Timetable
@@ -25,7 +24,9 @@ class UntisApiCalls(
     schoolName: String
 ){
     private val session: Session
-
+    companion object {
+        private const val TAG = "UntisApiCalls"
+    }
     init {
         try {
             this.session = Session.login(

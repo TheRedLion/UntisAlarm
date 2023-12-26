@@ -20,7 +20,7 @@ import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
-import eu.karenfort.main.helper.TAG
+import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.isOnline
 import eu.karenfort.main.helper.sendLoggedOutNotif
 import eu.karenfort.main.notifications.WarningNotifications
@@ -28,8 +28,9 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class AlarmClockSetter {
-
     companion object {
+        private const val TAG = "AlarmClockSetter"
+
         /* isActive and isEdited is used to override stored data, necessary because storing is
             done on a different thread and thus takes time. Used when a new state is set and the
             AlarmClock needs to be adjusted right after that for example to update UI
@@ -78,8 +79,7 @@ class AlarmClockSetter {
             }
 
             if (tbs == null) {
-                //should never happen
-                tbs = 60 //just settings default value, should fix itself next time user opens app
+                tbs = TBS_DEFAULT //just setting default value in case stored value is lost
             }
 
             if (!alarmActive) {
