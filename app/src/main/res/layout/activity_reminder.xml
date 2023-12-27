@@ -70,7 +70,7 @@
         android:layout_height="70dp"
         android:layout_marginBottom="16dp"
         android:padding="16dp"
-        android:src="@drawable/ic_alarm_vector_48"
+        android:src="@drawable/ic_alarm_vector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/reminder_dismiss"
         app:layout_constraintHorizontal_bias="0.5"

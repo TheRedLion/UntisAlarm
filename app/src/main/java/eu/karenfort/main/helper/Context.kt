@@ -10,7 +10,6 @@
 package eu.karenfort.main.helper
 
 import android.app.Activity
-import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -27,9 +26,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
-import android.text.SpannableString
 import android.text.format.DateFormat
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -42,10 +39,6 @@ import com.carlkarenfort.test.R.string.not_logged_in
 import com.carlkarenfort.test.R.string.you_are_currently_not_logged_in_please_login_again
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
-import eu.karenfort.main.alarmClock.AlarmClock
-import eu.karenfort.main.alarmClock.AlarmClockReceiver
-import eu.karenfort.main.alarmClock.DismissAlarmReceiver
-import eu.karenfort.main.alarmClock.EarlyAlarmDismissalReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
 import eu.karenfort.main.alarmClock.SnoozeAlarmReceiver
 import kotlinx.coroutines.runBlocking
@@ -214,7 +207,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     runBlocking {
         val storeData = StoreData(applicationContext)    // 0: System Default, 1: Off: 2: On
         if (storeData.loadDarkMode() == null) {
-            storeData.storeDarkMode(StoreData.DARK_MODE_DEFAULT)
+            storeData.storeDarkMode(DarkMode.DEFAULT)
         }
         darkMode = storeData.loadDarkMode()?: 0
         if (darkMode == 1) {
@@ -248,7 +241,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
         .setContentTitle(label)
         .setContentText(getAlarmPreviewString(LocalDateTime.now()))
-        .setSmallIcon(R.drawable.ic_alarm_vector_48)
+        .setSmallIcon(R.drawable.ic_alarm_vector)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationManager.IMPORTANCE_HIGH)
         .setDefaults(Notification.DEFAULT_LIGHTS)

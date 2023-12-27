@@ -9,6 +9,7 @@
 package eu.karenfort.main.api
 
 import android.util.Log
+import com.google.android.material.timepicker.TimeFormat
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.UntisUtils
 import org.bytedream.untis4j.responseObjects.Timetable
