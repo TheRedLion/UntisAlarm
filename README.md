@@ -24,14 +24,6 @@ To contribute, frork from this repisitory and submit a pull request.
 
 If you want to work with Android Studio, you can follow [this](https://getstream.io/blog/use-github-android-studio/) tutorial.
 
-## License
-
-UntisAlarm is licensed under the GNU General Public License, version 3.0 (GPL-3.0).
-
-## Support
-
-If you encounter any issues or have questions, please feel free to open an issue on our GitHub repository.
-
 ## Acknowledgments
 
 We would like to thank the [Simple-Clock](https://github.com/SimpleMobileTools/Simple-Clock) project since some of our code related to the Alarm Clock is taken from them.
