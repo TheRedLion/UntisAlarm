@@ -14,13 +14,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
-import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
-import eu.karenfort.main.helper.deleteNotificationChannel
 import eu.karenfort.main.helper.hideNotification
 
 class HideAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        context.deleteNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID)
         context.hideNotification(ALARM_CLOCK_ID)
     }
 }

@@ -97,4 +97,8 @@
     <string name="system_default">System Default</string>
     <string name="disabled">Disabled</string>
     <string name="enabled">Enabled</string>
+    <string name="time_format">Time Format</string>
+    <string name="select_time_format">Select Time Format</string>
+    <string name="_12_hours">12 Hours</string>
+    <string name="_24_hours">24 Hours</string>
 </resources>

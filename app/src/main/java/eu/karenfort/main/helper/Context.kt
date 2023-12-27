@@ -90,15 +90,6 @@ fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerMana
 fun Context.areNotificationsEnabled(): Boolean {
     return NotificationManagerCompat.from(this).areNotificationsEnabled()
 }
-fun Context.deleteNotificationChannel(channelId: String) { //todo delete this and related fuctions
-    if (isOreoPlus()) {
-        try {
-            val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.deleteNotificationChannel(channelId)
-        } catch (_: Throwable) {
-        }
-    }
-}
 
 private fun doToast(context: Context, message: String, length: Int) {
     if (context is Activity) {
@@ -257,7 +248,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
         .setContentTitle(label)
         .setContentText(getAlarmPreviewString(LocalDateTime.now()))
-        .setSmallIcon(R.drawable.ic_alarm_vector)
+        .setSmallIcon(R.drawable.ic_alarm_vector_48)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationManager.IMPORTANCE_HIGH)
         .setDefaults(Notification.DEFAULT_LIGHTS)
@@ -290,6 +281,7 @@ fun Context.hideNotification(id: Int) {
     val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     manager.cancel(id)
 }
+
 fun Context.showAlarmNotification() {
     val pendingIntent = getOpenAlarmTabIntent()
     val notification = getAlarmNotification(pendingIntent)
@@ -349,22 +341,6 @@ private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, S
         "${alarmClock.minute}"
     }
     return Pair(alarmClockStrHour, alarmClockStrMinute)
-}
-
-fun Context.getEarlyAlarmDismissalIntent(): PendingIntent {
-    val intent = Intent(this, EarlyAlarmDismissalReceiver::class.java)
-    return PendingIntent.getBroadcast(this, EARLY_ALARM_DISMISSAL_INTENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-}
-
-fun Context.getDismissAlarmPendingIntent(): PendingIntent {
-    val intent = Intent(this, DismissAlarmReceiver::class.java)
-    return PendingIntent.getBroadcast(this, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-}
-
-fun Context.cancelAlarmClock() {
-    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    AlarmClock.cancelAlarm(applicationContext)
-    alarmManager.cancel(getEarlyAlarmDismissalIntent())
 }
 
 val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

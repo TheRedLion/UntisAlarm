@@ -83,7 +83,7 @@ class AlarmClockSetter {
             }
 
             if (!alarmActive) {
-                AlarmClock.cancelAlarm(context)
+                AlarmClock.cancelAlarmClock(context)
 
                 //the following will load and display the time an alarm would have
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { //isUiContext requires Android API 31
@@ -146,7 +146,7 @@ class AlarmClockSetter {
             val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
 
             if (storedAlarmClockDateTime == null) {
-                AlarmClock.setAlarm(alarmClockDateTime, context)
+                AlarmClock.setAlarmClock(alarmClockDateTime, context)
                 setNew("normal", schoolStart, context)
                 return alarmClockDateTime
             }
@@ -156,8 +156,8 @@ class AlarmClockSetter {
                 return alarmClockDateTime
             }
 
-            AlarmClock.cancelAlarm(context)
-            AlarmClock.setAlarm(alarmClockDateTime, context)
+            AlarmClock.cancelAlarmClock(context)
+            AlarmClock.setAlarmClock(alarmClockDateTime, context)
 
             setNew("normal", schoolStart, context)
             return alarmClockDateTime

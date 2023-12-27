@@ -32,9 +32,7 @@ const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
 const val ALARM_REQUEST_CODE = 73295871
 
 const val ALARM_NOTIF_ID = 9998
-const val EARLY_ALARM_NOTIF_ID = 10003
 const val ALARM_CLOCK_ID = 543
-const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
 
 //settings default
 const val TBS_DEFAULT = 60
@@ -75,28 +73,6 @@ fun ensureBackgroundThread(callback: () -> Unit) {
     } else {
         callback()
     }
-}
-
-fun formatTime(showSeconds: Boolean, use24HourFormat: Boolean, hours: Int, minutes: Int, seconds: Int): String {
-    val hoursFormat = if (use24HourFormat) "%02d" else "%01d"
-    var format = "$hoursFormat:%02d"
-
-    return if (showSeconds) {
-        format += ":%02d"
-        String.format(format, hours, minutes, seconds)
-    } else {
-        String.format(format, hours, minutes)
-    }
-}
-
-fun getPassedSeconds(): Int {
-    val calendar = Calendar.getInstance()
-    val isDaylightSavingActive = TimeZone.getDefault().inDaylightTime(Date())
-    var offset = calendar.timeZone.rawOffset
-    if (isDaylightSavingActive) {
-        offset += TimeZone.getDefault().dstSavings
-    }
-    return ((calendar.timeInMillis + offset) / 1000).toInt()
 }
 
 @SuppressLint("ObsoleteSdkInt")

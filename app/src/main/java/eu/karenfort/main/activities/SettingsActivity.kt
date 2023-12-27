@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
+class SettingsActivity : AppCompatActivity() {
 
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
