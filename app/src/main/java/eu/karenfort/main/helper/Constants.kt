@@ -24,7 +24,6 @@ const val NOTIFS_ALLOWED = "notifsAllowed"
 
 //notification channels
 const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
-const val EARLY_ALARM_DISMISSAL_CHANNEL_ID = "Early Alarm Dismissal"
 const val INFO_NOTIFICATION_CHANNEL_ID = "Info_Notifs_Channel"
 const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
 
@@ -75,28 +74,6 @@ fun ensureBackgroundThread(callback: () -> Unit) {
     } else {
         callback()
     }
-}
-
-fun formatTime(showSeconds: Boolean, use24HourFormat: Boolean, hours: Int, minutes: Int, seconds: Int): String {
-    val hoursFormat = if (use24HourFormat) "%02d" else "%01d"
-    var format = "$hoursFormat:%02d"
-
-    return if (showSeconds) {
-        format += ":%02d"
-        String.format(format, hours, minutes, seconds)
-    } else {
-        String.format(format, hours, minutes)
-    }
-}
-
-fun getPassedSeconds(): Int {
-    val calendar = Calendar.getInstance()
-    val isDaylightSavingActive = TimeZone.getDefault().inDaylightTime(Date())
-    var offset = calendar.timeZone.rawOffset
-    if (isDaylightSavingActive) {
-        offset += TimeZone.getDefault().dstSavings
-    }
-    return ((calendar.timeInMillis + offset) / 1000).toInt()
 }
 
 @SuppressLint("ObsoleteSdkInt")

@@ -42,8 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
-
+class SettingsActivity : AppCompatActivity() {
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
@@ -54,8 +53,8 @@ class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
     private lateinit var snoozeInputField: TextInputEditText
     private lateinit var tbsInputLayout: TextInputLayout
     private lateinit var snoozeInputLayout: TextInputLayout
-    private lateinit var cancellationMessageField: TextInputEditText
-    private lateinit var cancellationMessageLayout: TextInputLayout
+    //private lateinit var cancellationMessageField: TextInputEditText
+    //private lateinit var cancellationMessageLayout: TextInputLayout
     private lateinit var alarmName: TextView
     private lateinit var makeSilent: Button
 
@@ -84,16 +83,16 @@ class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
         vibrateToggle = findViewById(R.id.vibrateToggle)
         tbsInputField = findViewById(R.id.tbs_input_field)
         snoozeInputField = findViewById(R.id.snooze_input_field)
-        cancellationMessageField = findViewById(R.id.cancelled_message_input_field)
         tbsInputLayout = findViewById(R.id.tbs_input_layout)
         snoozeInputLayout = findViewById(R.id.snooze_input_layout)
-        cancellationMessageLayout = findViewById(R.id.cancelled_message_input_layout)
+        //cancellationMessageLayout = findViewById(R.id.cancelled_message_input_layout)
+        //cancellationMessageField = findViewById(R.id.cancelled_message_input_field)
         makeSilent = findViewById(R.id.makeSilent)
     }
 
     private fun setListener() {
-        cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
-        cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
+        //cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
+        //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
         snoozeInputLayout.setEndIconOnClickListener { _: View? -> handleSetSnooze() }
         tbsInputLayout.setEndIconOnClickListener { _: View? -> handleSetTBS() }
         vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
@@ -107,9 +106,11 @@ class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
         }
     }
 
+    /*
     private fun handleCancellationMessageInfo() {
         startActivity(Intent(this@SettingsActivity, CancelledMessageInfo::class.java))
     }
+     */
 
 
     private fun enableClicking() {
@@ -167,7 +168,7 @@ class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
         }
     }
 
-    private fun languageDialog() { //todo implement usage of Locale https://developer.android.com/reference/java/util/Locale#fields_1
+    private fun languageDialog() {
         var checkedItem = 0
 
         if (storedLanguage != null) {
@@ -292,7 +293,7 @@ class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
         StoreData(this).storeIncreaseVolumeGradually(stateBool)
     }
 
-
+    /*
     private fun handleSetCancellationMessageEnd() {
         val newMessage = cancellationMessageField.text.toString()
 
@@ -303,6 +304,7 @@ class SettingsActivity : AppCompatActivity() { //todo add am pm switcher
 
         StoreData(this).storeCancelledMessage(newMessage)
     }
+     */
 
     private fun handleSetSnooze() {
         val newSnoozeStr = snoozeInputField.text.toString()

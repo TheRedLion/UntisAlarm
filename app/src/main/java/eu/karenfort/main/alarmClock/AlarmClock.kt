@@ -74,8 +74,8 @@ class AlarmClock {
             }
         }
 
-        fun snoozeAlarm(timeInS: Int, context: Context) {
-            if (timeInS < 0) return
+        fun snoozeAlarm(timeInM: Int, context: Context) {
+            if (timeInM < 0) return
             if (!context.areNotificationsEnabled()) {
                 return
             }
@@ -88,7 +88,7 @@ class AlarmClock {
 
             val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-            val triggerTime = System.currentTimeMillis() + timeInS * 1000
+            val triggerTime = System.currentTimeMillis() + timeInM * 60 * 1000
             alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerTime, pendingIntent), pendingIntent)
 
             val alarmClockTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault())

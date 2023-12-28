@@ -55,7 +55,6 @@ class ReminderActivity : AppCompatActivity() {
     private val maxReminderDurationHandler = Handler(Looper.getMainLooper())
     private val swipeGuideFadeHandler = Handler(Looper.getMainLooper())
     private val vibrationHandler = Handler(Looper.getMainLooper())
-    private var isAlarmReminder = false
     private var didVibrate = false
     private var wasAlarmSnoozed = false
     private var audioManager: AudioManager? = null

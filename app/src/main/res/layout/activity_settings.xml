@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!--
             <TextView
                 style="@style/settings_subtitle"
                 android:layout_width="match_parent"
@@ -49,7 +50,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
+            -->
 
             <TextView
                 style="@style/settings_subtitle"

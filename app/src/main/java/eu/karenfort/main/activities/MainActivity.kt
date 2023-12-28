@@ -12,7 +12,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -56,9 +55,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
-import java.time.format.TextStyle
 import java.util.Calendar
-import java.util.Locale
 import java.util.TimeZone
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -91,7 +88,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
         setListener()
         updateNotifsDisabledWarning()
-        //request Notification Permission after 1 second if it was not granted yet
+
+        /*request Notification Permission after 1 second if it was not granted yet
+            adding the one second delay made the loading process feel better for
+            the user
+         */
         Handler(Looper.getMainLooper()).postDelayed({
             requestNotificationPermission()
         }, 1000)
@@ -108,7 +109,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         active = false
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
         if (string == null) return //don't know when this would happen
 
@@ -371,7 +371,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         resetAlarm.isClickable = false
     }
 
-    @SuppressLint("SetTextI18n")
     private fun handleToggleAlarm(isChecked: Boolean) {
         StoreData(this).storeAlarmActive(isChecked)
         if (isChecked) {
@@ -416,8 +415,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             toggleAlarm.isClickable = true
         }
     }
-
-    @SuppressLint("SetTextI18n")
     private suspend fun loadAndDisplayAlarmClockPreview() {
         val storeData = StoreData(applicationContext)
         val (alarmClockDateTime, alarmClockEdited) = storeData.loadAlarmClock()
@@ -472,6 +469,4 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             finish()
         }
     }
-
-
 }

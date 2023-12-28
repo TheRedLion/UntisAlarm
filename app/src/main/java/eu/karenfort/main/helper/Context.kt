@@ -10,7 +10,6 @@
 package eu.karenfort.main.helper
 
 import android.app.Activity
-import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -27,9 +26,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
-import android.text.SpannableString
 import android.text.format.DateFormat
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -42,10 +39,6 @@ import com.carlkarenfort.test.R.string.not_logged_in
 import com.carlkarenfort.test.R.string.you_are_currently_not_logged_in_please_login_again
 import eu.karenfort.main.StoreData
 import eu.karenfort.main.activities.MainActivity
-import eu.karenfort.main.alarmClock.AlarmClock
-import eu.karenfort.main.alarmClock.AlarmClockReceiver
-import eu.karenfort.main.alarmClock.DismissAlarmReceiver
-import eu.karenfort.main.alarmClock.EarlyAlarmDismissalReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
 import eu.karenfort.main.alarmClock.SnoozeAlarmReceiver
 import kotlinx.coroutines.runBlocking
@@ -68,7 +61,6 @@ fun Context.changeDarkMode(checkedItem: Int) {
         }
     }
 }
-
 fun Context.isOnline(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -86,20 +78,9 @@ fun Context.isOnline(): Boolean {
     return false
 }
 fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
-
 fun Context.areNotificationsEnabled(): Boolean {
     return NotificationManagerCompat.from(this).areNotificationsEnabled()
 }
-fun Context.deleteNotificationChannel(channelId: String) { //todo delete this and related fuctions
-    if (isOreoPlus()) {
-        try {
-            val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.deleteNotificationChannel(channelId)
-        } catch (_: Throwable) {
-        }
-    }
-}
-
 private fun doToast(context: Context, message: String, length: Int) {
     if (context is Activity) {
         if (!context.isFinishing && !context.isDestroyed) {
@@ -181,7 +162,7 @@ fun Context.sendLoggedOutNotif() {
     val notification = builder.build()
     notification.flags = notification.flags or Notification.FLAG_INSISTENT
 
-    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notificationManager = this.notificationManager
 
     try {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
@@ -238,7 +219,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
             isDark = currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
         }
     }
-    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notificationManager = this.notificationManager
     val importance = NotificationManager.IMPORTANCE_HIGH
     NotificationChannel(channelId, label, importance).apply {
         setBypassDnd(true)
@@ -287,13 +268,13 @@ fun Context.getOpenAlarmTabIntent(): PendingIntent {
 }
 
 fun Context.hideNotification(id: Int) {
-    val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val manager = this.notificationManager
     manager.cancel(id)
 }
 fun Context.showAlarmNotification() {
     val pendingIntent = getOpenAlarmTabIntent()
     val notification = getAlarmNotification(pendingIntent)
-    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notificationManager = this.notificationManager
     try {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
     } catch (e: Exception) {
@@ -338,33 +319,8 @@ private fun reformatAlarmClockPreview(hour: Int, minute: Int): Pair<String, Stri
 }
 
 private fun reformatAlarmClockPreview(alarmClock: LocalDateTime): Pair<String, String> {
-    val alarmClockStrHour = if (alarmClock.hour < 10) {
-        "0${alarmClock.hour}"
-    } else {
-        "${alarmClock.hour}"
-    }
-    val alarmClockStrMinute = if (alarmClock.minute < 10) {
-        "0${alarmClock.minute}"
-    } else {
-        "${alarmClock.minute}"
-    }
-    return Pair(alarmClockStrHour, alarmClockStrMinute)
+    return reformatAlarmClockPreview(alarmClock.hour, alarmClock.minute)
 }
 
-fun Context.getEarlyAlarmDismissalIntent(): PendingIntent {
-    val intent = Intent(this, EarlyAlarmDismissalReceiver::class.java)
-    return PendingIntent.getBroadcast(this, EARLY_ALARM_DISMISSAL_INTENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-}
-
-fun Context.getDismissAlarmPendingIntent(): PendingIntent {
-    val intent = Intent(this, DismissAlarmReceiver::class.java)
-    return PendingIntent.getBroadcast(this, ALARM_CLOCK_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-}
-
-fun Context.cancelAlarmClock() {
-    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    AlarmClock.cancelAlarm(applicationContext)
-    alarmManager.cancel(getEarlyAlarmDismissalIntent())
-}
 
 val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

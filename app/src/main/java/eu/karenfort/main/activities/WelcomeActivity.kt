@@ -128,7 +128,7 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun verifyLoginData(): Boolean {
+    private fun verifyLoginData(): Boolean { //todo move to different coroutine
         if (server == null || schoolName == null || untisUserName.text.isNullOrEmpty() || untisPassword.text.isNullOrEmpty()) {
             return false
         }

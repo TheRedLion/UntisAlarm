@@ -37,7 +37,6 @@ class FirstSettingActivity : AppCompatActivity() {
     private fun setListener() {
         skipButton.setOnClickListener { goToMainActivity() }
         confirmButton.setOnClickListener {
-            //store TBS
             val newTBSStr = tbsInputField.text.toString()
             tbsInputField.setText("")
             val newTBS: Int
@@ -55,14 +54,12 @@ class FirstSettingActivity : AppCompatActivity() {
         tbsInputField.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
             override fun afterTextChanged(text: Editable?) {
                 if (text.isNullOrEmpty()) {
                     confirmButton.alpha = .4F
                     confirmButton.isClickable = false
                     return
                 }
-
                 confirmButton.alpha = 1F
                 confirmButton.isClickable = true
             }

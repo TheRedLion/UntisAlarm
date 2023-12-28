@@ -8,7 +8,15 @@
  */
 package eu.karenfort.main.api
 
+import android.content.Context
+import android.os.StrictMode
 import android.util.Log
+import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.UntisUtils
 import org.bytedream.untis4j.responseObjects.Timetable
@@ -42,15 +50,12 @@ class UntisApiCalls(
 
     fun getID(): Int? {
         var id: Int? = null
-
         try {
-            //login to API
             id = session.infos.personId
         } catch (e: IOException) {
             Log.i(TAG, "error")
             e.printStackTrace()
         }
-
         return id
     }
 
@@ -62,7 +67,6 @@ class UntisApiCalls(
                 nextDay,
                 id
             )
-
 
             while (timetable.isEmpty()) {
                 nextDay = nextDay.plusDays(1)
