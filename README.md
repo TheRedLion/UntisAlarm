@@ -1,9 +1,5 @@
 # UntisAlarm
 
-![Project Logo](app/src/main/ic_launcher-playstore.png)
-
-## Introduction
-
 UntisAlarm is an Android application developed in Kotlin that ensures you wake up at the right time based on your timetable. It currently supports Web Untis for fetching timetable data.
 
 ## Requirements
@@ -28,13 +24,8 @@ To contribute, frork from this repisitory and submit a pull request.
 
 If you want to work with Android Studio, you can follow [this](https://getstream.io/blog/use-github-android-studio/) tutorial.
 
-## License
-UntisAlarm is licensed under the GNU General Public License, version 3.0 (GPL-3.0).
-
-## Support
-If you encounter any issues or have questions, please feel free to open an issue on our GitHub repository.
-
 ## Acknowledgments
+
 We would like to thank the [Simple-Clock](https://github.com/SimpleMobileTools/Simple-Clock) project since some of our code related to the Alarm Clock is taken from them.
 
-This project is not related to the [UntisAlarm](https://www.rala.io/app/untisAlarm) from rala, who created a simillar app in 2016. We have their permission to use the app, since it it no longer beeing updated.
+This project is not related to the [UntisAlarm](https://www.rala.io/app/untisAlarm) from rala, who created a simillar app in 2016. We have their permission to use the name.

@@ -8,15 +8,7 @@
  */
 package eu.karenfort.main.api
 
-import android.content.Context
-import android.os.StrictMode
 import android.util.Log
-import eu.karenfort.main.StoreData
-import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.bytedream.untis4j.Session
 import org.bytedream.untis4j.UntisUtils
 import org.bytedream.untis4j.responseObjects.Timetable

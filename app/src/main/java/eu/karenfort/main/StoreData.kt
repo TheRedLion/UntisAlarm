@@ -18,6 +18,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
+import eu.karenfort.main.helper.DarkMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -50,14 +51,8 @@ class StoreData (
     private val languageKey = stringPreferencesKey("language")
     private val cancelledMessageKey = stringPreferencesKey("cancelledMessage")
 
-    companion object {
-        const val DARK_MODE_DEFAULT = 0
-        const val DARK_MODE_DISABLED = 1
-        const val DARK_MODE_ENABLED = 2
-    }
-
     fun storeDarkMode(isDarkModeEnabled: Int) {
-        if (isDarkModeEnabled != DARK_MODE_ENABLED && isDarkModeEnabled != DARK_MODE_DISABLED && isDarkModeEnabled != DARK_MODE_DEFAULT) {
+        if (isDarkModeEnabled != DarkMode.ENABLED && isDarkModeEnabled != DarkMode.DISABLED && isDarkModeEnabled != DarkMode.DEFAULT) {
             return
         }
 

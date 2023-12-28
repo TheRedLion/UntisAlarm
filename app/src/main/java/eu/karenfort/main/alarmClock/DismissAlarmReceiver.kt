@@ -19,7 +19,7 @@ import eu.karenfort.main.helper.ensureBackgroundThread
 class DismissAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         ensureBackgroundThread {
-            AlarmClock.cancelAlarm(context)
+            AlarmClock.cancelAlarmClock(context)
         }
         AlarmClockSetter.main(context)
     }

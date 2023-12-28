@@ -31,9 +31,7 @@ const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
 const val ALARM_REQUEST_CODE = 73295871
 
 const val ALARM_NOTIF_ID = 9998
-const val EARLY_ALARM_NOTIF_ID = 10003
 const val ALARM_CLOCK_ID = 543
-const val EARLY_ALARM_DISMISSAL_INTENT_ID = 10002
 
 //settings default
 const val TBS_DEFAULT = 60

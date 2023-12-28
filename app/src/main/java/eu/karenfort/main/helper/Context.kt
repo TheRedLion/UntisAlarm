@@ -81,6 +81,7 @@ fun Context.isScreenOn() = (getSystemService(Context.POWER_SERVICE) as PowerMana
 fun Context.areNotificationsEnabled(): Boolean {
     return NotificationManagerCompat.from(this).areNotificationsEnabled()
 }
+
 private fun doToast(context: Context, message: String, length: Int) {
     if (context is Activity) {
         if (!context.isFinishing && !context.isDestroyed) {
@@ -204,7 +205,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     runBlocking {
         val storeData = StoreData(applicationContext)    // 0: System Default, 1: Off: 2: On
         if (storeData.loadDarkMode() == null) {
-            storeData.storeDarkMode(StoreData.DARK_MODE_DEFAULT)
+            storeData.storeDarkMode(DarkMode.DEFAULT)
         }
         darkMode = storeData.loadDarkMode()?: 0
         if (darkMode == 1) {

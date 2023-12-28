@@ -262,7 +262,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             val startDate = getStartDate()
 
-            // Build constraints.
             val constraintsBuilder =
                 CalendarConstraints.Builder()
                     .setStart(startDate)
@@ -303,8 +302,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                     ).show()
                 } else {
                     if (toggleAlarm.isChecked) {
-                        AlarmClock.cancelAlarm(this)
-                        AlarmClock.setAlarm(selectedDateTime, this)
+                        AlarmClock.cancelAlarmClock(this)
+                        AlarmClock.setAlarmClock(selectedDateTime, this)
                         currentAlarmClockDateTime = selectedDateTime
                         if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
                             currentAlarmClockDateTime!!
@@ -385,7 +384,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 Toast.makeText(this, getString(R.string.enable_notifications), Toast.LENGTH_SHORT).show()
             }
         } else {
-            AlarmClock.cancelAlarm(this)
+            AlarmClock.cancelAlarmClock(this)
             AlarmScheduler(this).cancel()
         }
     }

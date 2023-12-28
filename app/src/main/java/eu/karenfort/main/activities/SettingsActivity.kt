@@ -27,6 +27,7 @@ import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
+import eu.karenfort.main.helper.DarkMode
 import eu.karenfort.main.helper.IVG_DEFAULT
 import eu.karenfort.main.helper.SILENT_TITLE
 import eu.karenfort.main.helper.SILENT_URI
@@ -43,6 +44,7 @@ import kotlinx.coroutines.runBlocking
 
 
 class SettingsActivity : AppCompatActivity() {
+
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
@@ -215,7 +217,7 @@ class SettingsActivity : AppCompatActivity() {
         ) //matches the states of StoreData.DARK_MODE_..., should not be changed
 
         // load checkedItem from StoreData
-        var checkedItem = StoreData.DARK_MODE_DEFAULT
+        var checkedItem = DarkMode.DEFAULT
         if (storedDarkMode != null) {
             checkedItem = storedDarkMode!! //is never set to null
         } else {
@@ -248,8 +250,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun initDarkMode(): Int {
-        StoreData(this).storeDarkMode(StoreData.DARK_MODE_DEFAULT)
-        return StoreData.DARK_MODE_DEFAULT
+        StoreData(this).storeDarkMode(DarkMode.DEFAULT)
+        return DarkMode.DEFAULT
     }
 
     private fun initLanguage(): String {

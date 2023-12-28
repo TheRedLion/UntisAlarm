@@ -33,6 +33,7 @@ import eu.karenfort.main.helper.showErrorToast
 
 class AlarmClockReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+
         StoreData(context).storeAlarmClock(false)
 
         if (context.isScreenOn()) {

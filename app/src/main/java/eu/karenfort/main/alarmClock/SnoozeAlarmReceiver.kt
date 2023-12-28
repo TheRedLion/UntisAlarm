@@ -25,6 +25,6 @@ class SnoozeAlarmReceiver : BroadcastReceiver() {
         runBlocking {
             snoozeTime = StoreData(context).loadSnoozeTime() ?: return@runBlocking
         }
-        AlarmClock.snoozeAlarm(snoozeTime, context)
+        AlarmClock.snoozeAlarmClock(snoozeTime, context)
     }
 }
