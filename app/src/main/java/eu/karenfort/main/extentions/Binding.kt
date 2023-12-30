@@ -4,7 +4,7 @@
  * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
  *
  */
-package eu.karenfort.main.helper
+package eu.karenfort.main.extentions
 
 import android.app.Activity
 import android.view.LayoutInflater

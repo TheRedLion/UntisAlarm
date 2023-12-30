@@ -36,7 +36,7 @@ class AlarmScheduler(
      }
 
     fun cancel() {
-        AlarmClock.cancelAlarmClock(context)
+        AlarmClock.cancel(context)
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,

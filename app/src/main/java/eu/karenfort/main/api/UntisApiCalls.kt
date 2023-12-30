@@ -50,7 +50,6 @@ class UntisApiCalls(
         }
         return id
     }
-
     fun getSchoolStartForDay(id: Int): LocalDateTime? {
         try {
             var nextDay = LocalDate.now().plusDays(1)
@@ -84,7 +83,6 @@ class UntisApiCalls(
             return null
         }
     }
-
     private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
         if (lesson.teachers.isEmpty() && lesson.teachers != null) {
             return true

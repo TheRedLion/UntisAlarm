@@ -13,9 +13,9 @@ package eu.karenfort.main.alarmClock
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
-import eu.karenfort.main.helper.hideNotification
+import eu.karenfort.main.extentions.hideNotification
 import kotlinx.coroutines.runBlocking
 
 class SnoozeAlarmReceiver : BroadcastReceiver() {
@@ -25,6 +25,6 @@ class SnoozeAlarmReceiver : BroadcastReceiver() {
         runBlocking {
             snoozeTime = StoreData(context).loadSnoozeTime() ?: return@runBlocking
         }
-        AlarmClock.snoozeAlarmClock(snoozeTime, context)
+        AlarmClock.snooze(snoozeTime, context)
     }
 }

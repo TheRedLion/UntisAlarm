@@ -8,6 +8,7 @@
 package eu.karenfort.main.activities
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -22,9 +23,9 @@ import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.alarmClock.AlarmClockSetter
-import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT
+import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_TITLE
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.DarkMode
@@ -36,7 +37,8 @@ import eu.karenfort.main.helper.SUPPORTED_LANGUAGES
 import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
-import eu.karenfort.main.helper.changeDarkMode
+import eu.karenfort.main.extentions.changeDarkMode
+import eu.karenfort.main.extentions.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,6 +65,7 @@ class SettingsActivity : AppCompatActivity() {
     //used to preload settings
     private var storedLanguage: String? = null
     private var storedDarkMode: Int? = null
+    private var storedUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,16 +143,21 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun loadAndDisplayStoredStates() {
-
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
-            val storeData = StoreData(applicationContext)
+            val storeData = StoreData(this@SettingsActivity)
 
             val tbs: Int = storeData.loadTBS() ?: initTBS()
             val vibrate: Boolean = storeData.loadVibrate() ?: initVibrate()
             val snooze: Int = storeData.loadSnoozeTime() ?: initSnooze()
             val ivg: Boolean = storeData.loadIncreaseVolumeGradually() ?: initIVG()
-            val (alarmSoundTitle, _) = storeData.loadSound()
-            if (alarmSoundTitle == null) initSound()
+
+            var alarmSoundPair = storeData.loadSound()
+            if (alarmSoundPair.first == null || alarmSoundPair.second == null) {
+                alarmSoundPair = initSound()
+            }
+            val alarmSoundTitle = alarmSoundPair.first
+            storedUri = alarmSoundPair.second
+
             storedLanguage = storeData.loadLanguage()?: initLanguage()
             storedDarkMode = storeData.loadDarkMode()?: initDarkMode()
 
@@ -245,8 +253,9 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun alarmSoundDialog() {
-        val intent2 = Intent(this, AlarmSoundPicker::class.java)
-        startActivity(intent2)
+        val intent = Intent(this, AlarmSoundPicker::class.java)
+        intent.putExtra(AlarmSoundPicker.INTENT_ALARM_SOUND_URI, storedUri.toString())
+        startActivity(intent)
     }
 
     private fun initDarkMode(): Int {
@@ -259,9 +268,9 @@ class SettingsActivity : AppCompatActivity() {
         return SUPPORTED_LANGUAGES[0]
     }
 
-    private fun initSound(): String {
-        StoreData(this).storeSound(ALARM_SOUND_DEFAULT, ALARM_SOUND_DEFAULT_URI)
-        return ALARM_SOUND_DEFAULT
+    private fun initSound(): Pair<String, Uri> {
+        StoreData(this).storeSound(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
+        return Pair(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
     }
 
     private fun initIVG(): Boolean {
@@ -316,12 +325,8 @@ class SettingsActivity : AppCompatActivity() {
         val newSnooze: Int
         try {
             newSnooze = Integer.parseInt(newSnoozeStr)
-        } catch (e: NumberFormatException) {
-            Toast.makeText(
-                this,
-                getString(R.string.please_only_enter_integers),
-                Toast.LENGTH_SHORT
-            ).show()
+        } catch (e: NumberFormatException) { //this should never happen since the input is a number input
+            this.toast(getString(R.string.please_only_enter_integers))
             return
         }
         snoozeInputLayout.hint =

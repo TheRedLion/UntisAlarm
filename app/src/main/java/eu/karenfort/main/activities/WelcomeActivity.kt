@@ -18,16 +18,16 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputLayout
-import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
-import eu.karenfort.main.helper.isOnline
+import eu.karenfort.main.extentions.isOnline
+import eu.karenfort.main.extentions.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,7 +66,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun setRunButtonListener() {
         runButton.setOnClickListener { _: View? ->
             if (!isOnline()) {
-                Toast.makeText(this, getString(R.string.you_are_offline), Toast.LENGTH_SHORT).show()
+                this.toast(getString(R.string.you_are_offline))
                 return@setOnClickListener
             }
 
@@ -111,11 +111,10 @@ class WelcomeActivity : AppCompatActivity() {
                 //no match was found
                 untisPasswordInputLayout.error = getString(R.string.invalid_login_data)
                 untisUserNameInputLayout.error = getString(R.string.invalid_login_data)
-                Toast.makeText(this, getString(R.string.no_id_found), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val storeData = StoreData(applicationContext)
+            val storeData = StoreData(this)
             storeData.storeLoginData(
                 untisUserName.text.toString(),
                 untisPassword.text.toString(),
@@ -215,7 +214,7 @@ class WelcomeActivity : AppCompatActivity() {
                             schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }
                                 .toTypedArray()
                         val arrayAdapter =
-                            ArrayAdapter(applicationContext, R.layout.dropdown_menu, schoolNames)
+                            ArrayAdapter(this@WelcomeActivity, R.layout.dropdown_menu, schoolNames)
                         val autocompleteTV = autoCompleteTextView
                         runOnUiThread {
                             autocompleteTV.setAdapter(arrayAdapter)

@@ -18,7 +18,8 @@ import android.widget.Toast
 import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.StoreData
+import eu.karenfort.main.extentions.isDisabled
 
 class FirstSettingActivity : AppCompatActivity() {
     private lateinit var skipButton: Button
@@ -48,7 +49,6 @@ class FirstSettingActivity : AppCompatActivity() {
                     .show()
                 return@setOnClickListener
             }
-
             goToMainActivity()
         }
         tbsInputField.addTextChangedListener(object : TextWatcher{
@@ -56,12 +56,10 @@ class FirstSettingActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(text: Editable?) {
                 if (text.isNullOrEmpty()) {
-                    confirmButton.alpha = .4F
-                    confirmButton.isClickable = false
+                    confirmButton.isDisabled = true
                     return
                 }
-                confirmButton.alpha = 1F
-                confirmButton.isClickable = true
+                confirmButton.isDisabled = false
             }
         })
     }

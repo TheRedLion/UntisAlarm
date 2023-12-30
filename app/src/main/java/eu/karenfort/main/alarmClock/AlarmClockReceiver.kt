@@ -20,65 +20,65 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
-import eu.karenfort.main.StoreData
+import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.activities.ReminderActivity
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
-import eu.karenfort.main.helper.ALARM_NOTIF_ID
-import eu.karenfort.main.helper.hideNotification
-import eu.karenfort.main.helper.isScreenOn
-import eu.karenfort.main.helper.showAlarmNotification
-import eu.karenfort.main.helper.showErrorToast
+import eu.karenfort.main.helper.ALARM_NOTIFICATION_ID
+import eu.karenfort.main.helper.MAX_ALARM_DURATION
+import eu.karenfort.main.extentions.hideNotification
+import eu.karenfort.main.extentions.isScreenOn
+import eu.karenfort.main.extentions.showAlarmNotification
+import eu.karenfort.main.extentions.showErrorToast
 
 class AlarmClockReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-
         StoreData(context).storeAlarmClock(false)
 
-        if (context.isScreenOn()) {
+        if (context.isScreenOn) {
             context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
-                AlarmClockSetter.main(context) // load new alarmClock
-            }, 10000)
-        } else {
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            if (notificationManager.getNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID) == null) {
-                notificationManager.deleteNotificationChannel("Alarm") // cleans up previous notification channel that had sound properties
-                NotificationChannel(
-                    ALARM_NOTIFICATION_CHANNEL_ID,
-                    context.getString(R.string.alarm_clock_notifications),
-                    NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    setBypassDnd(true)
-                    setSound(null, null)
-                    notificationManager.createNotificationChannel(this)
-                }
+                AlarmClockSetter.main(context, null, false)
+            }, MAX_ALARM_DURATION * 1000L)
+            return
+        }
+
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (notificationManager.getNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID) == null) {
+            NotificationChannel(
+                ALARM_NOTIFICATION_CHANNEL_ID,
+                context.getString(R.string.alarm_clock_notifications),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                setBypassDnd(true)
+                setSound(null, null)
+                notificationManager.createNotificationChannel(this)
             }
+        }
 
-            val pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                Intent(context, ReminderActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                },
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            Intent(context, ReminderActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
-            val builder = NotificationCompat.Builder(context, ALARM_NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.alarm_vector)
-                .setContentTitle(context.getString(R.string.app_name))
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setFullScreenIntent(pendingIntent, true)
+        val builder = NotificationCompat.Builder(context, ALARM_NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.alarm_vector)
+            .setContentTitle(context.getString(R.string.app_name))
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setFullScreenIntent(pendingIntent, true)
 
-            try {
-                notificationManager.notify(ALARM_NOTIF_ID, builder.build())
-            } catch (e: Exception) {
-                context.showErrorToast(e)
-            }
+        try {
+            notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build())
+        } catch (e: Exception) {
+            context.showErrorToast(e)
         }
     }
 }

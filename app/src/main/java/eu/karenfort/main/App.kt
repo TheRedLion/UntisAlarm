@@ -12,7 +12,8 @@ import com.google.android.material.color.DynamicColors
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.SUPPORTED_LANGUAGES
 import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
-import eu.karenfort.main.helper.changeDarkMode
+import eu.karenfort.main.extentions.changeDarkMode
+import eu.karenfort.main.helper.StoreData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

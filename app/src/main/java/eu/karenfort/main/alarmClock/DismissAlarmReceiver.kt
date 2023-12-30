@@ -13,13 +13,13 @@ package eu.karenfort.main.alarmClock
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import eu.karenfort.main.helper.ensureBackgroundThread
+import eu.karenfort.main.helper.ensureBackgroundCoroutine
 
 
 class DismissAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        ensureBackgroundThread {
-            AlarmClock.cancelAlarmClock(context)
+        ensureBackgroundCoroutine {
+            AlarmClock.cancel(context)
         }
         AlarmClockSetter.main(context)
     }
