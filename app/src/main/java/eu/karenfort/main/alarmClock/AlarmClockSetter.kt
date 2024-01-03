@@ -11,19 +11,18 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.StrictMode
 import android.util.Log
-import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
-import eu.karenfort.main.helper.ALARM_REQUEST_CODE
-import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
-import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.extentions.isOnline
 import eu.karenfort.main.extentions.sendLoggedOutNotif
 import eu.karenfort.main.extentions.sendNoInternetNotif
+import eu.karenfort.main.helper.ALARM_REQUEST_CODE
+import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
+import eu.karenfort.main.helper.StoreData
+import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.isSnowConePlus
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
@@ -103,14 +102,14 @@ class AlarmClockSetter {
                     val schoolStart: LocalDateTime?
 
                     StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
-                    val untisApiCalls = UntisApiCalls(
+                    val webuntisApiCalls = UntisApiCalls(
                         loginData[0]!!,
                         loginData[1]!!,
                         loginData[2]!!,
                         loginData[3]!!
                     )
 
-                    schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+                    schoolStart = webuntisApiCalls.getSchoolStartForDay(id!!)
 
                     if (schoolStart == null) return null
 
@@ -132,14 +131,14 @@ class AlarmClockSetter {
 
             val schoolStart: LocalDateTime?
             StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
-            val untisApiCalls = UntisApiCalls(
+            val webuntisApiCalls = UntisApiCalls(
                 loginData[0]!!,
                 loginData[1]!!,
                 loginData[2]!!,
                 loginData[3]!!
             )
 
-            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+            schoolStart = webuntisApiCalls.getSchoolStartForDay(id!!)
 
             if (schoolStart == null) {
                 //probably holiday or something
