@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import com.carlkarenfort.test.R
@@ -38,18 +40,7 @@ class FirstSettingActivity : AppCompatActivity() {
     private fun setListener() {
         skipButton.setOnClickListener { goToMainActivity() }
         confirmButton.setOnClickListener {
-            val newTBSStr = tbsInputField.text.toString()
-            tbsInputField.setText("")
-            val newTBS: Int
-            try {
-                newTBS = Integer.parseInt(newTBSStr)
-                StoreData(this).storeTBS(newTBS)
-            } catch (e: NumberFormatException) {
-                Toast.makeText(this, getString(R.string.please_only_enter_integers), Toast.LENGTH_SHORT)
-                    .show()
-                return@setOnClickListener
-            }
-            goToMainActivity()
+            handleConfirmButtonPressed()
         }
         tbsInputField.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -62,6 +53,31 @@ class FirstSettingActivity : AppCompatActivity() {
                 confirmButton.isDisabled = false
             }
         })
+        tbsInputField.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    tbsInputField.clearFocus()
+                    handleConfirmButtonPressed()
+                    return true
+                }
+                return false
+            }
+        })
+    }
+
+    private fun handleConfirmButtonPressed() {
+        val newTBSStr = tbsInputField.text.toString()
+        tbsInputField.setText("")
+        val newTBS: Int
+        try {
+            newTBS = Integer.parseInt(newTBSStr)
+            StoreData(this).storeTBS(newTBS)
+        } catch (e: NumberFormatException) {
+            Toast.makeText(this, getString(R.string.please_only_enter_integers), Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+        goToMainActivity()
     }
 
     private fun goToMainActivity() {

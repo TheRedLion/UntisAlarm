@@ -70,8 +70,6 @@ class AlarmClock {
             val nextAlarmClock: AlarmManager.AlarmClockInfo = alarmManager.nextAlarmClock
             if (nextAlarmClock.triggerTime > System.currentTimeMillis()) {
                 StoreData(context).storeAlarmClock(alarmClockDateTime)
-
-                //todo check if update of alarmPreview in main activity is necessary
             }
         }
 

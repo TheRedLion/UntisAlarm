@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         getLayoutObjectsByID()
         disableClicking() //disabling clicks until everything was properly loaded to stop errors
         createNotificationChannel()
-        sendToWelcomeActivity() //send user to welcomeActivity if they have not logged in yet
+        sendToWelcomeActivityIfNotLoggedIn() //send user to welcomeActivity if they have not logged in yet
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             loadAndDisplayAlarmClockPreview()
             loadAndSetAlarmActive()
@@ -438,9 +438,9 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
     private suspend fun hasLoggedIn() : Boolean {
         val storeData = StoreData(this)
-        return storeData.loadLoginData()[0] == null || storeData.loadID() == null
+        return storeData.loadLoginData()[0].isNullOrEmpty() || storeData.loadID() == null
     }
-    private fun sendToWelcomeActivity() {
+    private fun sendToWelcomeActivityIfNotLoggedIn() {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             if (!hasLoggedIn()) return@launch
             intent = Intent(this@MainActivity, WelcomeActivity::class.java)

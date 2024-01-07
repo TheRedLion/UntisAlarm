@@ -45,11 +45,12 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/untisSchool"
+                        android:id="@+id/untis_school"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/webuntis_url"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:nextFocusDown="@id/untis_username"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,7 +76,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <AutoCompleteTextView
-                        android:id="@+id/autoCompleteTextView"
+                        android:id="@+id/school_selector"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -101,7 +102,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/untisUsername"
+                        android:id="@+id/untis_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/webuntis_username"
@@ -129,7 +130,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/untisPassword"
+                        android:id="@+id/untis_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="password"
@@ -146,7 +147,7 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/runButton"
+                    android:id="@+id/run_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
