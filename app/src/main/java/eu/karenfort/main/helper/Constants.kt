@@ -8,14 +8,8 @@ package eu.karenfort.main.helper
 
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
-import android.os.Looper
 import android.os.StrictMode
-import androidx.annotation.ChecksSdkIntAtLeast
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 //notification channels

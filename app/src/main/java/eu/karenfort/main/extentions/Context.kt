@@ -36,7 +36,6 @@ import com.carlkarenfort.test.R
 import com.carlkarenfort.test.R.drawable.ic_login_vector
 import com.carlkarenfort.test.R.string.not_logged_in
 import com.carlkarenfort.test.R.string.you_are_currently_not_logged_in_please_login_again
-import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.activities.MainActivity
 import eu.karenfort.main.activities.ReminderActivity.Companion.TAG
 import eu.karenfort.main.alarmClock.AlarmClockReceiver
@@ -49,6 +48,7 @@ import eu.karenfort.main.helper.DarkMode
 import eu.karenfort.main.helper.INFO_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.OPEN_ALARM_TAB_INTENT_CODE
 import eu.karenfort.main.helper.SILENT_URI
+import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isOnMainThread
 import eu.karenfort.main.helper.isSnowConePlus
 import kotlinx.coroutines.runBlocking
