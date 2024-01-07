@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         setListener()
         updateNotifsDisabledWarning()
 
-        /*request Notification Permission after 1 second if it was not granted yet
+        /* request Notification Permission after 1 second if it was not granted yet
             adding the one second delay made the loading process feel better for
             the user
          */
