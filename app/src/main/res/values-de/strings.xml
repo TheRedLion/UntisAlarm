@@ -30,6 +30,18 @@
     <string name="snooze">Schlummern</string>
     <string name="dismiss_alarm">Stopp</string>
     <string name="upcoming_alarm">Nächster Alarm</string>
+    <string name="error_when_searching_for_schools">Fehler bei der Schulsuche!</string>
+    <string name="no_school_found">Keine Schule gefunden</string>
+    <string name="too_many_results">Zu viele Ergebnisse</string>
+    <string name="select_alarm_sound">Wähle einen Wecker Ton</string>
+    <string name="system_default">Systemeinstellung</string>
+    <string name="disabled">Aus</string>
+    <string name="enabled">Ein</string>
+    <string name="time_format">Zeitformat</string>
+    <string name="select_time_format">Wähle ein Zeitformat</string>
+    <string name="_12_hours">12 Stunden</string>
+    <string name="_24_hours">24 Stunden</string>
+    <string name="selected_date_and_time_is_before_the_current_time">Die ausgewählte Zeit ist vor der aktuellen Zeit.</string>
     <string name="time_expired">Zeit Abgelaufen</string>
     <string name="settings">Einstellungen</string>
     <string name="log_out">Abmelden</string>
@@ -92,4 +104,5 @@
     <string name="close_view">Fenster Schließen</string>
     <string name="draggable_selector">Ziehbare Auswahl</string>
     <string name="good_morning">Guten Morgen!</string>
+    <string name="alarms_are_disabled">Wecker sind deaktiviert</string>
 </resources>

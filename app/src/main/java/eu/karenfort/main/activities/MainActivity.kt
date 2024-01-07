@@ -13,7 +13,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -46,6 +45,7 @@ import eu.karenfort.main.extentions.getAlarmPreviewString
 import eu.karenfort.main.helper.isTiramisuPlus
 import eu.karenfort.main.extentions.showErrorToast
 import eu.karenfort.main.extentions.toast
+import eu.karenfort.main.helper.ABOUT_US_PAGE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -114,12 +114,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             //update UI accordingly
             if (alarmClockDateTime == null) {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity)
-                if (currentAlarmClockDateTime != null) {
-                    alarmPreview.text = getAlarmPreviewString(
-                        currentAlarmClockDateTime!!
-                    )
+
+                runOnUiThread{
+                    if (currentAlarmClockDateTime != null) {
+                        alarmPreview.text = getAlarmPreviewString(
+                            currentAlarmClockDateTime!!
+                        )
+                    }
+                    resetAlarm.isDisabled =
+                        true //can never be edited if alarm clock time was just loaded
                 }
-                resetAlarm.isDisabled = true //can never be edited if alarm clock time was just loaded
                 return@launch
             }
 
@@ -166,7 +170,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 StoreData(this).deleteLoginData()
             }
             R.id.about_us -> {
-                val uri = Uri.parse("https://github.com/TheRedLion/UntisAlarm")
+                val uri = ABOUT_US_PAGE
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
             }
@@ -216,16 +220,18 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     private fun handleResetAlarm() {
         StoreData(this).storeAlarmClock(false)
-        if (toggleAlarm.isChecked) {
-            currentAlarmClockDateTime = AlarmClockSetter.main(this, null, false)
-            if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
-                currentAlarmClockDateTime!!
-            )
-        } else {
-            currentAlarmClockDateTime = AlarmClockSetter.main(this, null, false)
-            if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
-                currentAlarmClockDateTime!!
-            )
+        CoroutineScope(Dispatchers.Default).launch {
+            if (toggleAlarm.isChecked) {
+                currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
+                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                    currentAlarmClockDateTime!!
+                )
+            } else {
+                currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
+                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
+                    currentAlarmClockDateTime!!
+                )
+            }
         }
         resetAlarm.isDisabled = true
     }
@@ -360,10 +366,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (isChecked) {
             if (areNotificationsEnabled) {
                 AlarmScheduler(this).schedule(this)
-                currentAlarmClockDateTime = AlarmClockSetter.main(this, true)
-                if (currentAlarmClockDateTime != null) alarmPreview.text = getAlarmPreviewString(
-                    currentAlarmClockDateTime!!
-                )
+                CoroutineScope(Dispatchers.Default).launch {
+                    currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, true)
+                    if (currentAlarmClockDateTime != null) {
+                        runOnUiThread{
+                            alarmPreview.text = getAlarmPreviewString(currentAlarmClockDateTime!!)
+                        }
+                    }
+                }
             } else {
                 toggleAlarm.isChecked = false
                 this.toast(getString(R.string.enable_notifications))

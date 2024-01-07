@@ -40,15 +40,15 @@ class AlarmClockSetter {
             AlarmClock needs to be adjusted right after that for example to update UI
          */
 
-        fun main(context: Context): LocalDateTime? {
+        suspend fun main(context: Context): LocalDateTime? {
             return main(context, null, null)
         }
 
-        fun main(context: Context, isActive: Boolean?): LocalDateTime? {
+        suspend fun main(context: Context, isActive: Boolean?): LocalDateTime? {
             return main(context, isActive, null)
         }
 
-        fun main(context: Context, isActive: Boolean?, isEdited: Boolean?): LocalDateTime? {
+        suspend fun main(context: Context, isActive: Boolean?, isEdited: Boolean?): LocalDateTime? {
 
             //rest unnecessary without being able to make API calls
             if (!context.isOnline()) {

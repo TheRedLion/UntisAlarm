@@ -143,12 +143,13 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/alarm_settings">
 
+                <!--TODO add proper icon-->
                 <Button
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="?attr/materialIconButtonFilledTonalStyle"
+                    app:icon="@drawable/ic_reset"
                     android:id="@+id/makeSilent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/silent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

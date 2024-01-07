@@ -1,8 +1,12 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ */
 package eu.karenfort.main.helper
 
 import android.os.Build
 import android.os.Looper
-import androidx.annotation.ChecksSdkIntAtLeast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

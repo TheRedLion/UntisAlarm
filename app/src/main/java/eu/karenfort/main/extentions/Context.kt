@@ -22,7 +22,6 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
@@ -57,6 +56,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -90,15 +90,15 @@ private val Context.openAlarmTabIntent: PendingIntent get() = PendingIntent.getA
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 )
 
-fun Context.changeDarkMode(checkedItem: Int) {
+fun Context.changeDarkMode(darkMode: DarkMode) {
     if (isSnowConePlus()) {
         val uiManager = getSystemService(AppCompatActivity.UI_MODE_SERVICE) as UiModeManager
-        when (checkedItem) {
+        when (darkMode.ordinal) {
             1 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_NO)
             2 -> uiManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_YES)
         }
     } else {
-        when (checkedItem) {
+        when (darkMode.ordinal) {
             0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -108,7 +108,7 @@ fun Context.changeDarkMode(checkedItem: Int) {
 fun Context.isOnline(): Boolean { //todo probably needs to be suspending
     if (hasNetworkConnection()) {
         try {
-            val urlc = URL("http://www.google.com").openConnection() as HttpURLConnection
+            val urlc = URL("https://www.google.com").openConnection() as HttpURLConnection
             urlc.setRequestProperty("User-Agent", "Test")
             urlc.setRequestProperty("Connection", "close")
             urlc.connectTimeout = 1500
@@ -240,21 +240,21 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
         .build()
 
-    var darkMode: Int
+    var darkMode: DarkMode
     var isDark = false
     runBlocking {
         val storeData = StoreData(this@getAlarmNotification)    // 0: System Default, 1: Off: 2: On
         if (storeData.loadDarkMode() == null) {
             storeData.storeDarkMode(DarkMode.DEFAULT)
         }
-        darkMode = storeData.loadDarkMode()?: 0
-        if (darkMode == 1) {
+        darkMode = storeData.loadDarkMode()?: DarkMode.DEFAULT
+        if (darkMode == DarkMode.ENABLED) {
             isDark = false
         }
-        if (darkMode == 2) {
+        if (darkMode == DarkMode.DISABLED) {
             isDark = true
         }
-        if (darkMode == 0) {
+        if (darkMode == DarkMode.DEFAULT) {
            // check if system default is dark mode
             val currentNightMode = this@getAlarmNotification.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
             isDark = currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -264,7 +264,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     val importance = NotificationManager.IMPORTANCE_HIGH
     NotificationChannel(channelId, label, importance).apply {
         setBypassDnd(true)
-        if (isDark or (darkMode == 2)) {
+        if (isDark or (darkMode == DarkMode.ENABLED)) {
             enableLights(true)
             lightColor = 0
         } else {
@@ -320,6 +320,13 @@ fun Context.showAlarmNotification() {
 fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
     if (DateFormat.is24HourFormat(this)) {
         val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
+
+        if (alarmClockDateTime.isAfter(LocalDateTime.now().plusDays(7))) {
+            return "${
+                alarmClockDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            } ${alarmClockStrHour}:${alarmClockStrMinute}"
+        }
+
         return "${
             alarmClockDateTime.dayOfWeek.getDisplayName(
                 TextStyle.SHORT,
@@ -330,6 +337,13 @@ fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
         val alarmClockHour = alarmClockDateTime.hour%12
         val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockHour, alarmClockDateTime.minute)
         val ampm = if (alarmClockDateTime.hour >= 12) getString(R.string.pm) else getString(R.string.am)
+
+        if (alarmClockDateTime.isAfter(LocalDateTime.now().plusDays(7))) {
+            return "${
+                alarmClockDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            } ${alarmClockStrHour}:${alarmClockStrMinute}"
+        }
+
         return "${
             alarmClockDateTime.dayOfWeek.getDisplayName(
                 TextStyle.SHORT,

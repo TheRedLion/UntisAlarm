@@ -14,6 +14,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import eu.karenfort.main.helper.ensureBackgroundCoroutine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class DismissAlarmReceiver : BroadcastReceiver() {
@@ -21,6 +24,8 @@ class DismissAlarmReceiver : BroadcastReceiver() {
         ensureBackgroundCoroutine {
             AlarmClock.cancel(context)
         }
-        AlarmClockSetter.main(context)
+        CoroutineScope(Dispatchers.Default).launch{
+            AlarmClockSetter.main(context)
+        }
     }
 }

@@ -65,65 +65,68 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun setRunButtonListener() {
         runButton.setOnClickListener { _: View? ->
-            if (!isOnline()) {
-                this.toast(getString(R.string.you_are_offline))
-                return@setOnClickListener
+            CoroutineScope(Dispatchers.Default).launch{
+                if (!isOnline()) {
+                    this@WelcomeActivity.toast(getString(R.string.you_are_offline))
+                    return@launch
+                }
+
+                if (untisSchool.text.toString().isEmpty()) {
+                    //show warning
+                    untisSchoolInputLayout.error = getString(R.string.may_not_be_empty)
+                    return@launch
+                }
+                untisSchoolInputLayout.error = null
+
+                if (untisUserName.text.toString().isEmpty()) {
+                    //show warning
+                    untisUserNameInputLayout.error = getString(R.string.may_not_be_empty)
+                    return@launch
+                }
+                untisUserNameInputLayout.error = null
+
+                if (untisPassword.text.toString().isEmpty()) {
+                    //show warning
+                    untisPasswordInputLayout.error = getString(R.string.may_not_be_empty)
+                    return@launch
+                }
+                untisPasswordInputLayout.error = null
+
+                //check if school was selected
+                if (schoolName == null || server == null) {
+                    untisSelectInputLayout.error = getString(R.string.school_must_be_selected)
+                    return@launch
+                }
+                untisSelectInputLayout.error = null
+
+                //verify login data
+                if (untisApiCalls == null) {
+                    if (!verifyLoginData()) return@launch
+                }
+                untisPasswordInputLayout.error = null
+                untisUserNameInputLayout.error = null
+
+                val untisID =
+                    untisApiCalls!!.getID() //!! valid since untisApiCalls is never set to null in code
+
+                if (untisID == null) {
+                    //no match was found
+                    untisPasswordInputLayout.error = getString(R.string.invalid_login_data)
+                    untisUserNameInputLayout.error = getString(R.string.invalid_login_data)
+                    return@launch
+                }
+
+                val storeData = StoreData(this@WelcomeActivity)
+                storeData.storeLoginData(
+                    untisUserName.text.toString(),
+                    untisPassword.text.toString(),
+                    server!!,
+                    schoolName!!
+                )
+                storeData.storeID(untisID)
+                intent = Intent(this@WelcomeActivity, FirstSettingActivity::class.java)
+                startActivity(intent)
             }
-
-            if (untisSchool.text.toString().isEmpty()) {
-                //show warning
-                untisSchoolInputLayout.error = getString(R.string.may_not_be_empty)
-                return@setOnClickListener
-            }
-            untisSchoolInputLayout.error = null
-
-            if (untisUserName.text.toString().isEmpty()) {
-                //show warning
-                untisUserNameInputLayout.error = getString(R.string.may_not_be_empty)
-                return@setOnClickListener
-            }
-            untisUserNameInputLayout.error = null
-
-            if (untisPassword.text.toString().isEmpty()) {
-                //show warning
-                untisPasswordInputLayout.error = getString(R.string.may_not_be_empty)
-                return@setOnClickListener
-            }
-            untisPasswordInputLayout.error = null
-
-            //check if school was selected
-            if (schoolName == null || server == null) {
-                untisSelectInputLayout.error = getString(R.string.school_must_be_selected)
-                return@setOnClickListener
-            }
-            untisSelectInputLayout.error = null
-
-            //verify login data
-            if (untisApiCalls == null) {
-                if (!verifyLoginData()) return@setOnClickListener
-            }
-            untisPasswordInputLayout.error = null
-            untisUserNameInputLayout.error = null
-
-            val untisID = untisApiCalls!!.getID() //!! valid since untisApiCalls is never set to null in code
-
-            if (untisID == null) {
-                //no match was found
-                untisPasswordInputLayout.error = getString(R.string.invalid_login_data)
-                untisUserNameInputLayout.error = getString(R.string.invalid_login_data)
-                return@setOnClickListener
-            }
-
-            val storeData = StoreData(this)
-            storeData.storeLoginData(
-                untisUserName.text.toString(),
-                untisPassword.text.toString(),
-                server!!,
-                schoolName!!
-            )
-            storeData.storeID(untisID)
-            intent = Intent(this@WelcomeActivity, FirstSettingActivity::class.java)
-            startActivity(intent)
         }
     }
 
@@ -176,13 +179,14 @@ class WelcomeActivity : AppCompatActivity() {
                     return
                 }
 
-                if (!isOnline()) {
-                    untisSchoolInputLayout.error = getString(R.string.you_are_offline)
-                    return
-                }
                 untisSchoolInputLayout.error = null
 
                 CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+                    if (!isOnline()) {
+                        untisSchoolInputLayout.error = getString(R.string.you_are_offline)
+                        return@launch
+                    }
+
                     val webApiCalls = WebApiCalls()
                     schools = webApiCalls.getUntisSchools("$text")
 

@@ -14,6 +14,9 @@ import android.content.Intent
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AlarmScheduler(
     private val context: Context
@@ -21,8 +24,9 @@ class AlarmScheduler(
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
 
     fun schedule(context: Context) {
-        AlarmClockSetter.main(context, true) //is always active if alarm was just scheduled
-
+        CoroutineScope(Dispatchers.Default).launch{
+            AlarmClockSetter.main(context, true) //is always active if alarm was just scheduled
+        }
         val intent = Intent(context, AlarmReceiver::class.java).also {
             it.action = Intent.ACTION_CALL
         }
@@ -32,7 +36,7 @@ class AlarmScheduler(
              intent,
              PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
          )
-         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 900000, pendingIntent)
+         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 900000, pendingIntent)
      }
 
     fun cancel() {

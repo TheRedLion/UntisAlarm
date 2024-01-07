@@ -11,6 +11,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import eu.karenfort.main.alarmClock.AlarmClockSetter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class AlarmReceiver: BroadcastReceiver() {
@@ -20,6 +23,8 @@ class AlarmReceiver: BroadcastReceiver() {
         if (action != null && action != Intent.ACTION_BOOT_COMPLETED && action != Intent.ACTION_CALL) {
             return
         }
-        AlarmClockSetter.main(context)
+        CoroutineScope(Dispatchers.Default).launch{
+            AlarmClockSetter.main(context)
+        }
     }
 }

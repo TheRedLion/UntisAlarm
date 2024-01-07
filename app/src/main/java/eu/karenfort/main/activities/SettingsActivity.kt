@@ -7,6 +7,7 @@
  */
 package eu.karenfort.main.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -46,7 +47,6 @@ import kotlinx.coroutines.runBlocking
 
 
 class SettingsActivity : AppCompatActivity() {
-
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
@@ -62,9 +62,9 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var alarmName: TextView
     private lateinit var makeSilent: Button
 
-    //used to preload settings
+    //these are used to preload settings
     private var storedLanguage: String? = null
-    private var storedDarkMode: Int? = null
+    private var storedDarkMode: DarkMode? = null
     private var storedUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,6 +142,7 @@ class SettingsActivity : AppCompatActivity() {
         snoozeInputField.isClickable = false
     }
 
+    @SuppressLint("SetTextI18n")
     private fun loadAndDisplayStoredStates() {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             val storeData = StoreData(this@SettingsActivity)
@@ -172,7 +173,11 @@ class SettingsActivity : AppCompatActivity() {
                         getString(R.string.short_minute)
                     })"
                 ivgToggle.isChecked = ivg
-                alarmName.text = alarmSoundTitle
+                if (alarmSoundTitle.isNullOrEmpty()) {
+                    alarmName.text = getString(R.string.alarm_sound)
+                } else {
+                    alarmName.text = "${getString(R.string.alarm_sound)} ($alarmSoundTitle)"
+                }
             }
             enableClicking()
         }
@@ -225,14 +230,14 @@ class SettingsActivity : AppCompatActivity() {
         ) //matches the states of StoreData.DARK_MODE_..., should not be changed
 
         // load checkedItem from StoreData
-        var checkedItem = DarkMode.DEFAULT
+        var checkedItem = DarkMode.DEFAULT.ordinal
         if (storedDarkMode != null) {
-            checkedItem = storedDarkMode!! //is never set to null
+            checkedItem = storedDarkMode!!.ordinal //is never set to null
         } else {
             runBlocking {
                 val storeData = StoreData(this@SettingsActivity)
                 if (storeData.loadDarkMode() != null) {
-                    checkedItem = storeData.loadDarkMode()!!
+                    checkedItem = storeData.loadDarkMode()!!.ordinal
                 }
             }
         }
@@ -244,7 +249,7 @@ class SettingsActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
                 // Change app theme to the selected theme
-                this.changeDarkMode(checkedItem)
+                this.changeDarkMode(DarkMode.values()[checkedItem])
                 StoreData(this).storeDarkMode(checkedItem)
             }
             .setSingleChoiceItems(listItems, checkedItem) { _, which ->
@@ -258,7 +263,7 @@ class SettingsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun initDarkMode(): Int {
+    private fun initDarkMode(): DarkMode {
         StoreData(this).storeDarkMode(DarkMode.DEFAULT)
         return DarkMode.DEFAULT
     }

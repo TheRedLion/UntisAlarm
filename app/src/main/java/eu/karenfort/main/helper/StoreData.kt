@@ -1,3 +1,10 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ *
+ * Description: Used to handel storage in Androids DataStore
+ */
 package eu.karenfort.main.helper
 
 import android.content.Context
@@ -53,20 +60,24 @@ class StoreData (
         val preferences = context.dataStore.data.first()
         return preferences[KEY_CANCELLED_MESSAGE]
     }*/
-    fun storeDarkMode(isDarkModeEnabled: Int) {
-        if (isDarkModeEnabled != DarkMode.ENABLED && isDarkModeEnabled != DarkMode.DISABLED && isDarkModeEnabled != DarkMode.DEFAULT) {
-            return
-        }
-
+    fun storeDarkMode(darkMode: DarkMode) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
-                settings[KEY_DARK_MODE] = isDarkModeEnabled
+                settings[KEY_DARK_MODE] = darkMode.ordinal
             }
         }
     }
-    suspend fun loadDarkMode(): Int? {
+    fun storeDarkMode(darkMode: Int) {
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+            context.dataStore.edit { settings ->
+                settings[KEY_DARK_MODE] = darkMode
+            }
+        }
+    }
+    suspend fun loadDarkMode(): DarkMode? {
         val preferences = context.dataStore.data.first()
-        return preferences[KEY_DARK_MODE]
+        val darkModeOrdinal = preferences[KEY_DARK_MODE] ?: return null
+        return DarkMode.values()[darkModeOrdinal]
     }
     fun storeLanguage(language: String) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {

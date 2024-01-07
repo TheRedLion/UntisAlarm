@@ -1,9 +1,12 @@
+/**
+ * Project: https://github.com/TheRedLion/UntisAlarm
+ *
+ * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+ */
 package eu.karenfort.main.helper
 
-class DarkMode {
-    companion object {
-        const val DEFAULT = 0
-        const val DISABLED = 1
-        const val ENABLED = 2
-    }
+enum class DarkMode() {
+    DEFAULT,
+    DISABLED,
+    ENABLED
 }

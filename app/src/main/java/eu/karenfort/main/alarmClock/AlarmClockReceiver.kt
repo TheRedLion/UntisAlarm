@@ -30,6 +30,9 @@ import eu.karenfort.main.extentions.hideNotification
 import eu.karenfort.main.extentions.isScreenOn
 import eu.karenfort.main.extentions.showAlarmNotification
 import eu.karenfort.main.extentions.showErrorToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AlarmClockReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -39,7 +42,9 @@ class AlarmClockReceiver : BroadcastReceiver() {
             context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
-                AlarmClockSetter.main(context, null, false)
+                CoroutineScope(Dispatchers.Default).launch{
+                    AlarmClockSetter.main(context, null, false)
+                }
             }, MAX_ALARM_DURATION * 1000L)
             return
         }

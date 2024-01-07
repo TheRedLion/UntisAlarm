@@ -42,6 +42,9 @@ const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
 const val MAX_ALARM_DURATION = 60
 const val DISABLED_BUTTON_ALPHA_VALUE = .4F
 
+//links
+val ABOUT_US_PAGE = Uri.parse("https://github.com/TheRedLion/UntisAlarm")
+
 //language
 val SUPPORTED_LANGUAGES = arrayOf("System Default", "English", "German")
 val SUPPORTED_LANGUAGES_TAG = arrayOf("system", "en", "de")

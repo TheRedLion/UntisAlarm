@@ -47,6 +47,9 @@ import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isOreoMr1Plus
 import eu.karenfort.main.helper.isSnowConePlus
 import eu.karenfort.main.helper.isUpsideDownCakePlus
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
@@ -128,7 +131,9 @@ class ReminderActivity : AppCompatActivity() {
                             binding.reminderDraggable.performHapticFeedback()
                             didVibrate = true
                             finishActivity()
-                            AlarmClockSetter.main(this)
+                            CoroutineScope(Dispatchers.Default).launch{
+                                AlarmClockSetter.main(this@ReminderActivity)
+                            }
                         }
 
                         notificationManager.cancelAll()
@@ -260,10 +265,12 @@ class ReminderActivity : AppCompatActivity() {
         finished = true
         destroyEffects()
         finish()
-        if (snoozed) {
-            AlarmClockSetter.main(this, null, null)
-        } else {
-            AlarmClockSetter.main(this, null, false)
+        CoroutineScope(Dispatchers.Default).launch{
+            if (snoozed) {
+                AlarmClockSetter.main(this@ReminderActivity, null, null)
+            } else {
+                AlarmClockSetter.main(this@ReminderActivity, null, false)
+            }
         }
         if (isUpsideDownCakePlus()) {
             overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,0,0)
