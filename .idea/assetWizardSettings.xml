@@ -333,26 +333,12 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
-                        <option name="children">
-                          <map>
-                            <entry key="clipartAsset">
-                              <value>
-                                <PersistentState>
-                                  <option name="values">
-                                    <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/stop_circle/baseline_stop_circle_24.xml" />
-                                    </map>
-                                  </option>
-                                </PersistentState>
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="opacityPercent" value="0" />
-                            <entry key="outputName" value="ic_stop_vector" />
-                            <entry key="sourceFile" value="C:\Users\Karen\AndroidStudioProjects\UntisAlarm" />
+                            <entry key="outputName" value="ic_alarm_silent" />
+                            <entry key="sourceFile" value="C:\Users\Karen\Downloads\android-notifications-off-1.svg" />
                           </map>
                         </option>
                       </PersistentState>

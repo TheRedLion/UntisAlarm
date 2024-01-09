@@ -11,6 +11,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -59,7 +63,6 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var snoozeInputLayout: TextInputLayout
     //private lateinit var cancellationMessageField: TextInputEditText
     //private lateinit var cancellationMessageLayout: TextInputLayout
-    private lateinit var alarmName: TextView
     private lateinit var makeSilent: Button
 
     //these are used to preload settings
@@ -75,7 +78,6 @@ class SettingsActivity : AppCompatActivity() {
         disableClicking() //disabling clicks until everything was properly loaded to prevent errors
         loadAndDisplayStoredStates()
         setListener()
-
     }
 
     private fun getLayoutObjectsByID() {
@@ -83,7 +85,6 @@ class SettingsActivity : AppCompatActivity() {
         //colorSchemeSettings = findViewById(R.id.color_scheme_settings)
         darkModeSettings = findViewById(R.id.dark_mode_settings)
         alarmSoundSettings = findViewById(R.id.alarm_settings)
-        alarmName = findViewById(R.id.alarm_sound_name)
         ivgToggle = findViewById(R.id.ivgToggle)
         vibrateToggle = findViewById(R.id.vibrateToggle)
         tbsInputField = findViewById(R.id.tbs_input_field)
@@ -98,8 +99,42 @@ class SettingsActivity : AppCompatActivity() {
     private fun setListener() {
         //cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
         //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
-        snoozeInputLayout.setEndIconOnClickListener { _: View? -> handleSetSnooze() }
-        tbsInputLayout.setEndIconOnClickListener { _: View? -> handleSetTBS() }
+
+        //listener when exiting field
+        snoozeInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
+            if(!b){
+                handleSetSnooze()
+            }
+        }
+        tbsInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
+            if(!b) {
+                handleSetTBS()
+            }
+        }
+        //lister for 2sec after entering something
+        val snoozeHandler = Handler(Looper.getMainLooper())
+        snoozeInputField.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                snoozeHandler.removeCallbacksAndMessages(null)
+                snoozeHandler.postDelayed({
+                    handleSetSnooze()
+                }, 2*1000L)
+            }
+        })
+        val tbsHandler = Handler(Looper.getMainLooper())
+        tbsInputField.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                tbsHandler.removeCallbacksAndMessages(null)
+                tbsHandler.postDelayed({
+                    handleSetTBS()
+                }, 2*1000L)
+            }
+        })
+
         vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
         ivgToggle.addOnCheckedStateChangedListener { _, state -> handleToggleIVG(state) }
         darkModeSettings.setOnClickListener { darkModeDialog() }
@@ -156,7 +191,6 @@ class SettingsActivity : AppCompatActivity() {
             if (alarmSoundPair.first == null || alarmSoundPair.second == null) {
                 alarmSoundPair = initSound()
             }
-            val alarmSoundTitle = alarmSoundPair.first
             storedUri = alarmSoundPair.second
 
             storedLanguage = storeData.loadLanguage()?: initLanguage()
@@ -173,11 +207,6 @@ class SettingsActivity : AppCompatActivity() {
                         getString(R.string.short_minute)
                     })"
                 ivgToggle.isChecked = ivg
-                if (alarmSoundTitle.isNullOrEmpty()) {
-                    alarmName.text = getString(R.string.alarm_sound)
-                } else {
-                    alarmName.text = "${getString(R.string.alarm_sound)} ($alarmSoundTitle)"
-                }
             }
             enableClicking()
         }
@@ -263,42 +292,6 @@ class SettingsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun initDarkMode(): DarkMode {
-        StoreData(this).storeDarkMode(DarkMode.DEFAULT)
-        return DarkMode.DEFAULT
-    }
-
-    private fun initLanguage(): String {
-        StoreData(this).storeLanguage(SUPPORTED_LANGUAGES[0])
-        return SUPPORTED_LANGUAGES[0]
-    }
-
-    private fun initSound(): Pair<String, Uri> {
-        StoreData(this).storeSound(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
-        return Pair(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
-    }
-
-    private fun initIVG(): Boolean {
-        StoreData(this).storeIncreaseVolumeGradually(IVG_DEFAULT)
-        return IVG_DEFAULT
-    }
-
-    private fun initSnooze(): Int {
-        StoreData(this).storeSnoozeTime(SNOOZE_DEFAULT)
-        return SNOOZE_DEFAULT
-    }
-
-    private fun initVibrate(): Boolean {
-        StoreData(this).storeVibrate(VIBRATE_DEFAULT)
-        return VIBRATE_DEFAULT
-    }
-
-    private fun initTBS(): Int {
-        StoreData(this).storeTBS(TBS_DEFAULT)
-        return TBS_DEFAULT
-    }
-
-
     private fun handleToggleVibrate(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED
         StoreData(this).storeVibrate(stateBool)
@@ -352,8 +345,7 @@ class SettingsActivity : AppCompatActivity() {
         try {
             newTBS = Integer.parseInt(newTBSStr)
         } catch (e: NumberFormatException) {
-            Toast.makeText(this, getString(R.string.please_only_enter_integers), Toast.LENGTH_SHORT)
-                .show()
+            toast(getString(R.string.please_only_enter_integers))
             return
         }
         tbsInputLayout.hint =
@@ -363,7 +355,7 @@ class SettingsActivity : AppCompatActivity() {
 
         storeData.storeTBS(newTBS)
 
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.Default).launch {//aa is alarm active
             val aaStateNullable: Boolean? = storeData.loadAlarmActive()
             var aaState = false
             if (aaStateNullable != null) {
@@ -373,5 +365,34 @@ class SettingsActivity : AppCompatActivity() {
                 AlarmClockSetter.main(this@SettingsActivity)
             }
         }
+    }
+
+    private fun initDarkMode(): DarkMode {
+        StoreData(this).storeDarkMode(DarkMode.DEFAULT)
+        return DarkMode.DEFAULT
+    }
+    private fun initLanguage(): String {
+        StoreData(this).storeLanguage(SUPPORTED_LANGUAGES[0])
+        return SUPPORTED_LANGUAGES[0]
+    }
+    private fun initSound(): Pair<String, Uri> {
+        StoreData(this).storeSound(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
+        return Pair(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
+    }
+    private fun initIVG(): Boolean {
+        StoreData(this).storeIncreaseVolumeGradually(IVG_DEFAULT)
+        return IVG_DEFAULT
+    }
+    private fun initSnooze(): Int {
+        StoreData(this).storeSnoozeTime(SNOOZE_DEFAULT)
+        return SNOOZE_DEFAULT
+    }
+    private fun initVibrate(): Boolean {
+        StoreData(this).storeVibrate(VIBRATE_DEFAULT)
+        return VIBRATE_DEFAULT
+    }
+    private fun initTBS(): Int {
+        StoreData(this).storeTBS(TBS_DEFAULT)
+        return TBS_DEFAULT
     }
 }
