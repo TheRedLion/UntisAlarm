@@ -17,8 +17,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,12 +28,10 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.alarmClock.AlarmClockSetter
-import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_TITLE
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.DarkMode
 import eu.karenfort.main.helper.IVG_DEFAULT
-import eu.karenfort.main.helper.SILENT_TITLE
 import eu.karenfort.main.helper.SILENT_URI
 import eu.karenfort.main.helper.SNOOZE_DEFAULT
 import eu.karenfort.main.helper.SUPPORTED_LANGUAGES
@@ -142,7 +138,7 @@ class SettingsActivity : AppCompatActivity() {
         languageSettings.setOnClickListener { languageDialog() }
         //colorSchemeSettings.setOnClickListener { colorDialog() }
         makeSilent.setOnClickListener {
-            StoreData(this).storeSound(SILENT_TITLE, SILENT_URI)
+            StoreData(this).storeSound(SILENT_URI)
         }
     }
 
@@ -187,12 +183,7 @@ class SettingsActivity : AppCompatActivity() {
             val snooze: Int = storeData.loadSnoozeTime() ?: initSnooze()
             val ivg: Boolean = storeData.loadIncreaseVolumeGradually() ?: initIVG()
 
-            var alarmSoundPair = storeData.loadSound()
-            if (alarmSoundPair.first == null || alarmSoundPair.second == null) {
-                alarmSoundPair = initSound()
-            }
-            storedUri = alarmSoundPair.second
-
+            storedUri = storeData.loadSound()?: initSound()
             storedLanguage = storeData.loadLanguage()?: initLanguage()
             storedDarkMode = storeData.loadDarkMode()?: initDarkMode()
 
@@ -375,9 +366,9 @@ class SettingsActivity : AppCompatActivity() {
         StoreData(this).storeLanguage(SUPPORTED_LANGUAGES[0])
         return SUPPORTED_LANGUAGES[0]
     }
-    private fun initSound(): Pair<String, Uri> {
-        StoreData(this).storeSound(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
-        return Pair(ALARM_SOUND_DEFAULT_TITLE, ALARM_SOUND_DEFAULT_URI)
+    private fun initSound(): Uri {
+        StoreData(this).storeSound(ALARM_SOUND_DEFAULT_URI)
+        return ALARM_SOUND_DEFAULT_URI
     }
     private fun initIVG(): Boolean {
         StoreData(this).storeIncreaseVolumeGradually(IVG_DEFAULT)

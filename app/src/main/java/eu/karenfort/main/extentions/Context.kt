@@ -229,7 +229,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     var vibrate: Boolean
     runBlocking {
         val storeData = StoreData(this@getAlarmNotification)
-        val (_, newSoundUri) = storeData.loadSound()
+        val newSoundUri = storeData.loadSound()
         soundUri = newSoundUri
         if (soundUri == null) {
             soundUri = Uri.parse("content://silent")

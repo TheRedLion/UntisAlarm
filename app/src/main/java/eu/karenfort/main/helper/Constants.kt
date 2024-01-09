@@ -42,13 +42,10 @@ val ABOUT_US_PAGE = Uri.parse("https://github.com/TheRedLion/UntisAlarm")
 //language
 val SUPPORTED_LANGUAGES = arrayOf("System Default", "English", "German")
 val SUPPORTED_LANGUAGES_TAG = arrayOf("system", "en", "de")
-/* tag as defined in RFC 4647, https://developer.android.com/reference/java/util/Locale
-    for more info's */
+/* tag as defined in Locale */
 
-val ALARM_SOUND_DEFAULT_TITLE: String = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString()
 val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
-const val SILENT_TITLE = "Silent"
 const val SILENT = "content://silent"
 val SILENT_URI: Uri = Uri.parse(SILENT)
 

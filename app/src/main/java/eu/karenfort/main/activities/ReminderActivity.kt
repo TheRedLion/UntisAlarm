@@ -159,10 +159,7 @@ class ReminderActivity : AppCompatActivity() {
         var soundUri: Uri = ALARM_SOUND_DEFAULT_URI
         runBlocking {
             doVibrate = StoreData(this@ReminderActivity).loadVibrate()?: return@runBlocking
-            val (_, newSoundUri) = StoreData(this@ReminderActivity).loadSound()
-            if (newSoundUri == null) {
-                return@runBlocking
-            }
+            val newSoundUri = StoreData(this@ReminderActivity).loadSound() ?: return@runBlocking
             soundUri = newSoundUri
         }
 

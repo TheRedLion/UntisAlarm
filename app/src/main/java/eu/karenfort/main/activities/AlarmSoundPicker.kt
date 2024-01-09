@@ -11,6 +11,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
@@ -21,15 +22,15 @@ import eu.karenfort.main.extentions.toast
 
 class AlarmSoundPicker : AppCompatActivity() {
     companion object {
+        const val TAG = "AlarmSoundPicker"
         const val INTENT_ALARM_SOUND_URI = "alarmSoundUri"
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm_sound_picker)
-    }
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+
         if (intent == null) {
+            startDialog()
             return
         }
 
@@ -41,6 +42,7 @@ class AlarmSoundPicker : AppCompatActivity() {
         val uri = Uri.parse(extras.getString(INTENT_ALARM_SOUND_URI))
         startDialog(uri)
     }
+
     private fun startDialog(uri: Uri = ALARM_SOUND_DEFAULT_URI) {
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
@@ -64,10 +66,9 @@ class AlarmSoundPicker : AppCompatActivity() {
                 return@registerForActivityResult
             }
             if (title == null) {
-                StoreData(this).storeSound(getString(R.string.alarm_sound), newUri)
-                return@registerForActivityResult
+                StoreData(this).storeSound(newUri)
             }
-            StoreData(this).storeSound(title, newUri)
+            StoreData(this).storeSound(newUri)
             finish()
         }
         ringtonePickerLauncher.launch(intent)

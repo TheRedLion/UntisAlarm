@@ -41,7 +41,6 @@ class StoreData (
         val KEY_ALARM_CLOCK_MINUTE = intPreferencesKey("alarmClockMinute")
         val KEY_ALARM_CLOCK_EDITED = booleanPreferencesKey("alarmClockEdited")
         val KEY_VIBRATE = booleanPreferencesKey("vibrate")
-        val KEY_SOUND_TITLE = stringPreferencesKey("soundTitle")
         val KEY_SOUND_URI = stringPreferencesKey("soundUri")
         val KEY_IVG = booleanPreferencesKey("increaseVolumeGradually")
         val KEY_SNOOZE_TIME = intPreferencesKey("snoozeTime")
@@ -123,24 +122,24 @@ class StoreData (
         val preferences = context.dataStore.data.first()
         return preferences[KEY_VIBRATE]
     }
-    suspend fun loadSound(): Pair<String?, Uri?> {
+    suspend fun loadSound(): Uri? {
         val preferences = context.dataStore.data.first()
         val uriStr = preferences[KEY_SOUND_URI]
         val uri: Uri = if (uriStr == null) {
             ALARM_SOUND_DEFAULT_URI
         } else {
-            Uri.parse(uriStr)
+            try {
+                Uri.parse(uriStr)
+            } catch (_: Error) {
+                return null
+            }
         }
 
-        return Pair(
-            preferences[KEY_SOUND_TITLE],
-            uri
-        )
+        return uri
     }
-    fun storeSound(soundTitle: String, soundUri: Uri) {
+    fun storeSound(soundUri: Uri) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
-                settings[KEY_SOUND_TITLE] = soundTitle
                 settings[KEY_SOUND_URI] = soundUri.toString()
             }
         }
