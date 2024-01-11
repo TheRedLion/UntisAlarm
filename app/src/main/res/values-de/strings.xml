@@ -105,4 +105,7 @@
     <string name="draggable_selector">Ziehbare Auswahl</string>
     <string name="good_morning">Guten Morgen!</string>
     <string name="alarms_are_disabled">Wecker sind deaktiviert</string>
+    <string name="the_maximum_length_is">"Die maximale länge ist "</string>
+    <string name="hours">stunden.</string>
+    <string name="minutes">" minuten."</string>
 </resources>
