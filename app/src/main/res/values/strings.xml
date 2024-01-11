@@ -105,5 +105,7 @@
     <string name="alarms_are_disabled">Alarms are disabled</string>
     <string name="time_expired">Time Expired</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="the_maximum_length_is">"The maximum length is "</string>
+    <string name="hours">" hours."</string>
+    <string name="minutes">" minutes."</string>
 </resources>

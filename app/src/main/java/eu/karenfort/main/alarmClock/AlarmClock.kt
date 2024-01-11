@@ -12,7 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import eu.karenfort.main.activities.MainActivity
+import eu.karenfort.main.ui.MainActivity
 import eu.karenfort.main.extentions.alarmClockPendingIntent
 import eu.karenfort.main.extentions.alarmManager
 import eu.karenfort.main.extentions.areNotificationsEnabled

@@ -8,7 +8,7 @@
  *
  * Description: This activity is shown when an alarm goes off.
  */
-package eu.karenfort.main.activities
+package eu.karenfort.main.ui
 
 import android.annotation.SuppressLint
 import android.content.Context

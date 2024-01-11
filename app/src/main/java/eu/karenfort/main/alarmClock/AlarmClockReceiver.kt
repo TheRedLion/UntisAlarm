@@ -21,7 +21,7 @@ import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
 import eu.karenfort.main.helper.StoreData
-import eu.karenfort.main.activities.ReminderActivity
+import eu.karenfort.main.ui.ReminderActivity
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.ALARM_NOTIFICATION_ID

@@ -26,7 +26,7 @@
         android:theme="@style/AppTheme"
         > <!--todo android:enableOnBackInvokedCallback="true"-->
         <activity
-            android:name="eu.karenfort.main.activities.MainActivity"
+            android:name="eu.karenfort.main.ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme">
@@ -37,24 +37,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="eu.karenfort.main.activities.SettingsActivity"
+            android:name="eu.karenfort.main.ui.CancelledMessageInfo"
             android:exported="false"
-            android:parentActivityName="eu.karenfort.main.activities.MainActivity" />
+            android:parentActivityName="eu.karenfort.main.ui.SettingsDialogFragment" />
         <activity
-            android:name="eu.karenfort.main.activities.CancelledMessageInfo"
+            android:name="eu.karenfort.main.ui.AlarmSoundPicker"
             android:exported="false"
-            android:parentActivityName="eu.karenfort.main.activities.SettingsActivity" />
+            android:parentActivityName="eu.karenfort.main.ui.SettingsDialogFragment" />
         <activity
-            android:name="eu.karenfort.main.activities.AlarmSoundPicker"
+            android:name="eu.karenfort.main.ui.WelcomeActivity"
             android:exported="false"
-            android:parentActivityName="eu.karenfort.main.activities.SettingsActivity" />
-        <activity
-            android:name="eu.karenfort.main.activities.WelcomeActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name="eu.karenfort.main.activities.ReminderActivity"
+            android:name="eu.karenfort.main.ui.ReminderActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTask"

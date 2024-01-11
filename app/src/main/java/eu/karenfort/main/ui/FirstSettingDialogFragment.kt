@@ -6,7 +6,7 @@
  * Description: This activity is shown after the user has logged in. The user is then able to
  *      change the time between school and Alarm Clock Time.
  */
-package eu.karenfort.main.activities
+package eu.karenfort.main.ui
 
 import android.content.Context
 import android.content.DialogInterface
@@ -18,7 +18,6 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
@@ -42,7 +41,7 @@ class FirstSettingDialogFragment : DialogFragment() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context = this.getContext()?: throw Error("Activity is Null")
+        context = this.getContext()?: throw Error("Context is Null")
     }
     override fun onCreateView(
         inflater: LayoutInflater,

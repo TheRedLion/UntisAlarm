@@ -5,13 +5,12 @@
  *
  * Description: This activity is used to let the user select a custom ringtone.
  */
-package eu.karenfort.main.activities
+package eu.karenfort.main.ui
 
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R

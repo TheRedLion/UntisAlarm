@@ -13,7 +13,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
 import android.util.Log
-import eu.karenfort.main.activities.MainActivity
+import eu.karenfort.main.ui.MainActivity
 import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.extentions.isOnline

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="eu.karenfort.main.activities.CancelledMessageInfo">
+    tools:context="eu.karenfort.main.ui.CancelledMessageInfo">
 
     <TextView
         android:id="@+id/cancelled_message_explanation"

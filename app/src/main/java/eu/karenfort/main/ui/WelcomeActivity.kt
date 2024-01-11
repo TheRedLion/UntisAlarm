@@ -5,9 +5,8 @@
  *
  * Description: This activity lets the user select a school and log in.
  */
-package eu.karenfort.main.activities
+package eu.karenfort.main.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.Editable
@@ -21,7 +20,6 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setFragmentResultListener
 import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputLayout
@@ -45,7 +43,6 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var untisPassword: EditText
     private lateinit var untisUserName: EditText
     private lateinit var runButton: Button
-    private lateinit var intent: Intent
     private lateinit var schoolSelector: AutoCompleteTextView
     private lateinit var untisSchoolInputLayout: TextInputLayout
     private lateinit var untisUserNameInputLayout: TextInputLayout

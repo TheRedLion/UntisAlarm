@@ -30,6 +30,9 @@ const val VIBRATE_DEFAULT = true
 const val SNOOZE_DEFAULT = 5
 const val IVG_DEFAULT = false
 
+const val MAX_SNOOZE = 30
+const val MAX_TBS = 12*60
+
 //defaults
 const val INCREASE_VOLUME_DELAY = 300L
 const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1

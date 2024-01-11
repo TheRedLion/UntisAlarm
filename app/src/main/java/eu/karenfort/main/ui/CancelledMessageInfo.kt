@@ -5,7 +5,7 @@
  *
  * Description: Not yet implemented.
  */
-package eu.karenfort.main.activities
+package eu.karenfort.main.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

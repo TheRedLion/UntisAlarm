@@ -5,9 +5,10 @@
  *
  * Description: Activity to change settings.
  */
-package eu.karenfort.main.activities
+package eu.karenfort.main.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,12 +16,16 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.LocaleListCompat
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 import com.carlkarenfort.test.R
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -40,13 +45,15 @@ import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
 import eu.karenfort.main.extentions.changeDarkMode
 import eu.karenfort.main.extentions.toast
+import eu.karenfort.main.helper.MAX_SNOOZE
+import eu.karenfort.main.helper.MAX_TBS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsDialogFragment : DialogFragment() {
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
@@ -66,32 +73,50 @@ class SettingsActivity : AppCompatActivity() {
     private var storedDarkMode: DarkMode? = null
     private var storedUri: Uri? = null
 
+    private lateinit var context: Context
+    private lateinit var nonNullActivity: FragmentActivity
+
+    companion object {
+        const val TAG = "SettingsDialogFragment"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        context = this.getContext()?: throw Error("Context is Null")
+        nonNullActivity = activity?: throw Error("Activity is Null")
+    }
 
-        getLayoutObjectsByID()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(R.layout.fragment_settings, container)
+
+        languageSettings = view.findViewById(R.id.language_settings)
+        darkModeSettings = view.findViewById(R.id.dark_mode_settings)
+        alarmSoundSettings = view.findViewById(R.id.alarm_settings)
+        ivgToggle = view.findViewById(R.id.ivgToggle)
+        vibrateToggle = view.findViewById(R.id.vibrateToggle)
+        tbsInputField = view.findViewById(R.id.tbs_input_field)
+        snoozeInputField = view.findViewById(R.id.snooze_input_field)
+        tbsInputLayout = view.findViewById(R.id.tbs_input_layout)
+        snoozeInputLayout = view.findViewById(R.id.snooze_input_layout)
+        //colorSchemeSettings = view.findViewById(R.id.color_scheme_settings)
+        //cancellationMessageLayout = view.findViewById(R.id.cancelled_message_input_layout)
+        //cancellationMessageField = view.findViewById(R.id.cancelled_message_input_field)
+        makeSilent = view.findViewById(R.id.makeSilent)
+
+        setListener()
         disableClicking() //disabling clicks until everything was properly loaded to prevent errors
         loadAndDisplayStoredStates()
         setListener()
-    }
 
-    private fun getLayoutObjectsByID() {
-        languageSettings = findViewById(R.id.language_settings)
-        //colorSchemeSettings = findViewById(R.id.color_scheme_settings)
-        darkModeSettings = findViewById(R.id.dark_mode_settings)
-        alarmSoundSettings = findViewById(R.id.alarm_settings)
-        ivgToggle = findViewById(R.id.ivgToggle)
-        vibrateToggle = findViewById(R.id.vibrateToggle)
-        tbsInputField = findViewById(R.id.tbs_input_field)
-        snoozeInputField = findViewById(R.id.snooze_input_field)
-        tbsInputLayout = findViewById(R.id.tbs_input_layout)
-        snoozeInputLayout = findViewById(R.id.snooze_input_layout)
-        //cancellationMessageLayout = findViewById(R.id.cancelled_message_input_layout)
-        //cancellationMessageField = findViewById(R.id.cancelled_message_input_field)
-        makeSilent = findViewById(R.id.makeSilent)
+        return view
     }
-
+    override fun getTheme(): Int {
+        return R.style.DialogTheme
+    }
     private fun setListener() {
         //cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
         //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
@@ -113,7 +138,7 @@ class SettingsActivity : AppCompatActivity() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
-                snoozeHandler.removeCallbacksAndMessages(null)
+                Log.i(TAG, "text change1d")
                 snoozeHandler.postDelayed({
                     handleSetSnooze()
                 }, 2*1000L)
@@ -124,7 +149,7 @@ class SettingsActivity : AppCompatActivity() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
-                tbsHandler.removeCallbacksAndMessages(null)
+                Log.i(TAG, "text chan2ged")
                 tbsHandler.postDelayed({
                     handleSetTBS()
                 }, 2*1000L)
@@ -138,7 +163,7 @@ class SettingsActivity : AppCompatActivity() {
         languageSettings.setOnClickListener { languageDialog() }
         //colorSchemeSettings.setOnClickListener { colorDialog() }
         makeSilent.setOnClickListener {
-            StoreData(this).storeSound(SILENT_URI)
+            StoreData(context).storeSound(SILENT_URI)
         }
     }
 
@@ -150,7 +175,7 @@ class SettingsActivity : AppCompatActivity() {
 
 
     private fun enableClicking() {
-        runOnUiThread {
+        nonNullActivity.runOnUiThread {
             languageSettings.isClickable = true
             //colorSchemeSettings.isClickable = true
             darkModeSettings.isClickable = true
@@ -176,7 +201,7 @@ class SettingsActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun loadAndDisplayStoredStates() {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
-            val storeData = StoreData(this@SettingsActivity)
+            val storeData = StoreData(context)
 
             val tbs: Int = storeData.loadTBS() ?: initTBS()
             val vibrate: Boolean = storeData.loadVibrate() ?: initVibrate()
@@ -187,7 +212,7 @@ class SettingsActivity : AppCompatActivity() {
             storedLanguage = storeData.loadLanguage()?: initLanguage()
             storedDarkMode = storeData.loadDarkMode()?: initDarkMode()
 
-            runOnUiThread {
+            nonNullActivity.runOnUiThread {
                 tbsInputLayout.hint =
                     "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $tbs${
                         getString(R.string.short_minute)
@@ -212,7 +237,7 @@ class SettingsActivity : AppCompatActivity() {
             } catch (_: Error) {}
         } else {
             runBlocking {
-                val storeData = StoreData(this@SettingsActivity)
+                val storeData = StoreData(context)
                 val language = storeData.loadLanguage()
                 if (language != null) {
                     checkedItem = SUPPORTED_LANGUAGES.indexOf(language)
@@ -220,7 +245,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(context)
             .setTitle(getString(R.string.select_language))
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
@@ -233,7 +258,7 @@ class SettingsActivity : AppCompatActivity() {
                 val appLocale = LocaleListCompat.forLanguageTags(languageTag)
                 AppCompatDelegate.setApplicationLocales(appLocale)
 
-                StoreData(this).storeLanguage(SUPPORTED_LANGUAGES[checkedItem])
+                StoreData(context).storeLanguage(SUPPORTED_LANGUAGES[checkedItem])
             }
             .setSingleChoiceItems(SUPPORTED_LANGUAGES, checkedItem) { _, which ->
                 if (checkedItem != which) {
@@ -255,13 +280,13 @@ class SettingsActivity : AppCompatActivity() {
             checkedItem = storedDarkMode!!.ordinal //is never set to null
         } else {
             runBlocking {
-                val storeData = StoreData(this@SettingsActivity)
+                val storeData = StoreData(context)
                 if (storeData.loadDarkMode() != null) {
                     checkedItem = storeData.loadDarkMode()!!.ordinal
                 }
             }
         }
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(context)
             .setTitle(getString(R.string.change_app_theme))
             .setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
@@ -269,8 +294,8 @@ class SettingsActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.confirm)) { dialog, _ ->
                 dialog.dismiss()
                 // Change app theme to the selected theme
-                this.changeDarkMode(DarkMode.values()[checkedItem])
-                StoreData(this).storeDarkMode(checkedItem)
+                context.changeDarkMode(DarkMode.values()[checkedItem])
+                StoreData(context).storeDarkMode(checkedItem)
             }
             .setSingleChoiceItems(listItems, checkedItem) { _, which ->
                 checkedItem = which
@@ -278,19 +303,19 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun alarmSoundDialog() {
-        val intent = Intent(this, AlarmSoundPicker::class.java)
+        val intent = Intent(context, AlarmSoundPicker::class.java)
         intent.putExtra(AlarmSoundPicker.INTENT_ALARM_SOUND_URI, storedUri.toString())
         startActivity(intent)
     }
 
     private fun handleToggleVibrate(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED
-        StoreData(this).storeVibrate(stateBool)
+        StoreData(context).storeVibrate(stateBool)
     }
 
     private fun handleToggleIVG(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED
-        StoreData(this).storeIncreaseVolumeGradually(stateBool)
+        StoreData(context).storeIncreaseVolumeGradually(stateBool)
     }
 
     /*
@@ -309,43 +334,56 @@ class SettingsActivity : AppCompatActivity() {
     private fun handleSetSnooze() {
         val newSnoozeStr = snoozeInputField.text.toString()
 
-        snoozeInputField.setText("")
+        if (newSnoozeStr.isEmpty()) return
+        snoozeInputField.setText("") //must be after isEmpty check to prevent afterTextChanged triggering
 
         val newSnooze: Int
         try {
             newSnooze = Integer.parseInt(newSnoozeStr)
         } catch (e: NumberFormatException) { //this should never happen since the input is a number input
-            this.toast(getString(R.string.please_only_enter_integers))
+            context.toast(getString(R.string.please_only_enter_integers))
             return
         }
+
+        if (newSnooze > MAX_SNOOZE) {
+            context.toast(getString(R.string.the_maximum_length_is) + MAX_SNOOZE + getString(R.string.minutes))
+            return
+        }
+
         snoozeInputLayout.hint =
             "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $newSnooze${
                 getString(R.string.short_minute)
             })"
 
-        StoreData(this).storeTBS(newSnooze)
+        StoreData(context).storeTBS(newSnooze)
     }
 
     private fun handleSetTBS() {
-        val storeData = StoreData(this)
         val newTBSStr = tbsInputField.text.toString()
 
-        tbsInputField.setText("")
+        if (newTBSStr.isEmpty()) return
+        tbsInputField.setText("") //must be after isEmpty check to prevent afterTextChanged triggering
 
         val newTBS: Int
         try {
             newTBS = Integer.parseInt(newTBSStr)
         } catch (e: NumberFormatException) {
-            toast(getString(R.string.please_only_enter_integers))
+            context.toast(getString(R.string.please_only_enter_integers))
             return
         }
+
+        if (newTBS > MAX_TBS) {
+            context.toast(getString(R.string.the_maximum_length_is) + MAX_TBS/12 + getString(R.string.hours))
+            return
+        }
+
         tbsInputLayout.hint =
             "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $newTBS${
                 getString(R.string.short_minute)
             })"
 
+        val storeData = StoreData(context)
         storeData.storeTBS(newTBS)
-
         CoroutineScope(Dispatchers.Default).launch {//aa is alarm active
             val aaStateNullable: Boolean? = storeData.loadAlarmActive()
             var aaState = false
@@ -353,37 +391,37 @@ class SettingsActivity : AppCompatActivity() {
                 aaState = aaStateNullable
             }
             if (aaState) {
-                AlarmClockSetter.main(this@SettingsActivity)
+                AlarmClockSetter.main(context)
             }
         }
     }
 
     private fun initDarkMode(): DarkMode {
-        StoreData(this).storeDarkMode(DarkMode.DEFAULT)
+        StoreData(context).storeDarkMode(DarkMode.DEFAULT)
         return DarkMode.DEFAULT
     }
     private fun initLanguage(): String {
-        StoreData(this).storeLanguage(SUPPORTED_LANGUAGES[0])
+        StoreData(context).storeLanguage(SUPPORTED_LANGUAGES[0])
         return SUPPORTED_LANGUAGES[0]
     }
     private fun initSound(): Uri {
-        StoreData(this).storeSound(ALARM_SOUND_DEFAULT_URI)
+        StoreData(context).storeSound(ALARM_SOUND_DEFAULT_URI)
         return ALARM_SOUND_DEFAULT_URI
     }
     private fun initIVG(): Boolean {
-        StoreData(this).storeIncreaseVolumeGradually(IVG_DEFAULT)
+        StoreData(context).storeIncreaseVolumeGradually(IVG_DEFAULT)
         return IVG_DEFAULT
     }
     private fun initSnooze(): Int {
-        StoreData(this).storeSnoozeTime(SNOOZE_DEFAULT)
+        StoreData(context).storeSnoozeTime(SNOOZE_DEFAULT)
         return SNOOZE_DEFAULT
     }
     private fun initVibrate(): Boolean {
-        StoreData(this).storeVibrate(VIBRATE_DEFAULT)
+        StoreData(context).storeVibrate(VIBRATE_DEFAULT)
         return VIBRATE_DEFAULT
     }
     private fun initTBS(): Int {
-        StoreData(this).storeTBS(TBS_DEFAULT)
+        StoreData(context).storeTBS(TBS_DEFAULT)
         return TBS_DEFAULT
     }
 }

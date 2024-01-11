@@ -6,7 +6,7 @@
  * Description: This Activity is the Main screen of the App and allows the user to activate and
  *      deactivate the alarm as well as edit the alarm set for tomorrow.
  */
-package eu.karenfort.main.activities
+package eu.karenfort.main.ui
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -162,8 +162,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
-                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-                startActivity(intent)
+                val settingDialogFragment = SettingsDialogFragment()
+                settingDialogFragment.show(supportFragmentManager, SettingsDialogFragment.TAG)
             }
             R.id.logout -> {
                 startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
