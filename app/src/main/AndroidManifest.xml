@@ -52,9 +52,7 @@
             android:name="eu.karenfort.main.activities.WelcomeActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name="eu.karenfort.main.activities.FirstSettingActivity"
-            android:exported="false" />
+
         <activity
             android:name="eu.karenfort.main.activities.ReminderActivity"
             android:excludeFromRecents="true"

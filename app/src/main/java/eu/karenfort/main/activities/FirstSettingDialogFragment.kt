@@ -8,33 +8,64 @@
  */
 package eu.karenfort.main.activities
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.Button
-import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.extentions.isDisabled
+import eu.karenfort.main.extentions.toast
+import eu.karenfort.main.helper.StoreData
 
-class FirstSettingActivity : AppCompatActivity() {
+class FirstSettingDialogFragment : DialogFragment() {
     private lateinit var skipButton: Button
     private lateinit var confirmButton: Button
     private lateinit var tbsInputLayout: TextInputLayout
     private lateinit var tbsInputField: TextInputEditText
+    private lateinit var context: Context
 
+    companion object {
+        const val TAG = "FirstSettingDialogFragment"
+        const val DISMISSED = "dismissed"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_first_setting)
-
-        getLayoutObjectByID()
+        context = this.getContext()?: throw Error("Activity is Null")
+    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(R.layout.fragment_first_setting, container)
+        skipButton = view.findViewById(R.id.skip_button)
+        confirmButton = view.findViewById(R.id.confirm_button)
+        tbsInputField = view.findViewById(R.id.tbs_input_field)
+        tbsInputLayout = view.findViewById(R.id.tbs_input_layout)
         setListener()
+        return view
+    }
+
+    override fun getTheme(): Int {
+        return R.style.DialogTheme
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        setFragmentResult(DISMISSED, Bundle())
     }
 
     private fun setListener() {
@@ -42,7 +73,7 @@ class FirstSettingActivity : AppCompatActivity() {
         confirmButton.setOnClickListener {
             handleConfirmButtonPressed()
         }
-        tbsInputField.addTextChangedListener(object : TextWatcher{
+        tbsInputField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(text: Editable?) {
@@ -71,24 +102,16 @@ class FirstSettingActivity : AppCompatActivity() {
         val newTBS: Int
         try {
             newTBS = Integer.parseInt(newTBSStr)
-            StoreData(this).storeTBS(newTBS)
+            StoreData(context).storeTBS(newTBS)
         } catch (e: NumberFormatException) {
-            Toast.makeText(this, getString(R.string.please_only_enter_integers), Toast.LENGTH_SHORT)
-                .show()
+            context.toast(getString(R.string.please_only_enter_integers))
             return
         }
         goToMainActivity()
     }
 
     private fun goToMainActivity() {
-        intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun getLayoutObjectByID() {
-        skipButton = findViewById(R.id.skip_button)
-        confirmButton = findViewById(R.id.confirm_button)
-        tbsInputField = findViewById(R.id.tbs_input_field)
-        tbsInputLayout = findViewById(R.id.tbs_input_layout)
     }
 }

@@ -21,6 +21,8 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.setFragmentResultListener
 import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.api.UntisApiCalls
@@ -172,8 +174,14 @@ class WelcomeActivity : AppCompatActivity() {
                 schoolName!!
             )
             storeData.storeID(untisID)
-            intent = Intent(this@WelcomeActivity, FirstSettingActivity::class.java)
-            startActivity(intent)
+
+            runOnUiThread{
+                val firstSettingDialogFragment = FirstSettingDialogFragment()
+                firstSettingDialogFragment.show(supportFragmentManager, FirstSettingDialogFragment.TAG)
+                firstSettingDialogFragment.setFragmentResultListener(FirstSettingDialogFragment.DISMISSED) { _, _ ->
+                    runButton.isDisabled = false
+                }
+            }
         }
     }
 

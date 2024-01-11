@@ -104,4 +104,6 @@
     <string name="selected_date_and_time_is_before_the_current_time">Selected date and time is before the current time.</string>
     <string name="alarms_are_disabled">Alarms are disabled</string>
     <string name="time_expired">Time Expired</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
