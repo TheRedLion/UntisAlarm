@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         //intent extra keys
         const val INTENT_NOTIFICATIONS_ALLOWED = "notifsAllowed"
+        const val INTENT_NEW_ALARM_PREVIEW = "newAlarmPreview"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,6 +145,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             return
         }
         val extras = intent.extras ?: return
+
+        alarmPreview.text = extras.getString(INTENT_NEW_ALARM_PREVIEW)
 
         if (extras.getBoolean(INTENT_NOTIFICATIONS_ALLOWED)) {
             notifsDisabledCard.visibility = INVISIBLE
@@ -247,7 +250,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 .setTimeFormat(clockFormat)
                 .setHour(hour)
                 .setMinute(minute)
-                .setTitleText("Edit Alarm Time")
+                .setTitleText(getString(R.string.edit_alarm_time))
                 .setInputMode(INPUT_MODE_CLOCK)
                 .build()
 
@@ -269,7 +272,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             val datePicker =
                 MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Select date")
+                    .setTitleText(getString(R.string.select_date))
                     .setSelection(selectedDateMilli)
                     .setCalendarConstraints(constraintsBuilder.build())
                     .build()
@@ -277,7 +280,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             datePicker.addOnPositiveButtonClickListener {
 
-                val selectedCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                val selectedCalendar = Calendar.getInstance(TimeZone.getDefault()) //todo check time zone is working properly
                 selectedCalendar.timeInMillis = it
 
                 // Extract day, month, and year from the selected date

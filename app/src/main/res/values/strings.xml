@@ -108,4 +108,6 @@
     <string name="the_maximum_length_is">"The maximum length is "</string>
     <string name="hours">" hours."</string>
     <string name="minutes">" minutes."</string>
+    <string name="edit_alarm_time">Edit Alarm Time</string>
+    <string name="select_date">Select date</string>
 </resources>

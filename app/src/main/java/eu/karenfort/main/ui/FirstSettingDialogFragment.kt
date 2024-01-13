@@ -3,7 +3,7 @@
  *
  * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
  *
- * Description: This activity is shown after the user has logged in. The user is then able to
+ * Description: This Fragment is shown after the user has logged in. The user is then able to
  *      change the time between school and Alarm Clock Time.
  */
 package eu.karenfort.main.ui

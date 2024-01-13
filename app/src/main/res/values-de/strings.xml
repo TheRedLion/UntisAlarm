@@ -108,4 +108,5 @@
     <string name="the_maximum_length_is">"Die maximale länge ist "</string>
     <string name="hours">stunden.</string>
     <string name="minutes">" minuten."</string>
+    <string name="edit_alarm_time">Wecker Zeit Bearbeiten</string>
 </resources>

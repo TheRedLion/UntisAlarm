@@ -3,12 +3,13 @@
  *
  * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
  *
- * Description: Activity to change settings.
+ * Description: Fragment to change settings.
  */
 package eu.karenfort.main.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -44,6 +45,7 @@ import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
 import eu.karenfort.main.extentions.changeDarkMode
+import eu.karenfort.main.extentions.getAlarmPreviewString
 import eu.karenfort.main.extentions.toast
 import eu.karenfort.main.helper.MAX_SNOOZE
 import eu.karenfort.main.helper.MAX_TBS
@@ -72,6 +74,9 @@ class SettingsDialogFragment : DialogFragment() {
     private var storedLanguage: String? = null
     private var storedDarkMode: DarkMode? = null
     private var storedUri: Uri? = null
+
+    //used to pass edited time to MainActivity
+    private var editedTBS: Int? = null
 
     private lateinit var context: Context
     private lateinit var nonNullActivity: FragmentActivity
@@ -117,6 +122,14 @@ class SettingsDialogFragment : DialogFragment() {
     override fun getTheme(): Int {
         return R.style.DialogTheme
     }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        val intent = Intent(context, MainActivity::class.java)
+        intent.putExtra(MainActivity.INTENT_NEW_ALARM_PREVIEW, context.getAlarmPreviewString(editedTBS)
+        startActivity(intent)
+    }
+
     private fun setListener() {
         //cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
         //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
@@ -138,7 +151,6 @@ class SettingsDialogFragment : DialogFragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
-                Log.i(TAG, "text change1d")
                 snoozeHandler.postDelayed({
                     handleSetSnooze()
                 }, 2*1000L)
@@ -149,7 +161,6 @@ class SettingsDialogFragment : DialogFragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
-                Log.i(TAG, "text chan2ged")
                 tbsHandler.postDelayed({
                     handleSetTBS()
                 }, 2*1000L)
@@ -381,6 +392,8 @@ class SettingsDialogFragment : DialogFragment() {
             "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $newTBS${
                 getString(R.string.short_minute)
             })"
+
+        editedTBS = newTBS
 
         val storeData = StoreData(context)
         storeData.storeTBS(newTBS)
