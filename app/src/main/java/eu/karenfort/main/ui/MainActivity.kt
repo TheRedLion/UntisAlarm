@@ -46,6 +46,7 @@ import eu.karenfort.main.helper.isTiramisuPlus
 import eu.karenfort.main.extentions.showErrorToast
 import eu.karenfort.main.extentions.toast
 import eu.karenfort.main.helper.ABOUT_US_PAGE
+import eu.karenfort.main.helper.OnDataPass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,7 +57,7 @@ import java.time.ZoneOffset
 import java.util.Calendar
 import java.util.TimeZone
 
-class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, OnDataPass {
     private lateinit var alarmPreview: Button
     private lateinit var toggleAlarm: MaterialSwitch
     private lateinit var notifsDisabledCard: MaterialCardView
@@ -64,11 +65,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     private var currentAlarmClockDateTime: LocalDateTime? = null
 
     companion object {
-        var active = false
-
-        //intent extra keys
-        const val INTENT_NOTIFICATIONS_ALLOWED = "notifsAllowed"
-        const val INTENT_NEW_ALARM_PREVIEW = "newAlarmPreview"
+        var active = false //used to check if app is active for API versions below 31
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +80,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             loadAndSetAlarmActive()
         }
         setListener()
-        updateNotifsDisabledWarning()
+        updateNotificationsDisabledWarning()
 
         /* request Notification Permission after 1 second if it was not granted yet
             adding the one second delay made the loading process feel better for
@@ -93,18 +90,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             requestNotificationPermission()
         }, 1000)
     }
-
-
     override fun onStart() {
         super.onStart()
         active = true
     }
-
     override fun onStop() {
         super.onStop()
         active = false
     }
-
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
         if (string == null) return //don't know when this would happen
 
@@ -135,20 +128,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
     }
-    override fun onResume() {
-        super.onResume()
-        updateNotifsDisabledWarning()
+    override fun onAlarmPreviewPass(localDateTime: LocalDateTime) {
+        alarmPreview.text = getAlarmPreviewString(localDateTime)
     }
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        if (intent == null) {
-            return
-        }
-        val extras = intent.extras ?: return
-
-        alarmPreview.text = extras.getString(INTENT_NEW_ALARM_PREVIEW)
-
-        if (extras.getBoolean(INTENT_NOTIFICATIONS_ALLOWED)) {
+    override fun onNotificationsAllowedPass(areNotificationsAllowed: Boolean) {
+        if (areNotificationsAllowed) {
             notifsDisabledCard.visibility = INVISIBLE
         } else {
             requestNotificationPermission()
@@ -156,12 +140,15 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateNotificationsDisabledWarning()
+    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.top_right_menu, menu)
         return true
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
@@ -190,28 +177,25 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 string.equals(StoreData.KEY_ALARM_CLOCK_EDITED) ||
                 string.equals(StoreData.KEY_ALARM_CLOCK_ACTIVE)
 
-    private fun updateNotifsDisabledWarning() {
+    private fun updateNotificationsDisabledWarning() {
         if (areNotificationsEnabled) {
             notifsDisabledCard.visibility = INVISIBLE
         } else {
             notifsDisabledCard.visibility = VISIBLE
         }
     }
-
     private fun getLayoutObjectsByID() {
         alarmPreview = findViewById(R.id.alarmPreview)
         toggleAlarm = findViewById(R.id.toggleAlarm)
         resetAlarm = findViewById(R.id.reset_alarm_tomorrow)
         notifsDisabledCard = findViewById(R.id.disabled_notfs)
     }
-
     private fun setListener() {
         alarmPreview.setOnClickListener { handleEditAlarmToday() }
         toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
         resetAlarm.setOnClickListener { handleResetAlarm() }
         notifsDisabledCard.setOnClickListener { handleNotifsDisabledCardClick() }
     }
-
     private fun handleNotifsDisabledCardClick() {
         //send user to notification settings of app
         val intent = Intent()
@@ -220,7 +204,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
         startActivity(intent)
     }
-
     private fun handleResetAlarm() {
         StoreData(this).storeAlarmClock(false)
         CoroutineScope(Dispatchers.Default).launch {
@@ -238,7 +221,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         }
         resetAlarm.isDisabled = true
     }
-
     private fun handleEditAlarmToday() {
         val clockFormat = if (is24HourFormat(this)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
 
@@ -330,7 +312,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             timePicker.dismiss()
         }
     }
-
     private fun getStartDate(): Long {
         val today = MaterialDatePicker.todayInUtcMilliseconds()
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
@@ -339,7 +320,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         return calendar.timeInMillis
     }
-
     private fun createNotificationChannel() {
         val notificationManager =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -357,13 +337,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             NotificationManager.IMPORTANCE_DEFAULT
         ))
     }
-
     private fun disableClicking() {
         toggleAlarm.isClickable = false
         alarmPreview.isClickable = false
         resetAlarm.isClickable = false
     }
-
     private fun handleToggleAlarm(isChecked: Boolean) {
         StoreData(this).storeAlarmActive(isChecked)
         if (isChecked) {

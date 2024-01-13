@@ -9,7 +9,6 @@ package eu.karenfort.main.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -17,7 +16,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,17 +43,20 @@ import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
 import eu.karenfort.main.extentions.changeDarkMode
-import eu.karenfort.main.extentions.getAlarmPreviewString
 import eu.karenfort.main.extentions.toast
+import eu.karenfort.main.helper.DataPass
 import eu.karenfort.main.helper.MAX_SNOOZE
 import eu.karenfort.main.helper.MAX_TBS
+import eu.karenfort.main.helper.OnDataPass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 
 
 class SettingsDialogFragment : DialogFragment() {
+
     //layout objects
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
@@ -75,18 +76,20 @@ class SettingsDialogFragment : DialogFragment() {
     private var storedDarkMode: DarkMode? = null
     private var storedUri: Uri? = null
 
-    //used to pass edited time to MainActivity
-    private var editedTBS: Int? = null
-
     private lateinit var context: Context
     private lateinit var nonNullActivity: FragmentActivity
 
     companion object {
         const val TAG = "SettingsDialogFragment"
     }
+
+    override fun onAttach(context1: Context) {
+        super.onAttach(context1)
+        context = context1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context = this.getContext()?: throw Error("Context is Null")
         nonNullActivity = activity?: throw Error("Activity is Null")
     }
 
@@ -121,13 +124,6 @@ class SettingsDialogFragment : DialogFragment() {
     }
     override fun getTheme(): Int {
         return R.style.DialogTheme
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        val intent = Intent(context, MainActivity::class.java)
-        intent.putExtra(MainActivity.INTENT_NEW_ALARM_PREVIEW, context.getAlarmPreviewString(editedTBS)
-        startActivity(intent)
     }
 
     private fun setListener() {
@@ -393,9 +389,6 @@ class SettingsDialogFragment : DialogFragment() {
                 getString(R.string.short_minute)
             })"
 
-
-        editedTBS = newTBS
-
         val storeData = StoreData(context)
         storeData.storeTBS(newTBS)
         CoroutineScope(Dispatchers.Default).launch {//aa is alarm active
@@ -405,7 +398,7 @@ class SettingsDialogFragment : DialogFragment() {
                 aaState = aaStateNullable
             }
             if (aaState) {
-                AlarmClockSetter.main(context)
+                DataPass.passLocalDateTime(context,AlarmClockSetter.main(context)?: return@launch)
             }
         }
     }

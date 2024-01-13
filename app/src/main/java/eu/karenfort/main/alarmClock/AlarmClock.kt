@@ -16,6 +16,7 @@ import eu.karenfort.main.ui.MainActivity
 import eu.karenfort.main.extentions.alarmClockPendingIntent
 import eu.karenfort.main.extentions.alarmManager
 import eu.karenfort.main.extentions.areNotificationsEnabled
+import eu.karenfort.main.helper.DataPass
 import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isSnowConePlus
 import java.time.Instant
@@ -36,19 +37,13 @@ class AlarmClock {
                 if (isSnowConePlus()) { //isUiContext requires Android API 31
                     if (!context.isUiContext) {
                         //make notification warning disappear on main activity
-                        val intent = Intent(context, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        intent.putExtra(MainActivity.INTENT_NOTIFICATIONS_ALLOWED, false)
-                        context.startActivity(intent)
+                        DataPass.passNotificationsAllowed(context, false)
                     }
                 } else if (MainActivity.active) {
                     //make notification warning disappear on main activity
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    intent.putExtra(MainActivity.INTENT_NOTIFICATIONS_ALLOWED, false)
-                    context.startActivity(intent)
+                    DataPass.passNotificationsAllowed(context, false)
                 }
-            }
+            }//not returning just in case notifications are re-enabled
 
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
