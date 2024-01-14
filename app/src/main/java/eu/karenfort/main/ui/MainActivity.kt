@@ -46,7 +46,7 @@ import eu.karenfort.main.helper.isTiramisuPlus
 import eu.karenfort.main.extentions.showErrorToast
 import eu.karenfort.main.extentions.toast
 import eu.karenfort.main.helper.ABOUT_US_PAGE
-import eu.karenfort.main.helper.OnDataPass
+import eu.karenfort.main.dataPass.OnDataPassedListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,7 +57,8 @@ import java.time.ZoneOffset
 import java.util.Calendar
 import java.util.TimeZone
 
-class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, OnDataPass {
+class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener,
+    OnDataPassedListener {
     private lateinit var alarmPreview: Button
     private lateinit var toggleAlarm: MaterialSwitch
     private lateinit var notifsDisabledCard: MaterialCardView
@@ -128,10 +129,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
     }
-    override fun onAlarmPreviewPass(localDateTime: LocalDateTime) {
+    override fun onAlarmPreviewPassed(localDateTime: LocalDateTime) {
         alarmPreview.text = getAlarmPreviewString(localDateTime)
     }
-    override fun onNotificationsAllowedPass(areNotificationsAllowed: Boolean) {
+    override fun onNotificationsAllowedPassed(areNotificationsAllowed: Boolean) {
         if (areNotificationsAllowed) {
             notifsDisabledCard.visibility = INVISIBLE
         } else {
@@ -139,7 +140,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             notifsDisabledCard.visibility = VISIBLE
         }
     }
-
     override fun onResume() {
         super.onResume()
         updateNotificationsDisabledWarning()
@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
             datePicker.addOnPositiveButtonClickListener {
 
-                val selectedCalendar = Calendar.getInstance(TimeZone.getDefault()) //todo check time zone is working properly
+                val selectedCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
                 selectedCalendar.timeInMillis = it
 
                 // Extract day, month, and year from the selected date

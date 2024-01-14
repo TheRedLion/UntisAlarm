@@ -16,7 +16,7 @@ import eu.karenfort.main.ui.MainActivity
 import eu.karenfort.main.extentions.alarmClockPendingIntent
 import eu.karenfort.main.extentions.alarmManager
 import eu.karenfort.main.extentions.areNotificationsEnabled
-import eu.karenfort.main.helper.DataPass
+import eu.karenfort.main.dataPass.DataPass
 import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isSnowConePlus
 import java.time.Instant

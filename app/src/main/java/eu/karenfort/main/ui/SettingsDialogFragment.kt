@@ -20,44 +20,47 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.carlkarenfort.test.R
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.alarmClock.AlarmClockSetter
+import eu.karenfort.main.dataPass.DataPass
+import eu.karenfort.main.extentions.changeDarkMode
+import eu.karenfort.main.extentions.toast
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.DarkMode
 import eu.karenfort.main.helper.IVG_DEFAULT
+import eu.karenfort.main.helper.MAX_SNOOZE
+import eu.karenfort.main.helper.MAX_TBS
 import eu.karenfort.main.helper.SILENT_URI
 import eu.karenfort.main.helper.SNOOZE_DEFAULT
 import eu.karenfort.main.helper.SUPPORTED_LANGUAGES
 import eu.karenfort.main.helper.SUPPORTED_LANGUAGES_TAG
+import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.VIBRATE_DEFAULT
-import eu.karenfort.main.extentions.changeDarkMode
-import eu.karenfort.main.extentions.toast
-import eu.karenfort.main.helper.DataPass
-import eu.karenfort.main.helper.MAX_SNOOZE
-import eu.karenfort.main.helper.MAX_TBS
-import eu.karenfort.main.helper.OnDataPass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 
 
 class SettingsDialogFragment : DialogFragment() {
 
     //layout objects
+
+    //private lateinit var cancellationMessageField: TextInputEditText
+    //private lateinit var cancellationMessageLayout: TextInputLayout
     private lateinit var languageSettings: ConstraintLayout
     private lateinit var alarmSoundSettings: ConstraintLayout
     private lateinit var darkModeSettings: ConstraintLayout
@@ -67,9 +70,8 @@ class SettingsDialogFragment : DialogFragment() {
     private lateinit var snoozeInputField: TextInputEditText
     private lateinit var tbsInputLayout: TextInputLayout
     private lateinit var snoozeInputLayout: TextInputLayout
-    //private lateinit var cancellationMessageField: TextInputEditText
-    //private lateinit var cancellationMessageLayout: TextInputLayout
     private lateinit var makeSilent: Button
+    private lateinit var toolbar: MaterialToolbar
 
     //these are used to preload settings
     private var storedLanguage: String? = null
@@ -101,6 +103,9 @@ class SettingsDialogFragment : DialogFragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_settings, container)
 
+        //colorSchemeSettings = view.findViewById(R.id.color_scheme_settings)
+        //cancellationMessageLayout = view.findViewById(R.id.cancelled_message_input_layout)
+        //cancellationMessageField = view.findViewById(R.id.cancelled_message_input_field)
         languageSettings = view.findViewById(R.id.language_settings)
         darkModeSettings = view.findViewById(R.id.dark_mode_settings)
         alarmSoundSettings = view.findViewById(R.id.alarm_settings)
@@ -110,10 +115,8 @@ class SettingsDialogFragment : DialogFragment() {
         snoozeInputField = view.findViewById(R.id.snooze_input_field)
         tbsInputLayout = view.findViewById(R.id.tbs_input_layout)
         snoozeInputLayout = view.findViewById(R.id.snooze_input_layout)
-        //colorSchemeSettings = view.findViewById(R.id.color_scheme_settings)
-        //cancellationMessageLayout = view.findViewById(R.id.cancelled_message_input_layout)
-        //cancellationMessageField = view.findViewById(R.id.cancelled_message_input_field)
         makeSilent = view.findViewById(R.id.makeSilent)
+        toolbar = view.findViewById(R.id.settings_toolar)
 
         setListener()
         disableClicking() //disabling clicks until everything was properly loaded to prevent errors
@@ -163,15 +166,16 @@ class SettingsDialogFragment : DialogFragment() {
             }
         })
 
+        //colorSchemeSettings.setOnClickListener { colorDialog() }
         vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
         ivgToggle.addOnCheckedStateChangedListener { _, state -> handleToggleIVG(state) }
         darkModeSettings.setOnClickListener { darkModeDialog() }
         alarmSoundSettings.setOnClickListener { alarmSoundDialog() }
         languageSettings.setOnClickListener { languageDialog() }
-        //colorSchemeSettings.setOnClickListener { colorDialog() }
         makeSilent.setOnClickListener {
             StoreData(context).storeSound(SILENT_URI)
         }
+        toolbar.setNavigationOnClickListener { nonNullActivity.onBackPressedDispatcher.onBackPressed() }
     }
 
     /*
@@ -179,8 +183,6 @@ class SettingsDialogFragment : DialogFragment() {
         startActivity(Intent(this@SettingsActivity, CancelledMessageInfo::class.java))
     }
      */
-
-
     private fun enableClicking() {
         nonNullActivity.runOnUiThread {
             languageSettings.isClickable = true
@@ -193,7 +195,6 @@ class SettingsDialogFragment : DialogFragment() {
             snoozeInputField.isClickable = true
         }
     }
-
     private fun disableClicking() {
         languageSettings.isClickable = false
         //colorSchemeSettings.isClickable = false
@@ -204,7 +205,6 @@ class SettingsDialogFragment : DialogFragment() {
         tbsInputField.isClickable = false
         snoozeInputField.isClickable = false
     }
-
     @SuppressLint("SetTextI18n")
     private fun loadAndDisplayStoredStates() {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
@@ -234,7 +234,6 @@ class SettingsDialogFragment : DialogFragment() {
             enableClicking()
         }
     }
-
     private fun languageDialog() {
         var checkedItem = 0
 

@@ -337,8 +337,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="opacityPercent" value="0" />
-                            <entry key="outputName" value="ic_alarm_silent" />
-                            <entry key="sourceFile" value="C:\Users\Karen\Downloads\android-notifications-off-1.svg" />
+                            <entry key="outputName" value="ic_back_button" />
+                            <entry key="sourceFile" value="C:\Users\Karen\Downloads\android-arrow-back.svg" />
                           </map>
                         </option>
                       </PersistentState>

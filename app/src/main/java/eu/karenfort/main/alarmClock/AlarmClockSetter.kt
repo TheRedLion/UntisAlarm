@@ -32,7 +32,6 @@ class AlarmClockSetter {
         private const val TAG = "AlarmClockSetter"
         private const val REASON_NORMAL = "normal"
         private const val REASON_NO_ALARM_TODAY = "noAlarmToday"
-        private const val REASON_ERROR = "error"
 
         /* isActive and isEdited is used to override stored data, necessary because storing is
             done on a different thread and thus takes time. Used when a new state is set and the
@@ -96,8 +95,7 @@ class AlarmClockSetter {
                 if (MainActivity.active) {
                     if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
                         context.sendLoggedOutNotif()
-                        setNew(REASON_ERROR, null, context)
-                        return null
+                        return null //not setting a new one, since it wont do anything
                     }
                     val schoolStart: LocalDateTime?
 
@@ -119,13 +117,13 @@ class AlarmClockSetter {
             }
 
             if (storedAlarmClockEdited) {
-                setNew(REASON_NO_ALARM_TODAY, null, context)
+                setNew(REASON_NO_ALARM_TODAY, context)
                 return null
             }
 
             if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
                 context.sendLoggedOutNotif()
-                setNew(REASON_ERROR, null, context)
+                //not setting a new one, since it wont do anything
                 return null
             }
 
@@ -142,7 +140,7 @@ class AlarmClockSetter {
 
             if (schoolStart == null) {
                 //probably holiday or something
-                setNew(REASON_NO_ALARM_TODAY, null, context)
+                setNew(REASON_NO_ALARM_TODAY, context)
                 return null
             }
 
@@ -171,6 +169,9 @@ class AlarmClockSetter {
             storedAlarmClockDateTime: LocalDateTime?
         ) = if (alarmClockTime == null || storedAlarmClockDateTime == null) false else alarmClockTime.isEqual(storedAlarmClockDateTime)
 
+        private fun setNew(reason: String, context: Context) {
+            setNew(reason, null, context)
+        }
         private fun setNew(reason: String, schoolStart: LocalDateTime?, context: Context) {
             when (reason) {
                 REASON_NO_ALARM_TODAY -> {
@@ -231,15 +232,8 @@ class AlarmClockSetter {
                     }
                 }
 
-                REASON_ERROR -> {
-                    Log.i(TAG, REASON_ERROR) //todo add exceptions
-                    setNew("normal", null, context)
-                }
-
                 else -> {
-                    //there is an error in the code
-                    Log.i(TAG, "no matching reason")
-                    setNew("normal", null, context)
+                    throw Error("No matching Reason.")
                 }
             }
         }
