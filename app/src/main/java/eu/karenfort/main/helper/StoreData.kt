@@ -144,13 +144,13 @@ class StoreData (
             }
         }
     }
-    suspend fun loadID(): Int? {
-        val preferences = context.dataStore.data.first()
-        return preferences[KEY_ID]
-    }
     fun deleteLoginData() {
         storeID(0)
         storeLoginData("", "", "", "")
+    }
+    suspend fun loadID(): Int? {
+        val preferences = context.dataStore.data.first()
+        return preferences[KEY_ID]
     }
     suspend fun loadLoginData(): Array<String?> {
         val preferences = context.dataStore.data.first()

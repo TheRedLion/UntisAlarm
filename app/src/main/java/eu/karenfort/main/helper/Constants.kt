@@ -26,7 +26,7 @@ const val ALARM_CLOCK_ID = 543
 
 //settings default
 const val TBS_DEFAULT = 60
-const val VIBRATE_DEFAULT = true
+const val VIBRATE_DEFAULT = false
 const val SNOOZE_DEFAULT = 5
 const val IVG_DEFAULT = false
 

@@ -10,6 +10,7 @@ package eu.karenfort.main.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -20,7 +21,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.LocaleListCompat
@@ -55,10 +55,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class SettingsDialogFragment : DialogFragment() {
+class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     //layout objects
-
     //private lateinit var cancellationMessageField: TextInputEditText
     //private lateinit var cancellationMessageLayout: TextInputLayout
     private lateinit var languageSettings: ConstraintLayout
@@ -89,12 +88,10 @@ class SettingsDialogFragment : DialogFragment() {
         super.onAttach(context1)
         context = context1
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         nonNullActivity = activity?: throw Error("Activity is Null")
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -125,10 +122,19 @@ class SettingsDialogFragment : DialogFragment() {
 
         return view
     }
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
+        if (string == null) return //don't know when this would happen
+
+        if (!string.equals(StoreData.KEY_SOUND_URI)) return //only respond if alarmClockTime was edited
+
+        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+            val newUri = StoreData(context).loadSound() ?: return@launch
+            storedUri = newUri
+        }
+    }
     override fun getTheme(): Int {
         return R.style.DialogTheme
     }
-
     private fun setListener() {
         //cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
         //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
@@ -174,30 +180,28 @@ class SettingsDialogFragment : DialogFragment() {
         languageSettings.setOnClickListener { languageDialog() }
         makeSilent.setOnClickListener {
             StoreData(context).storeSound(SILENT_URI)
+            storedUri = SILENT_URI
         }
-        toolbar.setNavigationOnClickListener { nonNullActivity.onBackPressedDispatcher.onBackPressed() }
+        toolbar.setNavigationOnClickListener { this.dismiss() }
     }
-
     /*
     private fun handleCancellationMessageInfo() {
         startActivity(Intent(this@SettingsActivity, CancelledMessageInfo::class.java))
     }
      */
     private fun enableClicking() {
-        nonNullActivity.runOnUiThread {
-            languageSettings.isClickable = true
-            //colorSchemeSettings.isClickable = true
-            darkModeSettings.isClickable = true
-            alarmSoundSettings.isClickable = true
-            ivgToggle.isClickable = true
-            vibrateToggle.isClickable = true
-            tbsInputField.isClickable = true
-            snoozeInputField.isClickable = true
-        }
+        //colorSchemeSettings.isClickable = true
+        languageSettings.isClickable = true
+        darkModeSettings.isClickable = true
+        alarmSoundSettings.isClickable = true
+        ivgToggle.isClickable = true
+        vibrateToggle.isClickable = true
+        tbsInputField.isClickable = true
+        snoozeInputField.isClickable = true
     }
     private fun disableClicking() {
-        languageSettings.isClickable = false
         //colorSchemeSettings.isClickable = false
+        languageSettings.isClickable = false
         darkModeSettings.isClickable = false
         alarmSoundSettings.isClickable = false
         ivgToggle.isClickable = false
@@ -230,8 +234,8 @@ class SettingsDialogFragment : DialogFragment() {
                         getString(R.string.short_minute)
                     })"
                 ivgToggle.isChecked = ivg
+                enableClicking()
             }
-            enableClicking()
         }
     }
     private fun languageDialog() {
@@ -307,23 +311,19 @@ class SettingsDialogFragment : DialogFragment() {
                 checkedItem = which
             }.show()
     }
-
     private fun alarmSoundDialog() {
         val intent = Intent(context, AlarmSoundPicker::class.java)
         intent.putExtra(AlarmSoundPicker.INTENT_ALARM_SOUND_URI, storedUri.toString())
         startActivity(intent)
     }
-
     private fun handleToggleVibrate(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED
         StoreData(context).storeVibrate(stateBool)
     }
-
     private fun handleToggleIVG(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED
         StoreData(context).storeIncreaseVolumeGradually(stateBool)
     }
-
     /*
     private fun handleSetCancellationMessageEnd() {
         val newMessage = cancellationMessageField.text.toString()
@@ -336,7 +336,6 @@ class SettingsDialogFragment : DialogFragment() {
         StoreData(this).storeCancelledMessage(newMessage)
     }
      */
-
     private fun handleSetSnooze() {
         val newSnoozeStr = snoozeInputField.text.toString()
 
@@ -363,7 +362,6 @@ class SettingsDialogFragment : DialogFragment() {
 
         StoreData(context).storeTBS(newSnooze)
     }
-
     private fun handleSetTBS() {
         val newTBSStr = tbsInputField.text.toString()
 
@@ -401,7 +399,6 @@ class SettingsDialogFragment : DialogFragment() {
             }
         }
     }
-
     private fun initDarkMode(): DarkMode {
         StoreData(context).storeDarkMode(DarkMode.DEFAULT)
         return DarkMode.DEFAULT

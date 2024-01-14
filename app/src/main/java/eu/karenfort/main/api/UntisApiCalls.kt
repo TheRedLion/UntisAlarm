@@ -15,6 +15,7 @@ import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class UntisApiCalls(
@@ -63,7 +64,7 @@ class UntisApiCalls(
                 nextDay = nextDay.plusDays(1)
                 timetable = session.getTimetableFromPersonId(
                     nextDay,
-                    nextDay,
+                    nextDay.plusDays(3), //getting a timeframe of 3 days since this would always include the day after a weekend
                     id
                 )
             }

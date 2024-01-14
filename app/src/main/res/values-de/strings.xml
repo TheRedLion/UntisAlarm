@@ -109,4 +109,5 @@
     <string name="hours">stunden.</string>
     <string name="minutes">" minuten."</string>
     <string name="edit_alarm_time">Wecker Zeit Bearbeiten</string>
+    <string name="select_date">Datum Wählen</string>
 </resources>

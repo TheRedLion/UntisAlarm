@@ -105,6 +105,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         if (!isAlarmClockRelated(string)) return //only respond if alarmClockTime was edited
 
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+
             val (alarmClockDateTime, alarmClockEdited) = StoreData(this@MainActivity).loadAlarmClock()
             //update UI accordingly
             if (alarmClockDateTime == null) {
@@ -116,8 +117,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                             currentAlarmClockDateTime!!
                         )
                     }
-                    resetAlarm.isDisabled =
-                        true //can never be edited if alarm clock time was just loaded
+                    resetAlarm.isDisabled = true //can never be edited if alarm clock time was just loaded
                 }
                 return@launch
             }
