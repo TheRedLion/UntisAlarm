@@ -18,13 +18,10 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.carlkarenfort.test.R
 import com.carlkarenfort.test.databinding.FragmentFirstSettingBinding
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.extentions.isDisabled
 import eu.karenfort.main.extentions.toast
 import eu.karenfort.main.extentions.viewBinding
