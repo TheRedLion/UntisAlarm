@@ -30,22 +30,22 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
 import com.google.android.material.timepicker.TimeFormat
-import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.alarmClock.AlarmClock
 import eu.karenfort.main.alarmClock.AlarmClockSetter
+import eu.karenfort.main.dataPass.OnDataPassedListener
+import eu.karenfort.main.extentions.areNotificationsEnabled
+import eu.karenfort.main.extentions.getAlarmPreviewString
+import eu.karenfort.main.extentions.isDisabled
+import eu.karenfort.main.extentions.showErrorToast
+import eu.karenfort.main.extentions.toast
+import eu.karenfort.main.extentions.viewBinding
+import eu.karenfort.main.helper.ABOUT_US_PAGE
 import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.INFO_NOTIFICATION_CHANNEL_ID
-import eu.karenfort.main.extentions.areNotificationsEnabled
-import eu.karenfort.main.extentions.isDisabled
-import eu.karenfort.main.extentions.getAlarmPreviewString
+import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isTiramisuPlus
-import eu.karenfort.main.extentions.showErrorToast
-import eu.karenfort.main.extentions.toast
-import eu.karenfort.main.helper.ABOUT_US_PAGE
-import eu.karenfort.main.dataPass.OnDataPassedListener
-import eu.karenfort.main.extentions.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,12 +59,13 @@ import java.util.TimeZone
 class MainActivity :
     AppCompatActivity(),
     SharedPreferences.OnSharedPreferenceChangeListener,
-    OnDataPassedListener
-{
+    OnDataPassedListener {
     private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
     private var currentAlarmClockDateTime: LocalDateTime? = null
+
     companion object {
-        var active = false //used to check if app is active for API versions below 31 //todo check instead weather screen is on with PowerManager
+        var active =
+            false //used to check if app is active for API versions below 31 //todo check instead weather screen is on with PowerManager
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +89,17 @@ class MainActivity :
             requestNotificationPermission()
         }, 1000)
     }
+
     override fun onStart() {
         super.onStart()
         active = true
     }
+
     override fun onStop() {
         super.onStop()
         active = false
     }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
         if (string == null) return //don't know when this would happen
 
@@ -108,13 +112,14 @@ class MainActivity :
             if (alarmClockDateTime == null) {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity)
 
-                runOnUiThread{
+                runOnUiThread {
                     if (currentAlarmClockDateTime != null) {
                         binding.alarmPreview.text = getAlarmPreviewString(
                             currentAlarmClockDateTime!!
                         )
                     }
-                    binding.resetAlarmTomorrow.isDisabled = true //can never be edited if alarm clock time was just loaded
+                    binding.resetAlarmTomorrow.isDisabled =
+                        true //can never be edited if alarm clock time was just loaded
                 }
                 return@launch
             }
@@ -126,9 +131,11 @@ class MainActivity :
             }
         }
     }
+
     override fun onAlarmPreviewPassed(newAlarmClockTime: LocalDateTime) {
         binding.alarmPreview.text = getAlarmPreviewString(newAlarmClockTime)
     }
+
     override fun onNotificationsAllowedPassed(areNotificationsAllowed: Boolean) {
         if (areNotificationsAllowed) {
             binding.disabledNotifsCard.visibility = INVISIBLE
@@ -137,25 +144,30 @@ class MainActivity :
             binding.disabledNotifsCard.visibility = VISIBLE
         }
     }
+
     override fun onResume() {
         super.onResume()
         updateNotificationsDisabledWarning()
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.top_right_menu, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
                 val settingDialogFragment = SettingsDialogFragment()
                 settingDialogFragment.show(supportFragmentManager, SettingsDialogFragment.TAG)
             }
+
             R.id.logout -> {
                 startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
                 StoreData(this).deleteLoginData()
             }
+
             R.id.about_us -> {
                 val uri = ABOUT_US_PAGE
                 val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -164,6 +176,7 @@ class MainActivity :
         }
         return super.onOptionsItemSelected(item)
     }
+
     private fun isAlarmClockRelated(string: String) =
         string.equals(StoreData.KEY_ALARM_CLOCK_HOUR) ||
                 string.equals(StoreData.KEY_ALARM_CLOCK_MINUTE) ||
@@ -188,6 +201,7 @@ class MainActivity :
         binding.resetAlarmTomorrow.setOnClickListener { handleResetAlarm() }
         binding.disabledNotifsCard.setOnClickListener { handleNotifsDisabledCardClick() }
     }
+
     private fun handleNotifsDisabledCardClick() {
         //send user to notification settings of app
         val intent = Intent()
@@ -196,23 +210,27 @@ class MainActivity :
         intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
         startActivity(intent)
     }
+
     private fun handleResetAlarm() {
         StoreData(this).storeAlarmClock(false)
         CoroutineScope(Dispatchers.Default).launch {
             if (binding.toggleAlarm.isChecked) {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
-                if (currentAlarmClockDateTime != null) binding.alarmPreview.text = getAlarmPreviewString(
-                    currentAlarmClockDateTime!!
-                )
+                if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
+                    getAlarmPreviewString(
+                        currentAlarmClockDateTime!!
+                    )
             } else {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
-                if (currentAlarmClockDateTime != null) binding.alarmPreview.text = getAlarmPreviewString(
-                    currentAlarmClockDateTime!!
-                )
+                if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
+                    getAlarmPreviewString(
+                        currentAlarmClockDateTime!!
+                    )
             }
         }
         binding.resetAlarmTomorrow.isDisabled = true
     }
+
     private fun handleEditAlarmToday() {
         val clockFormat = if (is24HourFormat(this)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
 
@@ -274,9 +292,10 @@ class MainActivity :
                         AlarmClock.cancel(this)
                         AlarmClock.set(selectedDateTime, this)
                         currentAlarmClockDateTime = selectedDateTime
-                        if (currentAlarmClockDateTime != null) binding.alarmPreview.text = getAlarmPreviewString(
-                            currentAlarmClockDateTime!!
-                        )
+                        if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
+                            getAlarmPreviewString(
+                                currentAlarmClockDateTime!!
+                            )
                     } else {
                         this.toast(getString(R.string.alarms_are_disabled))
                     }
@@ -304,6 +323,7 @@ class MainActivity :
             timePicker.dismiss()
         }
     }
+
     private fun getStartDate(): Long {
         val today = MaterialDatePicker.todayInUtcMilliseconds()
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
@@ -312,28 +332,35 @@ class MainActivity :
 
         return calendar.timeInMillis
     }
+
     private fun createNotificationChannel() {
         val notificationManager =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(NotificationChannel(
-            ALARM_CLOCK_NOTIFICATION_CHANNEL_ID,
-            getString(R.string.alarm_notifications_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT
-        ))
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                ALARM_CLOCK_NOTIFICATION_CHANNEL_ID,
+                getString(R.string.alarm_notifications_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+        )
 
         val notificationManager2 =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager2.createNotificationChannel(NotificationChannel(
-            INFO_NOTIFICATION_CHANNEL_ID,
-            getString(R.string.info_notifications_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT
-        ))
+        notificationManager2.createNotificationChannel(
+            NotificationChannel(
+                INFO_NOTIFICATION_CHANNEL_ID,
+                getString(R.string.info_notifications_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+        )
     }
+
     private fun disableClicking() {
         binding.toggleAlarm.isClickable = false
         binding.alarmPreview.isClickable = false
         binding.resetAlarmTomorrow.isClickable = false
     }
+
     private fun handleToggleAlarm(isChecked: Boolean) {
         StoreData(this).storeAlarmActive(isChecked)
         if (isChecked) {
@@ -342,8 +369,9 @@ class MainActivity :
                 CoroutineScope(Dispatchers.Default).launch {
                     currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, true)
                     if (currentAlarmClockDateTime != null) {
-                        runOnUiThread{
-                            binding.alarmPreview.text = getAlarmPreviewString(currentAlarmClockDateTime!!)
+                        runOnUiThread {
+                            binding.alarmPreview.text =
+                                getAlarmPreviewString(currentAlarmClockDateTime!!)
                         }
                     }
                 }
@@ -356,6 +384,7 @@ class MainActivity :
             AlarmScheduler(this).cancel()
         }
     }
+
     private fun requestNotificationPermission() {
         if (!isTiramisuPlus()) return
         if (areNotificationsEnabled) return
@@ -369,6 +398,7 @@ class MainActivity :
             0
         )
     }
+
     private suspend fun loadAndSetAlarmActive() {
         val storeData = StoreData(this)
         val aaState: Boolean = storeData.loadAlarmActive() ?: false
@@ -377,12 +407,13 @@ class MainActivity :
             binding.toggleAlarm.isClickable = true
         }
     }
+
     private suspend fun loadAndDisplayAlarmClockPreview() {
         val storeData = StoreData(this)
         val (alarmClockDateTime, alarmClockEdited) = storeData.loadAlarmClock()
 
         if (alarmClockEdited) {
-            runOnUiThread{
+            runOnUiThread {
                 binding.resetAlarmTomorrow.isDisabled = false
             }
         } else {
@@ -393,10 +424,11 @@ class MainActivity :
 
         if (alarmClockDateTime == null) {
             currentAlarmClockDateTime = AlarmClockSetter.main(this)
-            runOnUiThread{
-                if (currentAlarmClockDateTime != null) binding.alarmPreview.text = getAlarmPreviewString(
-                    currentAlarmClockDateTime!!
-                )
+            runOnUiThread {
+                if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
+                    getAlarmPreviewString(
+                        currentAlarmClockDateTime!!
+                    )
             }
             runOnUiThread {
                 binding.alarmPreview.isClickable = true
@@ -409,10 +441,12 @@ class MainActivity :
             binding.alarmPreview.isClickable = true
         }
     }
-    private suspend fun hasLoggedIn() : Boolean {
+
+    private suspend fun hasLoggedIn(): Boolean {
         val storeData = StoreData(this)
         return storeData.loadLoginData()[0].isNullOrEmpty() || storeData.loadID() == null
     }
+
     private fun sendToWelcomeActivityIfNotLoggedIn() {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             if (!hasLoggedIn()) return@launch

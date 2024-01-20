@@ -12,13 +12,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import eu.karenfort.main.ui.MainActivity
+import eu.karenfort.main.dataPass.DataPass
 import eu.karenfort.main.extentions.alarmClockPendingIntent
 import eu.karenfort.main.extentions.alarmManager
 import eu.karenfort.main.extentions.areNotificationsEnabled
-import eu.karenfort.main.dataPass.DataPass
 import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isSnowConePlus
+import eu.karenfort.main.ui.MainActivity
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -59,7 +59,10 @@ class AlarmClock {
             val alarmManager = context.alarmManager
             val pendingIntent = context.alarmClockPendingIntent
 
-            alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendarMills, pendingIntent), pendingIntent)
+            alarmManager.setAlarmClock(
+                AlarmManager.AlarmClockInfo(calendarMills, pendingIntent),
+                pendingIntent
+            )
 
             // this check is necessary because android automatically cancels alarms that happen in the past (back to the future vibes)
             val nextAlarmClock: AlarmManager.AlarmClockInfo = alarmManager.nextAlarmClock
@@ -81,10 +84,19 @@ class AlarmClock {
             val pendingIntent = context.alarmClockPendingIntent
 
             val triggerTime = System.currentTimeMillis() + timeInM * 60 * 1000
-            context.alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerTime, pendingIntent), pendingIntent)
+            context.alarmManager.setAlarmClock(
+                AlarmManager.AlarmClockInfo(
+                    triggerTime,
+                    pendingIntent
+                ), pendingIntent
+            )
 
-            val alarmClockTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault())
-            StoreData(context).storeAlarmClock(alarmClockTime, true) //edited so it does not get overridden
+            val alarmClockTime =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(triggerTime), ZoneId.systemDefault())
+            StoreData(context).storeAlarmClock(
+                alarmClockTime,
+                true
+            ) //edited so it does not get overridden
 
             Handler(Looper.getMainLooper()).postDelayed({
                 val intent = Intent(context, MainActivity::class.java)

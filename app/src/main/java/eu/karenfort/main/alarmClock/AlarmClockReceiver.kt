@@ -21,16 +21,16 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
-import eu.karenfort.main.helper.StoreData
-import eu.karenfort.main.ui.ReminderActivity
-import eu.karenfort.main.helper.ALARM_CLOCK_ID
-import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_ID
-import eu.karenfort.main.helper.MAX_ALARM_DURATION
 import eu.karenfort.main.extentions.hideNotification
 import eu.karenfort.main.extentions.isScreenOn
 import eu.karenfort.main.extentions.showAlarmNotification
 import eu.karenfort.main.extentions.showErrorToast
+import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
+import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_ID
+import eu.karenfort.main.helper.MAX_ALARM_DURATION
+import eu.karenfort.main.helper.StoreData
+import eu.karenfort.main.ui.ReminderActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
             context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
-                CoroutineScope(Dispatchers.Default).launch{
+                CoroutineScope(Dispatchers.Default).launch {
                     AlarmClockSetter.main(context, null, false)
                 }
             }, MAX_ALARM_DURATION * 1000L)

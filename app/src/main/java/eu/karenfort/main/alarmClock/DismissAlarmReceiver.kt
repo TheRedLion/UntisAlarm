@@ -24,7 +24,7 @@ class DismissAlarmReceiver : BroadcastReceiver() {
         ensureBackgroundCoroutine {
             AlarmClock.cancel(context)
         }
-        CoroutineScope(Dispatchers.Default).launch{
+        CoroutineScope(Dispatchers.Default).launch {
             AlarmClockSetter.main(context)
         }
     }

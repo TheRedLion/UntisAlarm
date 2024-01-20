@@ -24,20 +24,24 @@ class AlarmScheduler(
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
 
     fun schedule(context: Context) {
-        CoroutineScope(Dispatchers.Default).launch{
+        CoroutineScope(Dispatchers.Default).launch {
             AlarmClockSetter.main(context, true) //is always active if alarm was just scheduled
         }
         val intent = Intent(context, AlarmReceiver::class.java).also {
             it.action = Intent.ACTION_CALL
         }
         val pendingIntent = PendingIntent.getBroadcast(
-             context,
-             ALARM_REQUEST_CODE,
-             intent,
-             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
-         )
-         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 900000, pendingIntent)
-     }
+            context,
+            ALARM_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + 900000,
+            pendingIntent
+        )
+    }
 
     fun cancel() {
         AlarmClock.cancel(context)

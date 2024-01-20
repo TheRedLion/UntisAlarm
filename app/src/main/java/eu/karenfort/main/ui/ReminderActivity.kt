@@ -72,6 +72,7 @@ class ReminderActivity : AppCompatActivity() {
     companion object {
         const val TAG = "ReminderActivity"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -87,10 +88,16 @@ class ReminderActivity : AppCompatActivity() {
         setupAlarmButtons()
         setupEffects()
     }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun setupAlarmButtons() {
         binding.reminderStop.visibility = View.GONE
-        binding.reminderDraggableBackground.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulsing_animation))
+        binding.reminderDraggableBackground.startAnimation(
+            AnimationUtils.loadAnimation(
+                this,
+                R.anim.pulsing_animation
+            )
+        )
 
         var minDragX = 0f
         var maxDragX = 0f
@@ -132,7 +139,7 @@ class ReminderActivity : AppCompatActivity() {
                             binding.reminderDraggable.performHapticFeedback()
                             didVibrate = true
                             finishActivity()
-                            CoroutineScope(Dispatchers.Default).launch{
+                            CoroutineScope(Dispatchers.Default).launch {
                                 AlarmClockSetter.main(this@ReminderActivity)
                             }
                         }
@@ -152,6 +159,7 @@ class ReminderActivity : AppCompatActivity() {
             true
         }
     }
+
     private fun setupEffects() {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         initialAlarmVolume = audioManager?.getStreamVolume(AudioManager.STREAM_ALARM) ?: 7
@@ -159,7 +167,7 @@ class ReminderActivity : AppCompatActivity() {
         var doVibrate = true
         var soundUri: Uri = ALARM_SOUND_DEFAULT_URI
         runBlocking {
-            doVibrate = StoreData(this@ReminderActivity).loadVibrate()?: return@runBlocking
+            doVibrate = StoreData(this@ReminderActivity).loadVibrate() ?: return@runBlocking
             val newSoundUri = StoreData(this@ReminderActivity).loadSound() ?: return@runBlocking
             soundUri = newSoundUri
         }
@@ -172,7 +180,8 @@ class ReminderActivity : AppCompatActivity() {
                         getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
                     vibratorManager.defaultVibrator
                 } else {
-                    vibrator = @Suppress("DEPRECATION") getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    vibrator =
+                        @Suppress("DEPRECATION") getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 }
                 vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
             }, 500)
@@ -180,9 +189,11 @@ class ReminderActivity : AppCompatActivity() {
 
         try {
             mediaPlayer = MediaPlayer()
-            mediaPlayer!!.setAudioAttributes(AudioAttributes.Builder()
-                .setLegacyStreamType(AudioManager.STREAM_ALARM)
-                .build())
+            mediaPlayer!!.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
+                    .build()
+            )
 
             mediaPlayer = mediaPlayer!!.apply {
                 setDataSource(this@ReminderActivity, soundUri)
@@ -192,16 +203,23 @@ class ReminderActivity : AppCompatActivity() {
             }
             var increaseVolumeGradually = false
             runBlocking {
-                increaseVolumeGradually = StoreData(this@ReminderActivity).loadIncreaseVolumeGradually() ?: return@runBlocking
+                increaseVolumeGradually =
+                    StoreData(this@ReminderActivity).loadIncreaseVolumeGradually()
+                        ?: return@runBlocking
             }
 
             if (increaseVolumeGradually) {
-                scheduleVolumeIncrease(MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS.toFloat(), initialAlarmVolume!!.toFloat(), 0)
+                scheduleVolumeIncrease(
+                    MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS.toFloat(),
+                    initialAlarmVolume!!.toFloat(),
+                    0
+                )
             }
         } catch (e: Exception) {
             Log.i(TAG, "Failed to play Alarm Clock Sounds!")
         }
     }
+
     private fun scheduleVolumeIncrease(lastVolume: Float, maxVolume: Float, delay: Long) {
         increaseVolumeHandler.postDelayed({
             val newLastVolume = (lastVolume + 0.1f).coerceAtMost(maxVolume)
@@ -209,11 +227,13 @@ class ReminderActivity : AppCompatActivity() {
             scheduleVolumeIncrease(newLastVolume, maxVolume, INCREASE_VOLUME_DELAY)
         }, delay)
     }
+
     private fun resetVolumeToInitialValue() {
         initialAlarmVolume?.apply {
             audioManager?.setStreamVolume(AudioManager.STREAM_ALARM, this, 0)
         }
     }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent?.action == AlarmClock.ACTION_SNOOZE_ALARM) {
@@ -246,6 +266,7 @@ class ReminderActivity : AppCompatActivity() {
         vibrator?.cancel()
         vibrator = null
     }
+
     private fun snoozeAlarmClock() {
         var snoozeTime = 5
         runBlocking {
@@ -259,11 +280,12 @@ class ReminderActivity : AppCompatActivity() {
     private fun finishActivity() {
         finishActivity(false)
     }
+
     private fun finishActivity(snoozed: Boolean) {
         finished = true
         destroyEffects()
         finish()
-        CoroutineScope(Dispatchers.Default).launch{
+        CoroutineScope(Dispatchers.Default).launch {
             if (snoozed) {
                 AlarmClockSetter.main(this@ReminderActivity, null, null)
             } else {
@@ -271,11 +293,12 @@ class ReminderActivity : AppCompatActivity() {
             }
         }
         if (isUpsideDownCakePlus()) {
-            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,0,0)
+            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0)
         } else {
             @Suppress("DEPRECATION") overridePendingTransition(0, 0)
         }
     }
+
     private fun showOverLockscreen() {
         if (isOreoMr1Plus()) {
             setShowWhenLocked(true)

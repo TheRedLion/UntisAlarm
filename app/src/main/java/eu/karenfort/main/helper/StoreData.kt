@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userData")
-class StoreData (
+
+class StoreData(
     private val context: Context
 ) {
     companion object {
@@ -48,6 +49,7 @@ class StoreData (
         val KEY_LANGUAGE = stringPreferencesKey("language")
         //val KEY_CANCELLED_MESSAGE = stringPreferencesKey("cancelledMessage")
     }
+
     /*fun storeCancelledMessage(cancellationMessage: String) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -66,6 +68,7 @@ class StoreData (
             }
         }
     }
+
     fun storeDarkMode(darkMode: Int) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -73,11 +76,13 @@ class StoreData (
             }
         }
     }
+
     suspend fun loadDarkMode(): DarkMode? {
         val preferences = context.dataStore.data.first()
         val darkModeOrdinal = preferences[KEY_DARK_MODE] ?: return null
         return DarkMode.values()[darkModeOrdinal]
     }
+
     fun storeLanguage(language: String) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -85,10 +90,12 @@ class StoreData (
             }
         }
     }
+
     suspend fun loadLanguage(): String? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_LANGUAGE]
     }
+
     fun storeSnoozeTime(snoozeTime: Int) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -96,10 +103,12 @@ class StoreData (
             }
         }
     }
+
     suspend fun loadSnoozeTime(): Int? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_SNOOZE_TIME]
     }
+
     fun storeIncreaseVolumeGradually(vibrate: Boolean) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -107,10 +116,12 @@ class StoreData (
             }
         }
     }
+
     suspend fun loadIncreaseVolumeGradually(): Boolean? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_VIBRATE]
     }
+
     fun storeVibrate(vibrate: Boolean) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -118,10 +129,12 @@ class StoreData (
             }
         }
     }
+
     suspend fun loadVibrate(): Boolean? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_VIBRATE]
     }
+
     suspend fun loadSound(): Uri? {
         val preferences = context.dataStore.data.first()
         val uriStr = preferences[KEY_SOUND_URI]
@@ -137,6 +150,7 @@ class StoreData (
 
         return uri
     }
+
     fun storeSound(soundUri: Uri) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -144,14 +158,17 @@ class StoreData (
             }
         }
     }
+
     fun deleteLoginData() {
         storeID(0)
         storeLoginData("", "", "", "")
     }
+
     suspend fun loadID(): Int? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_ID]
     }
+
     suspend fun loadLoginData(): Array<String?> {
         val preferences = context.dataStore.data.first()
         return arrayOf(
@@ -161,14 +178,17 @@ class StoreData (
             preferences[KEY_SCHOOL]
         )
     }
+
     suspend fun loadTBS(): Int? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_TBS]
     }
+
     suspend fun loadAlarmActive(): Boolean? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_ALARM_CLOCK_ACTIVE]
     }
+
     suspend fun loadAlarmClock(): Pair<LocalDateTime?, Boolean> {
         val preferences = context.dataStore.data.first()
         val year = preferences[KEY_ALARM_CLOCK]
@@ -188,9 +208,11 @@ class StoreData (
 
         return Pair(LocalDateTime.of(year, month, day, hour, minute), edited)
     }
+
     fun storeAlarmClock(alarmClockDayTime: LocalDateTime?) {
         storeAlarmClock(alarmClockDayTime, false)
     }
+
     fun storeAlarmClock(edited: Boolean) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -198,6 +220,7 @@ class StoreData (
             }
         }
     }
+
     fun storeAlarmClock(alarmClockDayTime: LocalDateTime?, edited: Boolean) {
         if (alarmClockDayTime == null) {
             CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
@@ -223,6 +246,7 @@ class StoreData (
             }
         }
     }
+
     fun storeID(id: Int) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -230,6 +254,7 @@ class StoreData (
             }
         }
     }
+
     fun storeLoginData(username: String, password: String, server: String, school: String) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -240,6 +265,7 @@ class StoreData (
             }
         }
     }
+
     fun storeTBS(timeBeforeSchool: Int) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
@@ -247,6 +273,7 @@ class StoreData (
             }
         }
     }
+
     fun storeAlarmActive(alarmActive: Boolean) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->

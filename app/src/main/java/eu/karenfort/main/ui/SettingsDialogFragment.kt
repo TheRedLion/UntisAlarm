@@ -52,7 +52,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsDialogFragment : DialogFragment(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private val binding: FragmentSettingsBinding by viewBinding(FragmentSettingsBinding::inflate)
 
     //these are used to preload settings
@@ -71,10 +72,12 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         super.onAttach(context1)
         context = context1
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        nonNullActivity = activity?: throw Error("Activity is Null")
+        nonNullActivity = activity ?: throw Error("Activity is Null")
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,7 +85,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_settings, container)
-        
+
         setListener()
         disableClicking() //disabling clicks until everything was properly loaded to prevent errors
         loadAndDisplayStoredStates()
@@ -90,6 +93,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
 
         return view
     }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
         if (string == null) return //don't know when this would happen
 
@@ -100,48 +104,54 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
             storedUri = newUri
         }
     }
+
     override fun getTheme(): Int {
         return R.style.DialogTheme
     }
+
     private fun setListener() {
         //cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
         //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
 
         //listener when exiting field
         binding.snoozeInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            if(!b){
+            if (!b) {
                 handleSetSnooze()
             }
         }
         binding.tbsInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            if(!b) {
+            if (!b) {
                 handleSetTBS()
             }
         }
         //lister for 2sec after entering something
         val snoozeHandler = Handler(Looper.getMainLooper())
-        binding.snoozeInputField.addTextChangedListener(object : TextWatcher{
+        binding.snoozeInputField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 snoozeHandler.postDelayed({
                     handleSetSnooze()
-                }, 2*1000L)
+                }, 2 * 1000L)
             }
         })
         val tbsHandler = Handler(Looper.getMainLooper())
-        binding.tbsInputField.addTextChangedListener(object : TextWatcher{
+        binding.tbsInputField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 tbsHandler.postDelayed({
                     handleSetTBS()
-                }, 2*1000L)
+                }, 2 * 1000L)
             }
         })
 
         //colorSchemeSettings.setOnClickListener { colorDialog() }
-        binding.vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
+        binding.vibrateToggle.addOnCheckedStateChangedListener { _, state ->
+            handleToggleVibrate(
+                state
+            )
+        }
         binding.ivgToggle.addOnCheckedStateChangedListener { _, state -> handleToggleIVG(state) }
         binding.darkModeSettings.setOnClickListener { darkModeDialog() }
         binding.alarmClockSoundSettings.setOnClickListener { alarmSoundDialog() }
@@ -152,6 +162,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         }
         binding.settingsToolar.setNavigationOnClickListener { this.dismiss() }
     }
+
     /*
     private fun handleCancellationMessageInfo() {
         startActivity(Intent(this@SettingsActivity, CancelledMessageInfo::class.java))
@@ -167,6 +178,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         binding.tbsInputField.isClickable = true
         binding.snoozeInputField.isClickable = true
     }
+
     private fun disableClicking() {
         //colorSchemeSettings.isClickable = false
         binding.languageSettings.isClickable = false
@@ -177,6 +189,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         binding.tbsInputField.isClickable = false
         binding.snoozeInputField.isClickable = false
     }
+
     @SuppressLint("SetTextI18n")
     private fun loadAndDisplayStoredStates() {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
@@ -187,9 +200,9 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
             val snooze: Int = storeData.loadSnoozeTime() ?: initSnooze()
             val ivg: Boolean = storeData.loadIncreaseVolumeGradually() ?: initIVG()
 
-            storedUri = storeData.loadSound()?: initSound()
-            storedLanguage = storeData.loadLanguage()?: initLanguage()
-            storedDarkMode = storeData.loadDarkMode()?: initDarkMode()
+            storedUri = storeData.loadSound() ?: initSound()
+            storedLanguage = storeData.loadLanguage() ?: initLanguage()
+            storedDarkMode = storeData.loadDarkMode() ?: initDarkMode()
 
             nonNullActivity.runOnUiThread {
                 binding.tbsInputLayout.hint =
@@ -206,13 +219,15 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
             }
         }
     }
+
     private fun languageDialog() {
         var checkedItem = 0
 
         if (storedLanguage != null) {
             try {
                 checkedItem = SUPPORTED_LANGUAGES.indexOf(storedLanguage)
-            } catch (_: Error) {}
+            } catch (_: Error) {
+            }
         } else {
             runBlocking {
                 val storeData = StoreData(context)
@@ -279,19 +294,23 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
                 checkedItem = which
             }.show()
     }
+
     private fun alarmSoundDialog() {
         val intent = Intent(context, AlarmSoundPicker::class.java)
         intent.putExtra(AlarmSoundPicker.INTENT_ALARM_SOUND_URI, storedUri.toString())
         startActivity(intent)
     }
+
     private fun handleToggleVibrate(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED
         StoreData(context).storeVibrate(stateBool)
     }
+
     private fun handleToggleIVG(state: Int) {
         val stateBool = state == MaterialCheckBox.STATE_CHECKED
         StoreData(context).storeIncreaseVolumeGradually(stateBool)
     }
+
     /*
     private fun handleSetCancellationMessageEnd() {
         val newMessage = cancellationMessageField.text.toString()
@@ -330,6 +349,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
 
         StoreData(context).storeTBS(newSnooze)
     }
+
     private fun handleSetTBS() {
         val newTBSStr = binding.tbsInputField.text.toString()
 
@@ -345,7 +365,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         }
 
         if (newTBS > MAX_TBS) {
-            context.toast(getString(R.string.the_maximum_length_is) + MAX_TBS/12 + getString(R.string.hours))
+            context.toast(getString(R.string.the_maximum_length_is) + MAX_TBS / 12 + getString(R.string.hours))
             return
         }
 
@@ -363,34 +383,41 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
                 aaState = aaStateNullable
             }
             if (aaState) {
-                DataPass.passLocalDateTime(context,AlarmClockSetter.main(context)?: return@launch)
+                DataPass.passLocalDateTime(context, AlarmClockSetter.main(context) ?: return@launch)
             }
         }
     }
+
     private fun initDarkMode(): DarkMode {
         StoreData(context).storeDarkMode(DarkMode.DEFAULT)
         return DarkMode.DEFAULT
     }
+
     private fun initLanguage(): String {
         StoreData(context).storeLanguage(SUPPORTED_LANGUAGES[0])
         return SUPPORTED_LANGUAGES[0]
     }
+
     private fun initSound(): Uri {
         StoreData(context).storeSound(ALARM_SOUND_DEFAULT_URI)
         return ALARM_SOUND_DEFAULT_URI
     }
+
     private fun initIVG(): Boolean {
         StoreData(context).storeIncreaseVolumeGradually(IVG_DEFAULT)
         return IVG_DEFAULT
     }
+
     private fun initSnooze(): Int {
         StoreData(context).storeSnoozeTime(SNOOZE_DEFAULT)
         return SNOOZE_DEFAULT
     }
+
     private fun initVibrate(): Boolean {
         StoreData(context).storeVibrate(VIBRATE_DEFAULT)
         return VIBRATE_DEFAULT
     }
+
     private fun initTBS(): Int {
         StoreData(context).storeTBS(TBS_DEFAULT)
         return TBS_DEFAULT

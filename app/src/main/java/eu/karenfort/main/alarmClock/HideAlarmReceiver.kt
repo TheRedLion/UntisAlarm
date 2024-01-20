@@ -13,8 +13,8 @@ package eu.karenfort.main.alarmClock
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import eu.karenfort.main.helper.ALARM_CLOCK_ID
 import eu.karenfort.main.extentions.hideNotification
+import eu.karenfort.main.helper.ALARM_CLOCK_ID
 
 class HideAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

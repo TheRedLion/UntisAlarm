@@ -19,4 +19,5 @@ fun View.onGlobalLayout(callback: () -> Unit) {
         }
     })
 }
+
 fun View.performHapticFeedback() = performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)

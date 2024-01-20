@@ -22,11 +22,13 @@ class UntisApiCalls(
     password: String,
     server: String,
     schoolName: String
-){
+) {
     private val session: Session
+
     companion object {
         private const val TAG = "UntisApiCalls"
     }
+
     init {
         try {
             this.session = Session.login(
@@ -50,6 +52,7 @@ class UntisApiCalls(
         }
         return id
     }
+
     fun getSchoolStartForDay(id: Int): LocalDateTime? {
         try {
             var nextDay = LocalDate.now().plusDays(1)
@@ -76,11 +79,14 @@ class UntisApiCalls(
             params["startDate"] = "19012024"
             params["endDate"] = "19012024"
 
-            Log.i(TAG, session.getTimetableFromPersonId(LocalDate.now(), LocalDate.now(), 436).toString())
+            Log.i(
+                TAG,
+                session.getTimetableFromPersonId(LocalDate.now(), LocalDate.now(), 436).toString()
+            )
 
             timetable.sortByDate()
             timetable.sortByStartTime()
-            for (i in timetable){
+            for (i in timetable) {
                 if (!lessonIsCancelled(i)) {
                     val firstLessonStartTime: LocalDateTime = LocalDateTime.of(nextDay, i.startTime)
                     session.logout()
@@ -89,10 +95,11 @@ class UntisApiCalls(
             }
             return null
         } catch (e: IOException) {
-            Log.i(TAG,e.toString())
+            Log.i(TAG, e.toString())
             return null
         }
     }
+
     private fun lessonIsCancelled(lesson: Timetable.Lesson): Boolean {
         if (lesson.teachers.isEmpty() && lesson.teachers != null) {
             return true

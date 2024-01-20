@@ -30,14 +30,17 @@ import eu.karenfort.main.helper.StoreData
 class FirstSettingDialogFragment : DialogFragment() {
     private lateinit var context: Context
     private val binding: FragmentFirstSettingBinding by viewBinding(FragmentFirstSettingBinding::inflate)
+
     companion object {
         const val TAG = "FirstSettingDialogFragment"
         const val DISMISSED = "dismissed"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context = this.getContext()?: throw Error("Context is Null")
+        context = this.getContext() ?: throw Error("Context is Null")
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

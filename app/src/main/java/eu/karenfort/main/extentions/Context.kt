@@ -36,8 +36,6 @@ import com.carlkarenfort.test.R
 import com.carlkarenfort.test.R.drawable.ic_login_vector
 import com.carlkarenfort.test.R.string.not_logged_in
 import com.carlkarenfort.test.R.string.you_are_currently_not_logged_in_please_login_again
-import eu.karenfort.main.ui.MainActivity
-import eu.karenfort.main.ui.ReminderActivity.Companion.TAG
 import eu.karenfort.main.alarmClock.AlarmClockReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
 import eu.karenfort.main.alarmClock.SnoozeAlarmReceiver
@@ -51,6 +49,8 @@ import eu.karenfort.main.helper.SILENT_URI
 import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isOnMainThread
 import eu.karenfort.main.helper.isSnowConePlus
+import eu.karenfort.main.ui.MainActivity
+import eu.karenfort.main.ui.ReminderActivity.Companion.TAG
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -63,32 +63,38 @@ import java.util.Locale
 
 val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 val Context.alarmManager: AlarmManager get() = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-val Context.alarmClockPendingIntent: PendingIntent get() = PendingIntent.getBroadcast(
-    this,
-    ALARM_CLOCK_ID,
-    Intent(this, AlarmClockReceiver::class.java),
-    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-)
-val Context.areNotificationsEnabled: Boolean get() = NotificationManagerCompat.from(this).areNotificationsEnabled()
+val Context.alarmClockPendingIntent: PendingIntent
+    get() = PendingIntent.getBroadcast(
+        this,
+        ALARM_CLOCK_ID,
+        Intent(this, AlarmClockReceiver::class.java),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+val Context.areNotificationsEnabled: Boolean
+    get() = NotificationManagerCompat.from(this).areNotificationsEnabled()
 val Context.isScreenOn: Boolean get() = (this.getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
-private val Context.snoozePendingIntent: PendingIntent get() = PendingIntent.getBroadcast(
-    this,
-    ALARM_CLOCK_ID,
-    Intent(this, SnoozeAlarmReceiver::class.java),
-    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-)
+private val Context.snoozePendingIntent: PendingIntent
+    get() = PendingIntent.getBroadcast(
+        this,
+        ALARM_CLOCK_ID,
+        Intent(this, SnoozeAlarmReceiver::class.java),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
 private val Context.packageLaunchIntent get() = packageManager.getLaunchIntentForPackage("eu.karenfort.main")
-private val Context.hideAlarmPendingIntent: PendingIntent get() = PendingIntent.getBroadcast(
-    this,
-    ALARM_CLOCK_ID,
-    Intent(this, HideAlarmReceiver::class.java),
-    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-private val Context.openAlarmTabIntent: PendingIntent get() = PendingIntent.getActivity(
-    this,
-    OPEN_ALARM_TAB_INTENT_CODE,
-    packageLaunchIntent ?: Intent(this, MainActivity::class.java),
-    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-)
+private val Context.hideAlarmPendingIntent: PendingIntent
+    get() = PendingIntent.getBroadcast(
+        this,
+        ALARM_CLOCK_ID,
+        Intent(this, HideAlarmReceiver::class.java),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+private val Context.openAlarmTabIntent: PendingIntent
+    get() = PendingIntent.getActivity(
+        this,
+        OPEN_ALARM_TAB_INTENT_CODE,
+        packageLaunchIntent ?: Intent(this, MainActivity::class.java),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
 
 fun Context.changeDarkMode(darkMode: DarkMode) {
     if (isSnowConePlus()) {
@@ -105,6 +111,7 @@ fun Context.changeDarkMode(darkMode: DarkMode) {
         }
     }
 }
+
 fun Context.isOnline(): Boolean {
     if (hasNetworkConnection()) {
         try {
@@ -122,12 +129,15 @@ fun Context.isOnline(): Boolean {
     }
     return false
 }
+
 private fun Context.hasNetworkConnection(): Boolean {
-    val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val connectivityManager =
+        this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
 
     return capabilities != null
 }
+
 private fun doToast(context: Context, message: String, length: Int) {
     if (context is Activity) {
         if (!context.isFinishing && !context.isDestroyed) {
@@ -137,6 +147,7 @@ private fun doToast(context: Context, message: String, length: Int) {
         Toast.makeText(context, message, length).show()
     }
 }
+
 fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
     try {
         if (isOnMainThread()) {
@@ -146,11 +157,14 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
                 doToast(this, msg, length)
             }
         }
-    } catch (_: Exception) {}
+    } catch (_: Exception) {
+    }
 }
+
 fun Context.showErrorToast(msg: String, length: Int = Toast.LENGTH_LONG) {
     toast(String.format("error", msg), length)
 }
+
 fun Context.showErrorToast(exception: Exception, length: Int = Toast.LENGTH_LONG) {
     showErrorToast(exception.toString(), length)
 }
@@ -163,11 +177,13 @@ fun Context.grantReadUriPermission(uri: Uri) {
         Log.i("Context", "Error")
     }
 }
+
 fun Context.sendNoInternetNotif() {
     NotificationChannel(
         INFO_NOTIFICATION_CHANNEL_ID,
         getString(R.string.info_notifications_channel_name),
-        NotificationManager.IMPORTANCE_HIGH).apply {
+        NotificationManager.IMPORTANCE_HIGH
+    ).apply {
         notificationManager.createNotificationChannel(this)
     }
 
@@ -182,13 +198,16 @@ fun Context.sendNoInternetNotif() {
 
     try {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
-    } catch (_: Exception) {}
+    } catch (_: Exception) {
+    }
 }
+
 fun Context.sendLoggedOutNotif() {
     NotificationChannel(
         INFO_NOTIFICATION_CHANNEL_ID,
         getString(R.string.info_notifications_channel_name),
-        NotificationManager.IMPORTANCE_HIGH).apply {
+        NotificationManager.IMPORTANCE_HIGH
+    ).apply {
         notificationManager.createNotificationChannel(this)
     }
 
@@ -221,7 +240,8 @@ fun Context.sendLoggedOutNotif() {
 
     try {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
-    } catch (_: Exception) {}
+    } catch (_: Exception) {
+    }
 }
 
 fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
@@ -261,7 +281,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         if (storeData.loadDarkMode() == null) {
             storeData.storeDarkMode(DarkMode.DEFAULT)
         }
-        darkMode = storeData.loadDarkMode()?: DarkMode.DEFAULT
+        darkMode = storeData.loadDarkMode() ?: DarkMode.DEFAULT
         if (darkMode == DarkMode.ENABLED) {
             isDark = false
         }
@@ -269,8 +289,9 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
             isDark = true
         }
         if (darkMode == DarkMode.DEFAULT) {
-           // check if system default is dark mode
-            val currentNightMode = this@getAlarmNotification.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+            // check if system default is dark mode
+            val currentNightMode =
+                this@getAlarmNotification.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
             isDark = currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
         }
     }
@@ -317,10 +338,12 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     notification.flags = notification.flags or Notification.FLAG_INSISTENT
     return notification
 }
+
 fun Context.hideNotification(id: Int) {
     val manager = this.notificationManager
     manager.cancel(id)
 }
+
 fun Context.showAlarmNotification() {
     val pendingIntent = openAlarmTabIntent
     val notification = getAlarmNotification(pendingIntent)
@@ -331,6 +354,7 @@ fun Context.showAlarmNotification() {
         showErrorToast(e)
     }
 }
+
 fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
     if (DateFormat.is24HourFormat(this)) {
         val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockDateTime)
@@ -348,9 +372,13 @@ fun Context.getAlarmPreviewString(alarmClockDateTime: LocalDateTime): String {
             )
         } ${alarmClockStrHour}:${alarmClockStrMinute}"
     } else {
-        val alarmClockHour = alarmClockDateTime.hour%12
-        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(alarmClockHour, alarmClockDateTime.minute)
-        val ampm = if (alarmClockDateTime.hour >= 12) getString(R.string.pm) else getString(R.string.am)
+        val alarmClockHour = alarmClockDateTime.hour % 12
+        val (alarmClockStrHour, alarmClockStrMinute) = reformatAlarmClockPreview(
+            alarmClockHour,
+            alarmClockDateTime.minute
+        )
+        val ampm =
+            if (alarmClockDateTime.hour >= 12) getString(R.string.pm) else getString(R.string.am)
 
         if (alarmClockDateTime.isAfter(LocalDateTime.now().plusDays(7))) {
             return "${

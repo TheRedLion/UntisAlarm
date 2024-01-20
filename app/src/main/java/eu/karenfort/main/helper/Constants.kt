@@ -30,7 +30,7 @@ const val SNOOZE_DEFAULT = 5 //min
 const val IVG_DEFAULT = false
 
 const val MAX_SNOOZE = 30 //min
-const val MAX_TBS = 12*60 //12h*60min
+const val MAX_TBS = 12 * 60 //12h*60min
 
 //not settable defaults
 const val INCREASE_VOLUME_DELAY = 300L
@@ -50,7 +50,8 @@ val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager
 const val SILENT = "content://silent"
 val SILENT_URI: Uri = Uri.parse(SILENT)
 
-val COROUTINE_EXCEPTION_HANDLER = CoroutineExceptionHandler{ _, throwable ->
+val COROUTINE_EXCEPTION_HANDLER = CoroutineExceptionHandler { _, throwable ->
     throwable.printStackTrace()
 }
-val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy =
+    StrictMode.ThreadPolicy.Builder().permitAll().build()

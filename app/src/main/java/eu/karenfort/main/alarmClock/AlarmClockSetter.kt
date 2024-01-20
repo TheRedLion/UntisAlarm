@@ -12,7 +12,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
-import eu.karenfort.main.ui.MainActivity
 import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.extentions.isOnline
@@ -23,6 +22,7 @@ import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.TBS_DEFAULT
 import eu.karenfort.main.helper.isSnowConePlus
+import eu.karenfort.main.ui.MainActivity
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
@@ -69,14 +69,14 @@ class AlarmClockSetter {
                 val pair: Pair<LocalDateTime?, Boolean> = storeData.loadAlarmClock()
                 storedAlarmClockDateTime = pair.first
                 storedAlarmClockEdited = pair.second
-                alarmActive = storeData.loadAlarmActive()?: false
+                alarmActive = storeData.loadAlarmActive() ?: false
             }
 
             if (isEdited != null) {
                 storedAlarmClockEdited = isEdited
             }
             if (isActive != null) {
-                alarmActive  = isActive
+                alarmActive = isActive
             }
 
             if (tbs == null) {
@@ -166,12 +166,16 @@ class AlarmClockSetter {
         private fun isAlarmClockSetProperly(
             alarmClockTime: LocalDateTime?,
             storedAlarmClockDateTime: LocalDateTime?
-        ) = if (alarmClockTime == null || storedAlarmClockDateTime == null) false else alarmClockTime.isEqual(storedAlarmClockDateTime)
+        ) =
+            if (alarmClockTime == null || storedAlarmClockDateTime == null) false else alarmClockTime.isEqual(
+                storedAlarmClockDateTime
+            )
 
         private fun setNew(reason: String, context: Context) {
             setNew(reason, null, context)
         }
-        private fun setNew(reason: String, schoolStart: LocalDateTime?, context: Context) {
+
+        private fun setNew(reason: String, schoolStart: LocalDateTime? = null, context: Context) {
             when (reason) {
                 REASON_NO_ALARM_TODAY -> {
                     val alarmManager = context.getSystemService(AlarmManager::class.java)

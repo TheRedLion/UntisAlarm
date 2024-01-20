@@ -14,16 +14,17 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
-import eu.karenfort.main.helper.StoreData
-import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.extentions.parcelable
 import eu.karenfort.main.extentions.toast
+import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
+import eu.karenfort.main.helper.StoreData
 
 class AlarmSoundPicker : AppCompatActivity() {
     companion object {
         const val TAG = "AlarmSoundPicker"
         const val INTENT_ALARM_SOUND_URI = "alarmSoundUri"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm_sound_picker)
@@ -45,7 +46,10 @@ class AlarmSoundPicker : AppCompatActivity() {
     private fun startDialog(uri: Uri = ALARM_SOUND_DEFAULT_URI) {
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.select_alarm_sound))
+        intent.putExtra(
+            RingtoneManager.EXTRA_RINGTONE_TITLE,
+            getString(R.string.select_alarm_sound)
+        )
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, uri)
 
         val ringtonePickerLauncher = registerForActivityResult(

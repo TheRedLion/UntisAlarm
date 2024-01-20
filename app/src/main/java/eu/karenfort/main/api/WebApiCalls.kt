@@ -22,6 +22,7 @@ class WebApiCalls {
     companion object {
         const val TOO_MANY_RESULTS = "too many results"
     }
+
     suspend fun getUntisSchools(searchSchoolString: String): Array<Array<String>>? {
         if (searchSchoolString.length < 3) { //query wont ever succeed with 2 letters
             return null
@@ -50,7 +51,10 @@ class WebApiCalls {
         connection.setRequestProperty("Sec-Fetch-Dest", "empty")
         connection.setRequestProperty("Sec-Fetch-Mode", "cors")
         connection.setRequestProperty("Sec-Fetch-Site", "same-site")
-        connection.setRequestProperty("Content-Length", data.toByteArray(StandardCharsets.UTF_8).size.toString())
+        connection.setRequestProperty(
+            "Content-Length",
+            data.toByteArray(StandardCharsets.UTF_8).size.toString()
+        )
         connection.doOutput = true
 
         val os: OutputStream = connection.outputStream
