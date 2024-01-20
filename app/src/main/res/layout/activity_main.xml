@@ -67,7 +67,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/disabled_notfs"
+        android:id="@+id/disabled_notifs_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 

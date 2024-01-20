@@ -42,7 +42,7 @@ import eu.karenfort.main.alarmClock.AlarmClockReceiver
 import eu.karenfort.main.alarmClock.HideAlarmReceiver
 import eu.karenfort.main.alarmClock.SnoozeAlarmReceiver
 import eu.karenfort.main.helper.ALARM_CLOCK_ID
-import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
+import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.DarkMode
 import eu.karenfort.main.helper.INFO_NOTIFICATION_CHANNEL_ID
@@ -290,7 +290,7 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
     }
 
     val dismissIntent = hideAlarmPendingIntent
-    val builder = NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
+    val builder = NotificationCompat.Builder(this, ALARM_CLOCK_NOTIFICATION_CHANNEL_ID)
         .setContentTitle(label)
         .setContentText(getAlarmPreviewString(LocalDateTime.now()))
         .setSmallIcon(R.drawable.ic_alarm_vector)

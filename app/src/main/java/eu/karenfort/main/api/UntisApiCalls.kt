@@ -15,7 +15,6 @@ import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 class UntisApiCalls(
@@ -69,6 +68,16 @@ class UntisApiCalls(
                 )
             }
 
+            //todo tempcode
+
+            val params: HashMap<String, String> = HashMap()
+            params["id"] = "436"
+            params["type"] = "5"
+            params["startDate"] = "19012024"
+            params["endDate"] = "19012024"
+
+            Log.i(TAG, session.getTimetableFromPersonId(LocalDate.now(), LocalDate.now(), 436).toString())
+
             timetable.sortByDate()
             timetable.sortByStartTime()
             for (i in timetable){
@@ -90,6 +99,6 @@ class UntisApiCalls(
         } //if there is no teacher assigned there is no school
 
         return lesson.code == UntisUtils.LessonCode.CANCELLED
-        //todo implement that CancelledMessage is checked
+        //tod implement that CancelledMessage is checked
     }
 }

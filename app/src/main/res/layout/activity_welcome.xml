@@ -50,7 +50,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/webuntis_url"
                         android:singleLine="true"
-                        android:nextFocusDown="@id/untis_username"/>
+                        android:nextFocusDown="@id/untis_user_name"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/select_school_input_layout"
+                    android:id="@+id/select_untis_school_input_layout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <AutoCompleteTextView
-                        android:id="@+id/school_selector"
+                        android:id="@+id/untis_school_selector"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/untis_username_input_layout"
+                    android:id="@+id/untis_user_name_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -102,7 +102,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/untis_username"
+                        android:id="@+id/untis_user_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/webuntis_username"

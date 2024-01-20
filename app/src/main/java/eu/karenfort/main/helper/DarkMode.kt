@@ -5,7 +5,7 @@
  */
 package eu.karenfort.main.helper
 
-enum class DarkMode() {
+enum class DarkMode {
     DEFAULT,
     DISABLED,
     ENABLED

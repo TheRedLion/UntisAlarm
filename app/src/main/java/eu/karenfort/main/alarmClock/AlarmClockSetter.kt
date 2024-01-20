@@ -12,7 +12,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
-import android.util.Log
 import eu.karenfort.main.ui.MainActivity
 import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
@@ -100,14 +99,14 @@ class AlarmClockSetter {
                     val schoolStart: LocalDateTime?
 
                     StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
-                    val webuntisApiCalls = UntisApiCalls(
+                    val untisApiCalls = UntisApiCalls(
                         loginData[0]!!,
                         loginData[1]!!,
                         loginData[2]!!,
                         loginData[3]!!
                     )
 
-                    schoolStart = webuntisApiCalls.getSchoolStartForDay(id!!)
+                    schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
                     if (schoolStart == null) return null
 
@@ -129,14 +128,14 @@ class AlarmClockSetter {
 
             val schoolStart: LocalDateTime?
             StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
-            val webuntisApiCalls = UntisApiCalls(
+            val untisApiCalls = UntisApiCalls(
                 loginData[0]!!,
                 loginData[1]!!,
                 loginData[2]!!,
                 loginData[3]!!
             )
 
-            schoolStart = webuntisApiCalls.getSchoolStartForDay(id!!)
+            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
 
             if (schoolStart == null) {
                 //probably holiday or something

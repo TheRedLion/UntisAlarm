@@ -26,19 +26,19 @@ import android.os.VibratorManager
 import android.provider.AlarmClock
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.carlkarenfort.test.R
 import com.carlkarenfort.test.databinding.ActivityReminderBinding
 import eu.karenfort.main.alarmClock.AlarmClockSetter
-import eu.karenfort.main.extentions.beGone
 import eu.karenfort.main.extentions.getAlarmPreviewString
 import eu.karenfort.main.extentions.notificationManager
 import eu.karenfort.main.extentions.onGlobalLayout
 import eu.karenfort.main.extentions.performHapticFeedback
 import eu.karenfort.main.extentions.viewBinding
-import eu.karenfort.main.helper.ALARM_NOTIFICATION_ID
+import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_ID
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
 import eu.karenfort.main.helper.MAX_ALARM_DURATION
@@ -52,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+
 
 class ReminderActivity : AppCompatActivity() {
     private val increaseVolumeHandler = Handler(Looper.getMainLooper())
@@ -88,7 +89,7 @@ class ReminderActivity : AppCompatActivity() {
     }
     @SuppressLint("ClickableViewAccessibility")
     private fun setupAlarmButtons() {
-        binding.reminderStop.beGone()
+        binding.reminderStop.visibility = View.GONE
         binding.reminderDraggableBackground.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulsing_animation))
 
         var minDragX = 0f
@@ -230,7 +231,7 @@ class ReminderActivity : AppCompatActivity() {
         vibrationHandler.removeCallbacksAndMessages(null)
         if (!finished) {
             finishActivity()
-            notificationManager.cancel(ALARM_NOTIFICATION_ID)
+            notificationManager.cancel(ALARM_CLOCK_NOTIFICATION_ID)
         } else {
             destroyEffects()
         }

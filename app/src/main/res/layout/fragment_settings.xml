@@ -149,7 +149,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/alarm_settings"
+                android:id="@+id/alarm_clock_sound_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

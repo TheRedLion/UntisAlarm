@@ -20,22 +20,19 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.carlkarenfort.test.R
-import com.google.android.material.appbar.MaterialToolbar
+import com.carlkarenfort.test.databinding.FragmentSettingsBinding
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.alarmClock.AlarmClockSetter
 import eu.karenfort.main.dataPass.DataPass
 import eu.karenfort.main.extentions.changeDarkMode
 import eu.karenfort.main.extentions.toast
+import eu.karenfort.main.extentions.viewBinding
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.main.helper.DarkMode
@@ -56,21 +53,7 @@ import kotlinx.coroutines.runBlocking
 
 
 class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
-
-    //layout objects
-    //private lateinit var cancellationMessageField: TextInputEditText
-    //private lateinit var cancellationMessageLayout: TextInputLayout
-    private lateinit var languageSettings: ConstraintLayout
-    private lateinit var alarmSoundSettings: ConstraintLayout
-    private lateinit var darkModeSettings: ConstraintLayout
-    private lateinit var ivgToggle: MaterialCheckBox
-    private lateinit var vibrateToggle: MaterialCheckBox
-    private lateinit var tbsInputField: TextInputEditText
-    private lateinit var snoozeInputField: TextInputEditText
-    private lateinit var tbsInputLayout: TextInputLayout
-    private lateinit var snoozeInputLayout: TextInputLayout
-    private lateinit var makeSilent: Button
-    private lateinit var toolbar: MaterialToolbar
+    private val binding: FragmentSettingsBinding by viewBinding(FragmentSettingsBinding::inflate)
 
     //these are used to preload settings
     private var storedLanguage: String? = null
@@ -99,22 +82,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_settings, container)
-
-        //colorSchemeSettings = view.findViewById(R.id.color_scheme_settings)
-        //cancellationMessageLayout = view.findViewById(R.id.cancelled_message_input_layout)
-        //cancellationMessageField = view.findViewById(R.id.cancelled_message_input_field)
-        languageSettings = view.findViewById(R.id.language_settings)
-        darkModeSettings = view.findViewById(R.id.dark_mode_settings)
-        alarmSoundSettings = view.findViewById(R.id.alarm_settings)
-        ivgToggle = view.findViewById(R.id.ivgToggle)
-        vibrateToggle = view.findViewById(R.id.vibrateToggle)
-        tbsInputField = view.findViewById(R.id.tbs_input_field)
-        snoozeInputField = view.findViewById(R.id.snooze_input_field)
-        tbsInputLayout = view.findViewById(R.id.tbs_input_layout)
-        snoozeInputLayout = view.findViewById(R.id.snooze_input_layout)
-        makeSilent = view.findViewById(R.id.makeSilent)
-        toolbar = view.findViewById(R.id.settings_toolar)
-
+        
         setListener()
         disableClicking() //disabling clicks until everything was properly loaded to prevent errors
         loadAndDisplayStoredStates()
@@ -140,19 +108,19 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
 
         //listener when exiting field
-        snoozeInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
+        binding.snoozeInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
             if(!b){
                 handleSetSnooze()
             }
         }
-        tbsInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
+        binding.tbsInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
             if(!b) {
                 handleSetTBS()
             }
         }
         //lister for 2sec after entering something
         val snoozeHandler = Handler(Looper.getMainLooper())
-        snoozeInputField.addTextChangedListener(object : TextWatcher{
+        binding.snoozeInputField.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
@@ -162,7 +130,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
             }
         })
         val tbsHandler = Handler(Looper.getMainLooper())
-        tbsInputField.addTextChangedListener(object : TextWatcher{
+        binding.tbsInputField.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
@@ -173,16 +141,16 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         })
 
         //colorSchemeSettings.setOnClickListener { colorDialog() }
-        vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
-        ivgToggle.addOnCheckedStateChangedListener { _, state -> handleToggleIVG(state) }
-        darkModeSettings.setOnClickListener { darkModeDialog() }
-        alarmSoundSettings.setOnClickListener { alarmSoundDialog() }
-        languageSettings.setOnClickListener { languageDialog() }
-        makeSilent.setOnClickListener {
+        binding.vibrateToggle.addOnCheckedStateChangedListener { _, state -> handleToggleVibrate(state) }
+        binding.ivgToggle.addOnCheckedStateChangedListener { _, state -> handleToggleIVG(state) }
+        binding.darkModeSettings.setOnClickListener { darkModeDialog() }
+        binding.alarmClockSoundSettings.setOnClickListener { alarmSoundDialog() }
+        binding.languageSettings.setOnClickListener { languageDialog() }
+        binding.makeSilent.setOnClickListener {
             StoreData(context).storeSound(SILENT_URI)
             storedUri = SILENT_URI
         }
-        toolbar.setNavigationOnClickListener { this.dismiss() }
+        binding.settingsToolar.setNavigationOnClickListener { this.dismiss() }
     }
     /*
     private fun handleCancellationMessageInfo() {
@@ -191,23 +159,23 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
      */
     private fun enableClicking() {
         //colorSchemeSettings.isClickable = true
-        languageSettings.isClickable = true
-        darkModeSettings.isClickable = true
-        alarmSoundSettings.isClickable = true
-        ivgToggle.isClickable = true
-        vibrateToggle.isClickable = true
-        tbsInputField.isClickable = true
-        snoozeInputField.isClickable = true
+        binding.languageSettings.isClickable = true
+        binding.darkModeSettings.isClickable = true
+        binding.alarmClockSoundSettings.isClickable = true
+        binding.ivgToggle.isClickable = true
+        binding.vibrateToggle.isClickable = true
+        binding.tbsInputField.isClickable = true
+        binding.snoozeInputField.isClickable = true
     }
     private fun disableClicking() {
         //colorSchemeSettings.isClickable = false
-        languageSettings.isClickable = false
-        darkModeSettings.isClickable = false
-        alarmSoundSettings.isClickable = false
-        ivgToggle.isClickable = false
-        vibrateToggle.isClickable = false
-        tbsInputField.isClickable = false
-        snoozeInputField.isClickable = false
+        binding.languageSettings.isClickable = false
+        binding.darkModeSettings.isClickable = false
+        binding.alarmClockSoundSettings.isClickable = false
+        binding.ivgToggle.isClickable = false
+        binding.vibrateToggle.isClickable = false
+        binding.tbsInputField.isClickable = false
+        binding.snoozeInputField.isClickable = false
     }
     @SuppressLint("SetTextI18n")
     private fun loadAndDisplayStoredStates() {
@@ -224,16 +192,16 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
             storedDarkMode = storeData.loadDarkMode()?: initDarkMode()
 
             nonNullActivity.runOnUiThread {
-                tbsInputLayout.hint =
+                binding.tbsInputLayout.hint =
                     "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $tbs${
                         getString(R.string.short_minute)
                     })"
-                vibrateToggle.isChecked = vibrate
-                snoozeInputLayout.hint =
+                binding.vibrateToggle.isChecked = vibrate
+                binding.snoozeInputLayout.hint =
                     "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $snooze${
                         getString(R.string.short_minute)
                     })"
-                ivgToggle.isChecked = ivg
+                binding.ivgToggle.isChecked = ivg
                 enableClicking()
             }
         }
@@ -337,10 +305,10 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
     }
      */
     private fun handleSetSnooze() {
-        val newSnoozeStr = snoozeInputField.text.toString()
+        val newSnoozeStr = binding.snoozeInputField.text.toString()
 
         if (newSnoozeStr.isEmpty()) return
-        snoozeInputField.setText("") //must be after isEmpty check to prevent afterTextChanged triggering
+        binding.snoozeInputField.setText("") //must be after isEmpty check to prevent afterTextChanged triggering
 
         val newSnooze: Int
         try {
@@ -355,7 +323,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
             return
         }
 
-        snoozeInputLayout.hint =
+        binding.snoozeInputLayout.hint =
             "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $newSnooze${
                 getString(R.string.short_minute)
             })"
@@ -363,10 +331,10 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
         StoreData(context).storeTBS(newSnooze)
     }
     private fun handleSetTBS() {
-        val newTBSStr = tbsInputField.text.toString()
+        val newTBSStr = binding.tbsInputField.text.toString()
 
         if (newTBSStr.isEmpty()) return
-        tbsInputField.setText("") //must be after isEmpty check to prevent afterTextChanged triggering
+        binding.tbsInputField.setText("") //must be after isEmpty check to prevent afterTextChanged triggering
 
         val newTBS: Int
         try {
@@ -381,7 +349,7 @@ class SettingsDialogFragment : DialogFragment(), SharedPreferences.OnSharedPrefe
             return
         }
 
-        tbsInputLayout.hint =
+        binding.tbsInputLayout.hint =
             "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $newTBS${
                 getString(R.string.short_minute)
             })"
