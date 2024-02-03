@@ -53,9 +53,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
         Log.i("test", "screen is ff")
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (notificationManager.getNotificationChannel(ALARM_CLOCK_NOTIFICATION_CHANNEL_ID)
-            == null
-        ) {
+        if (notificationManager.getNotificationChannel(ALARM_CLOCK_NOTIFICATION_CHANNEL_ID) == null) {
             NotificationChannel(
                 ALARM_CLOCK_NOTIFICATION_CHANNEL_ID,
                 context.getString(R.string.alarm_clock_notifications),

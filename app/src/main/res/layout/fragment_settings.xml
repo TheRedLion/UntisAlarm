@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent"
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.google.android.material.appbar.MaterialToolbar android:id="@+id/settings_toolar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            app:title="@string/settings" app:navigationIcon="@drawable/ic_back_button">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/settings_toolar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/settings"
+            app:navigationIcon="@drawable/ic_back_button">
 
         </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
-    <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:fillViewport="true" android:scrollbars="none">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none">
 
-        <androidx.appcompat.widget.LinearLayoutCompat android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:orientation="vertical">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
 
             <TextView
@@ -54,61 +65,32 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <TextView style="@style/settings_subtitle" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:text="@string/alarm_settings" />
+            <TextView
+                style="@style/settings_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_settings" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout style="@style/settings_text_holder"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tbs_input_layout" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:hint="@string/time_before_school"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tbs_input_field" android:layout_width="match_parent"
-                        android:layout_height="wrap_content" android:inputType="number"
-                        android:singleLine="true" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/settings_text_holder"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView style="@style/settings_normal_text" android:layout_width="wrap_content"
-                    android:layout_height="match_parent" android:text="@string/vibrate"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/vibrateToggle" style="@style/settings_checkbox"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout style="@style/settings_text_holder"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
-
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/snooze_input_layout" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:hint="@string/snooze_time"
+                    android:id="@+id/tbs_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/time_before_school"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/snooze_input_field" android:layout_width="match_parent"
-                        android:layout_height="wrap_content" android:inputType="number"
+                        android:id="@+id/tbs_input_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
                         android:singleLine="true" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -116,26 +98,86 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/alarm_clock_sound_settings" android:layout_width="match_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <Button android:id="@+id/makeSilent" style="?attr/materialIconButtonOutlinedStyle"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <TextView
+                    style="@style/settings_normal_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/vibrate"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/vibrateToggle"
+                    style="@style/settings_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/settings_text_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/snooze_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/snooze_time"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/snooze_input_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/alarm_clock_sound_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/makeSilent"
+                    style="?attr/materialIconButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/settings_label_start_margin"
                     app:icon="@drawable/ic_alarm_silent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView style="@style/settings_normal_text" android:layout_width="wrap_content"
-                    android:layout_height="match_parent" android:text="@string/alarm_sound"
+                <TextView
+                    style="@style/settings_normal_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/alarm_sound"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/alarm_sound_image"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
-                <ImageView android:id="@+id/alarm_sound_image" style="@style/settings_image_view"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <ImageView
+                    android:id="@+id/alarm_sound_image"
+                    style="@style/settings_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:contentDescription="@string/bell"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -145,18 +187,23 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView style="@style/settings_normal_text" android:layout_width="wrap_content"
+                <TextView
+                    style="@style/settings_normal_text"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="@string/increase_volume_gradually"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.checkbox.MaterialCheckBox android:id="@+id/ivgToggle"
-                    style="@style/settings_checkbox" android:layout_width="wrap_content"
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/ivgToggle"
+                    style="@style/settings_checkbox"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -164,21 +211,32 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView style="@style/settings_subtitle" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:text="@string/general_settings" />
+            <TextView
+                style="@style/settings_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/general_settings" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/language_settings"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/language_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <TextView style="@style/settings_normal_text" android:layout_width="wrap_content"
-                    android:layout_height="match_parent" android:text="@string/language"
+                <TextView
+                    style="@style/settings_normal_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/language"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/language_image"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
-                <ImageView android:id="@+id/language_image" style="@style/settings_image_view"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <ImageView
+                    android:id="@+id/language_image"
+                    style="@style/settings_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:contentDescription="@string/globe"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -187,18 +245,26 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/dark_mode_settings"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dark_mode_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <TextView style="@style/settings_normal_text" android:layout_width="wrap_content"
-                    android:layout_height="match_parent" android:text="@string/dark_mode"
+                <TextView
+                    style="@style/settings_normal_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/dark_mode"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/dark_mode_image"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
-                <ImageView android:id="@+id/dark_mode_image" style="@style/settings_image_view"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <ImageView
+                    android:id="@+id/dark_mode_image"
+                    style="@style/settings_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:contentDescription="@string/moon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
