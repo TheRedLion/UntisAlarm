@@ -64,8 +64,10 @@ class MainActivity :
     private var currentAlarmClockDateTime: LocalDateTime? = null
 
     companion object {
-        var active =
-            false //used to check if app is active for API versions below 31 //todo check instead weather screen is on with PowerManager
+        var active: Boolean =
+            false
+        //used to check if app is active for API versions below 31
+        // TODO: check instead weather screen is on with PowerManager
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,7 +117,7 @@ class MainActivity :
                 runOnUiThread {
                     if (currentAlarmClockDateTime != null) {
                         binding.alarmPreview.text = getAlarmPreviewString(
-                            currentAlarmClockDateTime!!
+                            currentAlarmClockDateTime ?: return@runOnUiThread
                         )
                     }
                     binding.resetAlarmTomorrow.isDisabled =
@@ -218,13 +220,13 @@ class MainActivity :
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
                 if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
                     getAlarmPreviewString(
-                        currentAlarmClockDateTime!!
+                        currentAlarmClockDateTime ?: return@launch
                     )
             } else {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
                 if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
                     getAlarmPreviewString(
-                        currentAlarmClockDateTime!!
+                        currentAlarmClockDateTime ?: return@launch
                     )
             }
         }
@@ -294,7 +296,7 @@ class MainActivity :
                         currentAlarmClockDateTime = selectedDateTime
                         if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
                             getAlarmPreviewString(
-                                currentAlarmClockDateTime!!
+                                currentAlarmClockDateTime ?: return@addOnPositiveButtonClickListener
                             )
                     } else {
                         this.toast(getString(R.string.alarms_are_disabled))
@@ -371,7 +373,9 @@ class MainActivity :
                     if (currentAlarmClockDateTime != null) {
                         runOnUiThread {
                             binding.alarmPreview.text =
-                                getAlarmPreviewString(currentAlarmClockDateTime!!)
+                                getAlarmPreviewString(
+                                    currentAlarmClockDateTime ?: return@runOnUiThread
+                                )
                         }
                     }
                 }
@@ -427,7 +431,7 @@ class MainActivity :
             runOnUiThread {
                 if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
                     getAlarmPreviewString(
-                        currentAlarmClockDateTime!!
+                        currentAlarmClockDateTime ?: return@runOnUiThread
                     )
             }
             runOnUiThread {

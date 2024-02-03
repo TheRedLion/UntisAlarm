@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets
 
 class WebApiCalls {
     companion object {
-        const val TOO_MANY_RESULTS = "too many results"
+        const val TOO_MANY_RESULTS: String = "too many results"
     }
 
     suspend fun getUntisSchools(searchSchoolString: String): Array<Array<String>>? {
@@ -78,7 +78,9 @@ class WebApiCalls {
             }
 
             val jsonResponseStr = response.toString()
-            if (jsonResponseStr == "{\"id\":\"wu_schulsuche-1697008128606\",\"error\":{\"code\":-6003,\"message\":\"too many results\"},\"jsonrpc\":\"2.0\"}") {
+            if (jsonResponseStr ==
+                "{\"id\":\"wu_schulsuche-1697008128606\",\"error\":{\"code\":-6003,\"message\":\"too many results\"},\"jsonrpc\":\"2.0\"}"
+            ) {
                 return arrayOf(arrayOf(TOO_MANY_RESULTS))
             }
 

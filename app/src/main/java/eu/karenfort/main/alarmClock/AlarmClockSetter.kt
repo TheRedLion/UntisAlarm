@@ -50,7 +50,7 @@ class AlarmClockSetter {
             //rest unnecessary without being able to make API calls
             if (!context.isOnline()) {
                 context.sendNoInternetNotif()
-                setNew(REASON_NORMAL, null, context)
+                setNew(REASON_NORMAL, context = context)
                 return null
             }
 
@@ -92,7 +92,9 @@ class AlarmClockSetter {
                 }
 
                 if (MainActivity.active) {
-                    if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
+                    if (id == null || loginData[0] == null || loginData[1] == null
+                        || loginData[2] == null || loginData[3] == null
+                    ) {
                         context.sendLoggedOutNotif()
                         return null //not setting a new one, since it wont do anything
                     }
@@ -100,17 +102,17 @@ class AlarmClockSetter {
 
                     StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
                     val untisApiCalls = UntisApiCalls(
-                        loginData[0]!!,
-                        loginData[1]!!,
-                        loginData[2]!!,
-                        loginData[3]!!
+                        loginData[0] ?: return null,
+                        loginData[1] ?: return null,
+                        loginData[2] ?: return null,
+                        loginData[3] ?: return null
                     )
 
-                    schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+                    schoolStart = untisApiCalls.getSchoolStartForDay(id ?: return null)
 
                     if (schoolStart == null) return null
 
-                    return schoolStart.minusMinutes(tbs!!.toLong())
+                    return schoolStart.minusMinutes((tbs ?: return null).toLong())
                 }
                 return null
             }
@@ -120,7 +122,9 @@ class AlarmClockSetter {
                 return null
             }
 
-            if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
+            if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null
+                || loginData[3] == null
+            ) {
                 context.sendLoggedOutNotif()
                 //not setting a new one, since it wont do anything
                 return null
@@ -129,13 +133,13 @@ class AlarmClockSetter {
             val schoolStart: LocalDateTime?
             StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
             val untisApiCalls = UntisApiCalls(
-                loginData[0]!!,
-                loginData[1]!!,
-                loginData[2]!!,
-                loginData[3]!!
+                loginData[0] ?: return null,
+                loginData[1] ?: return null,
+                loginData[2] ?: return null,
+                loginData[3] ?: return null
             )
 
-            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+            schoolStart = untisApiCalls.getSchoolStartForDay(id ?: return null)
 
             if (schoolStart == null) {
                 //probably holiday or something
@@ -143,7 +147,7 @@ class AlarmClockSetter {
                 return null
             }
 
-            val alarmClockDateTime = schoolStart.minusMinutes(tbs!!.toLong())
+            val alarmClockDateTime = schoolStart.minusMinutes((tbs ?: return null).toLong())
 
             if (storedAlarmClockDateTime == null) {
                 AlarmClock.set(alarmClockDateTime, context)
@@ -167,12 +171,13 @@ class AlarmClockSetter {
             alarmClockTime: LocalDateTime?,
             storedAlarmClockDateTime: LocalDateTime?
         ) =
-            if (alarmClockTime == null || storedAlarmClockDateTime == null) false else alarmClockTime.isEqual(
+            if (alarmClockTime == null || storedAlarmClockDateTime == null) false
+            else alarmClockTime.isEqual(
                 storedAlarmClockDateTime
             )
 
         private fun setNew(reason: String, context: Context) {
-            setNew(reason, null, context)
+            setNew(reason, context = context)
         }
 
         private fun setNew(reason: String, schoolStart: LocalDateTime? = null, context: Context) {

@@ -1,7 +1,3 @@
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:textColor="?android:attr/textColorPrimary"
-    android:textStyle="bold"
-    android:padding="14dp"
-    android:layout_height="wrap_content" />
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:textColor="?android:attr/textColorPrimary"
+    android:textStyle="bold" android:padding="14dp" android:layout_height="wrap_content" />

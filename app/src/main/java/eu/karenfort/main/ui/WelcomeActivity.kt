@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 class WelcomeActivity : AppCompatActivity() {
-    private val binding: ActivityWelcomeBinding by viewBinding(ActivityWelcomeBinding::inflate)
+    internal val binding: ActivityWelcomeBinding by viewBinding(ActivityWelcomeBinding::inflate)
 
     private var schools: Array<Array<String>>? = null
     private var schoolName: String? = null
@@ -80,7 +80,7 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleRunButtonPressed() {
+    internal fun handleRunButtonPressed() {
         binding.runButton.isDisabled = true
         CoroutineScope(Dispatchers.Default).launch {
             if (!isOnline()) {
@@ -143,7 +143,8 @@ class WelcomeActivity : AppCompatActivity() {
             }
 
             val untisID =
-                untisApiCalls!!.getID() //!! valid since untisApiCalls is never set to null in code
+                (untisApiCalls
+                    ?: return@launch).getID()
 
             if (untisID == null) {
                 //no match was found
@@ -159,8 +160,8 @@ class WelcomeActivity : AppCompatActivity() {
             storeData.storeLoginData(
                 binding.untisUserName.text.toString(),
                 binding.untisPassword.text.toString(),
-                server!!,
-                schoolName!!
+                server ?: return@launch,
+                schoolName ?: return@launch
             )
             storeData.storeID(untisID)
 
@@ -170,7 +171,8 @@ class WelcomeActivity : AppCompatActivity() {
                     supportFragmentManager,
                     FirstSettingDialogFragment.TAG
                 )
-                firstSettingDialogFragment.setFragmentResultListener(FirstSettingDialogFragment.DISMISSED) { _, _ ->
+                firstSettingDialogFragment.setFragmentResultListener(FirstSettingDialogFragment.DISMISSED)
+                { _, _ ->
                     binding.runButton.isDisabled = false
                 }
             }
@@ -178,7 +180,9 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun verifyLoginData(): Boolean {
-        if (server == null || schoolName == null || binding.untisUserName.text.isNullOrEmpty() || binding.untisPassword.text.isNullOrEmpty()) {
+        if (server == null || schoolName == null || binding.untisUserName.text.isNullOrEmpty()
+            || binding.untisPassword.text.isNullOrEmpty()
+        ) {
             return false
         }
         try {
@@ -187,8 +191,8 @@ class WelcomeActivity : AppCompatActivity() {
                 untisApiCalls = UntisApiCalls(
                     binding.untisUserName.text.toString(),
                     binding.untisPassword.text.toString(),
-                    server!!,
-                    schoolName!!
+                    server ?: return@ensureBackgroundCoroutine,
+                    schoolName ?: return@ensureBackgroundCoroutine
                 )
             }
         } catch (_: IOException) {
@@ -207,9 +211,10 @@ class WelcomeActivity : AppCompatActivity() {
     private fun setSelectionListener() {
         binding.untisSchoolSelector.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
-                binding.selectUntisSchoolInputLayout.helperText = schools!![position][1]
-                schoolName = schools!![position][3]
-                server = schools!![position][2]
+                binding.selectUntisSchoolInputLayout.helperText = (schools
+                    ?: return@setOnItemClickListener)[position][1]
+                schoolName = (schools ?: return@setOnItemClickListener)[position][3]
+                server = (schools ?: return@setOnItemClickListener)[position][2]
             } catch (e: IndexOutOfBoundsException) {
                 binding.selectUntisSchoolInputLayout.helperText =
                     getString(R.string.unable_to_load_address)
@@ -250,7 +255,7 @@ class WelcomeActivity : AppCompatActivity() {
                         return@launch
                     }
 
-                    if (schools!!.isEmpty()) {
+                    if ((schools ?: return@launch).isEmpty()) {
                         runOnUiThread {
                             binding.untisSchoolInputLayout.error =
                                 getString(R.string.no_school_found)
@@ -258,11 +263,11 @@ class WelcomeActivity : AppCompatActivity() {
                         return@launch
                     }
 
-                    if (schools!![0].isEmpty()) {
+                    if ((schools ?: return@launch)[0].isEmpty()) {
                         return@launch
                     }
 
-                    if (schools!![0][0] == WebApiCalls.TOO_MANY_RESULTS) {
+                    if ((schools ?: return@launch)[0][0] == WebApiCalls.TOO_MANY_RESULTS) {
                         runOnUiThread {
                             binding.selectUntisSchoolInputLayout.hint =
                                 getString(R.string.too_many_results)
@@ -277,7 +282,10 @@ class WelcomeActivity : AppCompatActivity() {
 
                     try {
                         val schoolNames =
-                            schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }
+                            (schools
+                                ?: return@launch).map {
+                                "${it[0]}, ${it[1].split(',')[1].trim()}"
+                            }
                                 .toTypedArray()
                         val arrayAdapter =
                             ArrayAdapter(this@WelcomeActivity, R.layout.dropdown_menu, schoolNames)
@@ -285,10 +293,14 @@ class WelcomeActivity : AppCompatActivity() {
                         runOnUiThread {
                             autocompleteTV.setAdapter(arrayAdapter)
                         }
-
-                        Log.i(TAG, "Size ${schools!!.size} ${schools!![0][0]}")
-                        //if there is exactly one result
-                        if (schools!!.size == 1 && schools!![0][0] != WebApiCalls.TOO_MANY_RESULTS) {
+                        //TODO: Remove log or make conditional
+                        Log.i(
+                            TAG,
+                            "Size ${(schools ?: return@launch).size} ${(schools ?: return@launch)[0][0]}"
+                        )
+                        if ((schools ?: return@launch).size == 1 && (schools
+                                ?: return@launch)[0][0] != WebApiCalls.TOO_MANY_RESULTS
+                        ) {
                             runOnUiThread {
                                 //select the only result
                                 binding.untisSchoolSelector.setText(
@@ -300,7 +312,8 @@ class WelcomeActivity : AppCompatActivity() {
                                 binding.untisSchoolSelector.performCompletion()
 
                                 //store the data of this result
-                                binding.selectUntisSchoolInputLayout.helperText = schools!![0][1]
+                                binding.selectUntisSchoolInputLayout.helperText = (schools
+                                    ?: return@runOnUiThread)[0][1]
                                 schoolName = schools?.get(0)?.get(3)
                                 server = schools?.get(0)?.get(2)
                             }
@@ -345,7 +358,9 @@ class WelcomeActivity : AppCompatActivity() {
                 //entered in the edit text
             } else {
                 //left edit text
-                if (!binding.untisUserName.text.isNullOrEmpty() && !binding.untisPassword.text.isNullOrEmpty()) {
+                if (!binding.untisUserName.text.isNullOrEmpty()
+                    && !binding.untisPassword.text.isNullOrEmpty()
+                ) {
                     CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
                         verifyLoginData()
                     }
@@ -357,7 +372,9 @@ class WelcomeActivity : AppCompatActivity() {
                 //entered in the edit text
             } else {
                 //left edit text
-                if (!binding.untisUserName.text.isNullOrEmpty() && !binding.untisPassword.text.isNullOrEmpty()) {
+                if (!binding.untisUserName.text.isNullOrEmpty()
+                    && !binding.untisPassword.text.isNullOrEmpty()
+                ) {
                     CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
                         verifyLoginData()
                     }

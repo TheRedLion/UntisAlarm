@@ -5,54 +5,38 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
-    <uses-permission
-        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" /><!--Do we still nerd this?-->
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" /><!--FIXME: Do we still need this?-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    <application
-        android:name="eu.karenfort.main.App"
-        android:appCategory="productivity"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+    <application android:name="eu.karenfort.main.App" android:appCategory="productivity"
+        android:icon="@mipmap/ic_launcher" android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="eu.karenfort.main.ui.MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme">
+        <activity android:name="eu.karenfort.main.ui.MainActivity" android:exported="true"
+            android:launchMode="singleTop" android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="eu.karenfort.main.ui.CancelledMessageInfo"
-            android:exported="false"
+        <activity android:name="eu.karenfort.main.ui.CancelledMessageInfo" android:exported="false"
             android:parentActivityName="eu.karenfort.main.ui.SettingsDialogFragment" />
-        <activity
-            android:name="eu.karenfort.main.ui.AlarmSoundPicker"
-            android:exported="false"
+        <activity android:name="eu.karenfort.main.ui.AlarmSoundPicker" android:exported="false"
             android:parentActivityName="eu.karenfort.main.ui.SettingsDialogFragment" />
-        <activity
-            android:name="eu.karenfort.main.ui.WelcomeActivity"
-            android:exported="false"
+        <activity android:name="eu.karenfort.main.ui.WelcomeActivity" android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="eu.karenfort.main.ui.ReminderActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:showOnLockScreen="true"
+        <activity android:name="eu.karenfort.main.ui.ReminderActivity"
+            android:excludeFromRecents="true" android:exported="false"
+            android:launchMode="singleTask" android:showOnLockScreen="true"
             android:taskAffinity=".ReminderActivity"> <!-- android:screenOrientation="portrait" -->
             <intent-filter>
                 <action android:name="android.intent.action.SNOOZE_ALARM" />
@@ -61,32 +45,22 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
-            android:enabled="false"
-            android:exported="false">
-            <meta-data
-                android:name="autoStoreLocales"
-                android:value="true" />
+        <service android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false" android:exported="false">
+            <meta-data android:name="autoStoreLocales" android:value="true" />
         </service>
-        <receiver
-            android:name="eu.karenfort.main.alarm.AlarmReceiver"
-            android:exported="false">
+        <receiver android:name="eu.karenfort.main.alarm.AlarmReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name="eu.karenfort.main.alarmClock.AlarmClockReceiver"
+        <receiver android:name="eu.karenfort.main.alarmClock.AlarmClockReceiver"
             android:exported="false" />
-        <receiver
-            android:name="eu.karenfort.main.alarmClock.DismissAlarmReceiver"
+        <receiver android:name="eu.karenfort.main.alarmClock.DismissAlarmReceiver"
             android:exported="false" />
-        <receiver
-            android:name="eu.karenfort.main.alarmClock.SnoozeAlarmReceiver"
+        <receiver android:name="eu.karenfort.main.alarmClock.SnoozeAlarmReceiver"
             android:exported="false" />
-        <receiver
-            android:name="eu.karenfort.main.alarmClock.HideAlarmReceiver"
+        <receiver android:name="eu.karenfort.main.alarmClock.HideAlarmReceiver"
             android:exported="false" />
     </application>
 

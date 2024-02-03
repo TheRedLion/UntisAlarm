@@ -66,22 +66,24 @@ class UntisApiCalls(
                 nextDay = nextDay.plusDays(1)
                 timetable = session.getTimetableFromPersonId(
                     nextDay,
-                    nextDay.plusDays(3), //getting a timeframe of 3 days since this would always include the day after a weekend
+                    //NOTE: getting a timeframe of 3 days since this always includes the weekend
+                    nextDay.plusDays(3),
                     id
                 )
             }
 
-            //todo tempcode
+            //TODO: tempcode
 
             val params: HashMap<String, String> = HashMap()
             params["id"] = "436"
             params["type"] = "5"
             params["startDate"] = "19012024"
             params["endDate"] = "19012024"
-
+            //TODO: Remove log or make conditional
             Log.i(
                 TAG,
-                session.getTimetableFromPersonId(LocalDate.now(), LocalDate.now(), 436).toString()
+                session.getTimetableFromPersonId(LocalDate.now(), LocalDate.now(),
+                    436).toString()
             )
 
             timetable.sortByDate()
@@ -95,6 +97,7 @@ class UntisApiCalls(
             }
             return null
         } catch (e: IOException) {
+            //TODO: Remove log or make conditional
             Log.i(TAG, e.toString())
             return null
         }

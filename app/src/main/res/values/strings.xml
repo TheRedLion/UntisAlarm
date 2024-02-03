@@ -4,7 +4,10 @@
     <string name="fore_name">Fore Name</string>
     <string name="last_name">Last Name</string>
     <string name="webuntis_password">Webuntis Password</string>
-    <string name="encryption_warning">Passwords are not encrypted, your account may be compromised! Do not use this app as a teacher! Your Webuntis Password should not be used on any other platform!</string>
+    <string name="encryption_warning">Passwords are not encrypted, your account may be compromised!
+        Do not use this app as a teacher! Your Webuntis Password should not be used on any other
+        platform!
+    </string>
     <string name="webuntis_username">Webuntis Username</string>
     <string name="fore_name_empty">Fore Name may not be Empty!</string>
     <string name="last_name_empty">Last Name may not be Empty!</string>
@@ -21,10 +24,14 @@
     <string name="label_got_it">Got it!</string>
     <string name="time_before_school">Time Before School</string>
     <string name="you_are_offline">You are Offline!</string>
-    <string name="foregroundService_notification">required for UntisAlarm to set and Update your Alarms</string>
+    <string name="foregroundService_notification">required for UntisAlarm to set and Update your
+        Alarms
+    </string>
     <string name="webuntis_url">School name or Address</string>
     <string name="select_school">Select School</string>
-    <string name="no_id_found">There is no ID for your Account, this should not happen, please send a bug report.</string>
+    <string name="no_id_found">There is no ID for your Account, this should not happen, please send
+        a bug report.
+    </string>
     <string name="short_minute">min</string>
     <string name="snooze">Snooze</string>
     <string name="dismiss_alarm">Dismiss</string>
@@ -46,29 +53,42 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="currently">Currently</string>
-    <string name="default_current_tbs">The Alarm currently goes off 60 minutes before your first lesson. Edit this in the Settings menu.</string>
-    <string name="error_loading_tbs">Please set the Time before School in the settings menu.</string>
+    <string name="default_current_tbs">The Alarm currently goes off 60 minutes before your first
+        lesson. Edit this in the Settings menu.
+    </string>
+    <string name="error_loading_tbs">Please set the Time before School in the settings menu.
+    </string>
     <string name="the_alarm_currently_goes_off">"The Alarm currently goes off "</string>
     <string name="minutes_n_before_your_first_lesson">" minutes before your first lesson."</string>
     <string name="button_to_change_tomorrows_alarm">Button to change tomorrows alarm.</string>
     <string name="webuntis_settings">Webuntis Settings</string>
     <string name="cancellation_text">Cancellation Text</string>
-    <string name="cancelled_message_explanation">Some Schools do not display cancelled messages as cancelled, instead they set a Message like \"Lesson is cancelled\" or \"Do assigned Tasks\". If this is the case for you, enter the shown Message, so that these lessons will also be registered as cancelled.</string>
+    <string name="cancelled_message_explanation">Some Schools do not display cancelled messages as
+        cancelled, instead they set a Message like \“Lesson is cancelled\” or \“Do assigned Tasks\”.
+        If this is the case for you, enter the shown Message, so that these lessons will also be
+        registered as cancelled.
+    </string>
     <string name="error">ERROR</string>
     <string name="not_logged_in">Not Logged in</string>
-    <string name="you_are_currently_not_logged_in_please_login_again">You are currently not logged in, please login again.</string>
+    <string name="you_are_currently_not_logged_in_please_login_again">You are currently not logged
+        in, please login again.
+    </string>
     <string name="login">Login</string>
     <string name="alarm_clock_notifications">Alarm Clock Notifications</string>
     <string name="time_before_school_hint">Time Before School</string>
     <string name="loading">Loading…</string>
     <string name="no_file_was_selected">No file was selected.</string>
-    <string name="your_alarms_might_not_be_set_properly_please_make_sure_that_they_are">Your Alarms might not be set properly. Please make sure that they are.</string>
+    <string name="your_alarms_might_not_be_set_properly_please_make_sure_that_they_are">Your Alarms
+        might not be set properly. Please make sure that they are.
+    </string>
     <string name="alarm_notifications_channel_name">Alarm Notifications</string>
     <string name="info_notifications_channel_name">Info Notifications</string>
     <string name="enable_notifications">You first need to enable notifications.</string>
     <string name="alarm_sound">Alarm Sound</string>
     <string name="no_success">No success</string>
-    <string name="warning_notifications_are_not_enabled_please_enable_them_for_the_app_to_work_properly">Warning: Notifications are not enabled, please enable them for the App to work properly.</string>
+    <string name="warning_notifications_are_not_enabled">
+        Warning: Notifications are not enabled, please enable them for the App to work properly.
+    </string>
     <string name="silent">Silent</string>
     <string name="may_not_be_empty">May not be empty</string>
     <string name="school_must_be_selected">School must be selected</string>
@@ -76,7 +96,9 @@
     <string name="pm">PM</string>
     <string name="am">AM</string>
     <string name="skip">Skip</string>
-    <string name="set_how_much_time_you_need_before_school_starts">Set how much time you need before School starts.</string>
+    <string name="set_how_much_time_you_need_before_school_starts">Set how much time you need before
+        School starts.
+    </string>
     <string name="selector">Selector</string>
     <string name="globe">Language</string>
     <string name="choose_alarm_sound">Choose Alarm Sound</string>
@@ -101,7 +123,9 @@
     <string name="select_time_format">Select Time Format</string>
     <string name="_12_hours">12 Hours</string>
     <string name="_24_hours">24 Hours</string>
-    <string name="selected_date_and_time_is_before_the_current_time">Selected date and time is before the current time.</string>
+    <string name="selected_date_and_time_is_before_the_current_time">Selected date and time is
+        before the current time.
+    </string>
     <string name="alarms_are_disabled">Alarms are disabled</string>
     <string name="time_expired">Time Expired</string>
     <string name="the_maximum_length_is">"The maximum length is "</string>

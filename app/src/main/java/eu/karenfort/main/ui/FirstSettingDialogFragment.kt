@@ -29,11 +29,12 @@ import eu.karenfort.main.helper.StoreData
 
 class FirstSettingDialogFragment : DialogFragment() {
     private lateinit var context: Context
-    private val binding: FragmentFirstSettingBinding by viewBinding(FragmentFirstSettingBinding::inflate)
+    private val binding: FragmentFirstSettingBinding
+            by viewBinding(FragmentFirstSettingBinding::inflate)
 
     companion object {
-        const val TAG = "FirstSettingDialogFragment"
-        const val DISMISSED = "dismissed"
+        const val TAG: String = "FirstSettingDialogFragment"
+        const val DISMISSED: String = "dismissed"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
