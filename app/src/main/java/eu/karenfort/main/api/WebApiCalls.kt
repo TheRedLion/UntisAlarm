@@ -7,6 +7,7 @@
  */
 package eu.karenfort.main.api
 
+import android.util.Log
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,11 +21,14 @@ import java.nio.charset.StandardCharsets
 
 class WebApiCalls {
     companion object {
+        const val TAG = "WebApiCalls"
         const val TOO_MANY_RESULTS = "too many results"
     }
 
     suspend fun getUntisSchools(searchSchoolString: String): Array<Array<String>>? {
-        if (searchSchoolString.length < 3) { //query wont ever succeed with 2 letters
+        Log.i(TAG, "getting Schools")
+
+        if (searchSchoolString.length < 3) { //query probably wont ever succeed with 2 letters
             return null
         }
 
@@ -83,6 +87,8 @@ class WebApiCalls {
             }
 
             connection.disconnect()
+
+            Log.i(TAG, parseSchoolData(JSONObject(jsonResponseStr)).toString())
 
             return parseSchoolData(JSONObject(jsonResponseStr))
         } else {

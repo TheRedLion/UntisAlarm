@@ -59,7 +59,8 @@ import java.util.TimeZone
 class MainActivity :
     AppCompatActivity(),
     SharedPreferences.OnSharedPreferenceChangeListener,
-    OnDataPassedListener {
+    OnDataPassedListener
+{
     private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
     private var currentAlarmClockDateTime: LocalDateTime? = null
 

@@ -93,10 +93,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.5"
-                    android:text="@string/confirm"
-
-                    android:alpha="0.4"
-                    android:clickable="false">
+                    android:text="@string/confirm">
 
                 </Button>
 

@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--
+
             <TextView
                 style="@style/settings_subtitle"
                 android:layout_width="match_parent"
@@ -46,8 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/cancellation_text"
-                    app:startIconDrawable="@drawable/ic_info_icon"
-                    app:endIconDrawable="@drawable/ic_confirm_in_textfield"
+                    app:endIconDrawable="@drawable/ic_info_icon"
                     app:endIconMode="custom"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +63,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-            -->
+
 
             <TextView
                 style="@style/settings_subtitle"

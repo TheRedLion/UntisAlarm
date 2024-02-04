@@ -17,6 +17,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,9 +69,9 @@ class SettingsDialogFragment : DialogFragment(),
         const val TAG = "SettingsDialogFragment"
     }
 
-    override fun onAttach(context1: Context) {
-        super.onAttach(context1)
-        context = context1
+    override fun onAttach(givenContext: Context) {
+        super.onAttach(givenContext)
+        context = givenContext
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,6 +103,8 @@ class SettingsDialogFragment : DialogFragment(),
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             val newUri = StoreData(context).loadSound() ?: return@launch
             storedUri = newUri
+
+            Log.i(TAG, "uri changed to $storedUri")
         }
     }
 
@@ -110,8 +113,7 @@ class SettingsDialogFragment : DialogFragment(),
     }
 
     private fun setListener() {
-        //cancellationMessageLayout.setEndIconOnClickListener { handleSetCancellationMessageEnd() }
-        //cancellationMessageLayout.setStartIconOnClickListener { handleCancellationMessageInfo() }
+        binding.cancelledMessageInputLayout.setEndIconOnClickListener { handleCancellationMessageInfo() }
 
         //listener when exiting field
         binding.snoozeInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
@@ -122,6 +124,11 @@ class SettingsDialogFragment : DialogFragment(),
         binding.tbsInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
             if (!b) {
                 handleSetTBS()
+            }
+        }
+        binding.cancelledMessageInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
+            if (!b) {
+                handleSetCancellationMessageEnd()
             }
         }
         //lister for 2sec after entering something
@@ -145,6 +152,16 @@ class SettingsDialogFragment : DialogFragment(),
                 }, 2 * 1000L)
             }
         })
+        val cancelledMessageHandler = Handler(Looper.getMainLooper())
+        binding.cancelledMessageInputField.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                cancelledMessageHandler.postDelayed({
+                    handleSetCancellationMessageEnd()
+                }, 2 * 1000L)
+            }
+        })
 
         //colorSchemeSettings.setOnClickListener { colorDialog() }
         binding.vibrateToggle.addOnCheckedStateChangedListener { _, state ->
@@ -163,11 +180,11 @@ class SettingsDialogFragment : DialogFragment(),
         binding.settingsToolar.setNavigationOnClickListener { this.dismiss() }
     }
 
-    /*
+
     private fun handleCancellationMessageInfo() {
-        startActivity(Intent(this@SettingsActivity, CancelledMessageInfo::class.java))
+        startActivity(Intent(context, CancelledMessageInfo::class.java))
     }
-     */
+
     private fun enableClicking() {
         //colorSchemeSettings.isClickable = true
         binding.languageSettings.isClickable = true
@@ -311,18 +328,18 @@ class SettingsDialogFragment : DialogFragment(),
         StoreData(context).storeIncreaseVolumeGradually(stateBool)
     }
 
-    /*
+
     private fun handleSetCancellationMessageEnd() {
-        val newMessage = cancellationMessageField.text.toString()
+        val newMessage = binding.cancelledMessageInputField.text.toString()
 
-        cancellationMessageField.setText("")
+        binding.cancelledMessageInputField.setText("")
 
-        cancellationMessageLayout.hint =
+        binding.cancelledMessageInputField.hint =
             "${getString(R.string.cancellation_text)} (${getString(R.string.currently)} \"$newMessage\")"
 
-        StoreData(this).storeCancelledMessage(newMessage)
+        StoreData(context).storeCancelledMessage(newMessage)
     }
-     */
+
     private fun handleSetSnooze() {
         val newSnoozeStr = binding.snoozeInputField.text.toString()
 

@@ -12,6 +12,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
+import android.util.Log
 import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.extentions.isOnline
@@ -33,7 +34,7 @@ class AlarmClockSetter {
         private const val REASON_NO_ALARM_TODAY = "noAlarmToday"
 
         /* isActive and isEdited is used to override stored data, necessary because storing is
-            done on a different thread and thus takes time. Used when a new state is set and the
+            done on a different coroutine and thus takes time. Used when a new state is set and the
             AlarmClock needs to be adjusted right after that for example to update UI
          */
 
@@ -46,11 +47,11 @@ class AlarmClockSetter {
         }
 
         suspend fun main(context: Context, isActive: Boolean?, isEdited: Boolean?): LocalDateTime? {
-
             //rest unnecessary without being able to make API calls
             if (!context.isOnline()) {
                 context.sendNoInternetNotif()
                 setNew(REASON_NORMAL, null, context)
+                Log.i(TAG, "cancelling because phone is offline")
                 return null
             }
 
@@ -106,7 +107,7 @@ class AlarmClockSetter {
                         loginData[3]!!
                     )
 
-                    schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+                    schoolStart = untisApiCalls.getSchoolStartForDay(id!!, context)
 
                     if (schoolStart == null) return null
 
@@ -116,6 +117,7 @@ class AlarmClockSetter {
             }
 
             if (storedAlarmClockEdited) {
+                Log.i(TAG, "cancelling because alarm is edited")
                 setNew(REASON_NO_ALARM_TODAY, context)
                 return null
             }
@@ -123,6 +125,7 @@ class AlarmClockSetter {
             if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
                 context.sendLoggedOutNotif()
                 //not setting a new one, since it wont do anything
+                Log.i(TAG, "cancelling because user is logged out")
                 return null
             }
 
@@ -135,11 +138,11 @@ class AlarmClockSetter {
                 loginData[3]!!
             )
 
-            schoolStart = untisApiCalls.getSchoolStartForDay(id!!)
+            schoolStart = untisApiCalls.getSchoolStartForDay(id!!, context)
 
             if (schoolStart == null) {
-                //probably holiday or something
                 setNew(REASON_NO_ALARM_TODAY, context)
+                Log.i(TAG, "getSchoolStart returned null")
                 return null
             }
 
@@ -148,11 +151,13 @@ class AlarmClockSetter {
             if (storedAlarmClockDateTime == null) {
                 AlarmClock.set(alarmClockDateTime, context)
                 setNew(REASON_NORMAL, schoolStart, context)
+                Log.i(TAG, "cancelled because couldn't load stored AlarmClockDateTime")
                 return alarmClockDateTime
             }
 
             if (isAlarmClockSetProperly(alarmClockDateTime, storedAlarmClockDateTime)) {
                 setNew(REASON_NORMAL, alarmClockDateTime, context)
+                Log.i(TAG, "alarm clock is set properly")
                 return alarmClockDateTime
             }
 
@@ -160,6 +165,7 @@ class AlarmClockSetter {
             AlarmClock.set(alarmClockDateTime, context)
 
             setNew(REASON_NORMAL, schoolStart, context)
+            Log.i(TAG, "updating alarm clock")
             return alarmClockDateTime
         }
 

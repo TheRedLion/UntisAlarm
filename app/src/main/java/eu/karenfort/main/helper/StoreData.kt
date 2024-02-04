@@ -47,10 +47,10 @@ class StoreData(
         val KEY_SNOOZE_TIME = intPreferencesKey("snoozeTime")
         val KEY_DARK_MODE = intPreferencesKey("darkMode")
         val KEY_LANGUAGE = stringPreferencesKey("language")
-        //val KEY_CANCELLED_MESSAGE = stringPreferencesKey("cancelledMessage")
+        val KEY_CANCELLED_MESSAGE = stringPreferencesKey("cancelledMessage")
     }
 
-    /*fun storeCancelledMessage(cancellationMessage: String) {
+    fun storeCancelledMessage(cancellationMessage: String) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->
                 settings[KEY_CANCELLED_MESSAGE] = cancellationMessage
@@ -60,7 +60,7 @@ class StoreData(
     suspend fun loadCancelledMessage(): String? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_CANCELLED_MESSAGE]
-    }*/
+    }
     fun storeDarkMode(darkMode: DarkMode) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->

@@ -18,6 +18,7 @@ import eu.karenfort.main.extentions.parcelable
 import eu.karenfort.main.extentions.toast
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.StoreData
+import java.lang.RuntimeException
 
 class AlarmSoundPicker : AppCompatActivity() {
     companion object {
@@ -39,8 +40,13 @@ class AlarmSoundPicker : AppCompatActivity() {
             startDialog()
             return
         }
-        val uri = Uri.parse(extras.getString(INTENT_ALARM_SOUND_URI))
-        startDialog(uri)
+
+        try {
+            val uri = Uri.parse(extras.getString(INTENT_ALARM_SOUND_URI))
+            startDialog(uri)
+        } catch (e: RuntimeException) {
+            startDialog()
+        }
     }
 
     private fun startDialog(uri: Uri = ALARM_SOUND_DEFAULT_URI) {

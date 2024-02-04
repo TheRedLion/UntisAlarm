@@ -50,7 +50,6 @@ import eu.karenfort.main.helper.StoreData
 import eu.karenfort.main.helper.isOnMainThread
 import eu.karenfort.main.helper.isSnowConePlus
 import eu.karenfort.main.ui.MainActivity
-import eu.karenfort.main.ui.ReminderActivity.Companion.TAG
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -60,6 +59,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
+const val TAG = "Context"
 
 val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 val Context.alarmManager: AlarmManager get() = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -115,12 +115,14 @@ fun Context.changeDarkMode(darkMode: DarkMode) {
 fun Context.isOnline(): Boolean {
     if (hasNetworkConnection()) {
         try {
-            val urlc = URL("https://www.google.com").openConnection() as HttpURLConnection
+            val urlc = URL("https://www.webuntis.com").openConnection() as HttpURLConnection
             urlc.setRequestProperty("User-Agent", "Test")
             urlc.setRequestProperty("Connection", "close")
             urlc.connectTimeout = 1500
             urlc.connect()
-            return urlc.responseCode == 200
+
+            Log.i(TAG, urlc.responseCode.toString())
+            return urlc.responseCode == 200 || urlc.responseCode == 204
         } catch (e: IOException) {
             Log.e(TAG, "Error checking internet connection", e)
         }
@@ -130,11 +132,12 @@ fun Context.isOnline(): Boolean {
     return false
 }
 
-private fun Context.hasNetworkConnection(): Boolean {
+fun Context.hasNetworkConnection(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
 
+    Log.i(TAG, capabilities.toString())
     return capabilities != null
 }
 
