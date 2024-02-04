@@ -22,6 +22,7 @@ import com.carlkarenfort.test.R
 import com.carlkarenfort.test.databinding.ActivityWelcomeBinding
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
+import eu.karenfort.main.extentions.hasNetworkConnection
 import eu.karenfort.main.extentions.isDisabled
 import eu.karenfort.main.extentions.isOnline
 import eu.karenfort.main.extentions.toast
@@ -219,10 +220,13 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun setSchoolFieldListener() {
+        Log.i(TAG, "called set schoolFieldListener")
         binding.untisSchool.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(text: Editable?) {
+                Log.i(TAG, "text changed in schoolInput")
+
                 if (text.isNullOrEmpty()) {
                     binding.untisSchoolInputLayout.error = getString(R.string.may_not_be_empty)
                     return
@@ -230,15 +234,16 @@ class WelcomeActivity : AppCompatActivity() {
 
                 binding.untisSchoolInputLayout.error = null
 
-                CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
-                    if (!isOnline()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (!hasNetworkConnection()) {
                         runOnUiThread {
                             binding.untisSchoolInputLayout.error =
                                 getString(R.string.you_are_offline)
                         }
+                        Log.i(TAG, "is Offline")
                         return@launch
                     }
-
+                    Log.i(TAG, "is Online")
                     val webApiCalls = WebApiCalls()
                     schools = webApiCalls.getUntisSchools("$text")
 
@@ -318,6 +323,7 @@ class WelcomeActivity : AppCompatActivity() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(text: Editable?) {
+                Log.i(TAG, "user name changed")
                 if (text.isNullOrEmpty()) {
                     binding.untisUserName.error = getString(R.string.may_not_be_empty)
                     return
