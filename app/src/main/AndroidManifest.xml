@@ -27,8 +27,7 @@
         <activity
             android:name="eu.karenfort.main.ui.MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,7 +37,7 @@
         <activity
             android:name="eu.karenfort.main.ui.CancelledMessageInfo"
             android:exported="false"
-            android:parentActivityName="eu.karenfort.main.ui.SettingsDialogFragment" />
+            android:parentActivityName="eu.karenfort.main.ui.MainActivity" />
         <activity
             android:name="eu.karenfort.main.ui.AlarmSoundPicker"
             android:exported="false"

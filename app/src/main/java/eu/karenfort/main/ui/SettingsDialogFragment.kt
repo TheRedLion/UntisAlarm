@@ -223,14 +223,10 @@ class SettingsDialogFragment : DialogFragment(),
 
             nonNullActivity.runOnUiThread {
                 binding.tbsInputLayout.hint =
-                    "${getString(R.string.time_before_school_hint)} (${getString(R.string.currently)} $tbs${
-                        getString(R.string.short_minute)
-                    })"
+                    "${getString(R.string.time_before_school_hint)} ($tbs${getString(R.string.short_minute)})"
                 binding.vibrateToggle.isChecked = vibrate
                 binding.snoozeInputLayout.hint =
-                    "${getString(R.string.snooze_time)} (${getString(R.string.currently)} $snooze${
-                        getString(R.string.short_minute)
-                    })"
+                    "${getString(R.string.snooze_time)} ($snooze${getString(R.string.short_minute)})"
                 binding.ivgToggle.isChecked = ivg
                 enableClicking()
             }
@@ -335,7 +331,7 @@ class SettingsDialogFragment : DialogFragment(),
         binding.cancelledMessageInputField.setText("")
 
         binding.cancelledMessageInputField.hint =
-            "${getString(R.string.cancellation_text)} (${getString(R.string.currently)} \"$newMessage\")"
+            "${context.getString(R.string.cancellation_text)} ($newMessage)"
 
         StoreData(context).storeCancelledMessage(newMessage)
     }

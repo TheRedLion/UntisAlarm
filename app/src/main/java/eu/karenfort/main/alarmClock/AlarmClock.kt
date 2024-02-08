@@ -34,16 +34,8 @@ class AlarmClock {
             cancel(context) //only one alarm may be active at any time
 
             if (!context.areNotificationsEnabled) {
-                if (isSnowConePlus()) { //isUiContext requires Android API 31
-                    if (!context.isUiContext) {
-                        //make notification warning disappear on main activity
-                        DataPass.passNotificationsAllowed(context, false)
-                    }
-                } else if (MainActivity.active) {
-                    //make notification warning disappear on main activity
-                    DataPass.passNotificationsAllowed(context, false)
-                } //todo check if screen is on check is necessary
-            }//not returning just in case notifications are re-enabled
+                DataPass.passNotificationsAllowed(context, false)
+            }//not returning just in case notifications are re-enabled before the alarm goes off
 
             val calendar: Calendar = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()

@@ -64,10 +64,6 @@ class MainActivity :
     private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
     private var currentAlarmClockDateTime: LocalDateTime? = null
 
-    companion object {
-        var active =
-            false //used to check if app is active for API versions below 31 //todo check instead weather screen is on with PowerManager
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) { //todo bug: when editing alarm clock time and "No School" is shown it doesn't update
         super.onCreate(savedInstanceState)
@@ -90,16 +86,6 @@ class MainActivity :
         Handler(Looper.getMainLooper()).postDelayed({
             requestNotificationPermission()
         }, 1000)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        active = true
-    }
-
-    override fun onStop() {
-        super.onStop()
-        active = false
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {

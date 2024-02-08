@@ -16,7 +16,7 @@ import android.util.Log
 import eu.karenfort.main.alarm.AlarmReceiver
 import eu.karenfort.main.alarm.AlarmScheduler
 import eu.karenfort.main.api.UntisApiCalls
-import eu.karenfort.main.extentions.isOnline
+import eu.karenfort.main.extentions.hasNetworkConnection
 import eu.karenfort.main.extentions.sendLoggedOutNotif
 import eu.karenfort.main.extentions.sendNoInternetNotif
 import eu.karenfort.main.helper.ALARM_REQUEST_CODE
@@ -50,7 +50,7 @@ class AlarmClockSetter {
         suspend fun main(context: Context, isActive: Boolean?, isEdited: Boolean?): LocalDateTime? {
             Log.i(TAG, "Called alarmClockSetter")
             //rest unnecessary without being able to make API calls
-            if (!context.isOnline()) {
+            if (!context.hasNetworkConnection()) {
                 context.sendNoInternetNotif()
                 setNew(REASON_NORMAL, context)
                 Log.i(TAG, "cancelling because phone is offline")

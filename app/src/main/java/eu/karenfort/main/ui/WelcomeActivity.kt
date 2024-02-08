@@ -25,8 +25,8 @@ import com.carlkarenfort.test.R
 import com.google.android.material.textfield.TextInputLayout
 import eu.karenfort.main.api.UntisApiCalls
 import eu.karenfort.main.api.WebApiCalls
+import eu.karenfort.main.extentions.hasNetworkConnection
 import eu.karenfort.main.extentions.isDisabled
-import eu.karenfort.main.extentions.isOnline
 import eu.karenfort.main.extentions.toast
 import eu.karenfort.main.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.main.helper.COROUTINE_EXCEPTION_HANDLER
@@ -92,7 +92,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun handleRunButtonPressed() {
         runButton.isDisabled = true
         CoroutineScope(Dispatchers.Default).launch {
-            if (!isOnline()) {
+            if (!hasNetworkConnection()) {
                 this@WelcomeActivity.toast(getString(R.string.you_are_offline))
                 runOnUiThread{ runButton.isDisabled = false }
                 return@launch
@@ -235,7 +235,7 @@ class WelcomeActivity : AppCompatActivity() {
                 untisSchoolInputLayout.error = null
 
                 CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
-                    if (!isOnline()) {
+                    if (!hasNetworkConnection()) {
                         runOnUiThread{ untisSchoolInputLayout.error = getString(R.string.you_are_offline) }
                         return@launch
                     }

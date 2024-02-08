@@ -112,29 +112,6 @@ fun Context.changeDarkMode(darkMode: DarkMode) {
     }
 }
 
-fun Context.isOnline(): Boolean {
-    return hasNetworkConnection()
-
-    //todo this doesnt work
-    if (hasNetworkConnection()) {
-        try {
-            val urlc = URL("https://www.webuntis.com").openConnection() as HttpURLConnection
-            urlc.setRequestProperty("User-Agent", "Test")
-            urlc.setRequestProperty("Connection", "close")
-            urlc.connectTimeout = 1500
-            urlc.connect()
-
-            Log.i(TAG, urlc.responseCode.toString())
-            return urlc.responseCode == 200 || urlc.responseCode == 204
-        } catch (e: IOException) {
-            Log.e(TAG, "Error checking internet connection", e)
-        }
-    } else {
-        Log.d(TAG, "No network available!")
-    }
-    return false
-}
-
 fun Context.hasNetworkConnection(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
