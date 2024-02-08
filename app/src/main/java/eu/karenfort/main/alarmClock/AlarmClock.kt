@@ -42,7 +42,7 @@ class AlarmClock {
                 } else if (MainActivity.active) {
                     //make notification warning disappear on main activity
                     DataPass.passNotificationsAllowed(context, false)
-                }
+                } //todo check if screen is on check is necessary
             }//not returning just in case notifications are re-enabled
 
             val calendar: Calendar = Calendar.getInstance().apply {

@@ -69,9 +69,10 @@ class MainActivity :
             false //used to check if app is active for API versions below 31 //todo check instead weather screen is on with PowerManager
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) { //todo bug: when editing alarm clock time and "No School" is shown it doesn't update
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+
         disableClicking() //disabling clicks until everything was properly loaded to stop errors
         createNotificationChannel()
         sendToWelcomeActivityIfNotLoggedIn() //send user to welcomeActivity if they have not logged in yet
@@ -112,13 +113,8 @@ class MainActivity :
             //update UI accordingly
             if (alarmClockDateTime == null) {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity)
-
                 runOnUiThread {
-                    if (currentAlarmClockDateTime != null) {
-                        binding.alarmPreview.text = getAlarmPreviewString(
-                            currentAlarmClockDateTime!!
-                        )
-                    }
+                    setAlarmPreview(currentAlarmClockDateTime)
                     binding.resetAlarmTomorrow.isDisabled =
                         true //can never be edited if alarm clock time was just loaded
                 }
@@ -127,14 +123,14 @@ class MainActivity :
 
             currentAlarmClockDateTime = alarmClockDateTime
             runOnUiThread {
-                binding.alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
+                setAlarmPreview(alarmClockDateTime)
                 binding.resetAlarmTomorrow.isDisabled = !alarmClockEdited
             }
         }
     }
 
     override fun onAlarmPreviewPassed(newAlarmClockTime: LocalDateTime) {
-        binding.alarmPreview.text = getAlarmPreviewString(newAlarmClockTime)
+        setAlarmPreview(newAlarmClockTime)
     }
 
     override fun onNotificationsAllowedPassed(areNotificationsAllowed: Boolean) {
@@ -166,6 +162,8 @@ class MainActivity :
 
             R.id.logout -> {
                 startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
+                AlarmScheduler(this).cancel()
+                AlarmClock.cancel(this)
                 StoreData(this).deleteLoginData()
             }
 
@@ -217,16 +215,10 @@ class MainActivity :
         CoroutineScope(Dispatchers.Default).launch {
             if (binding.toggleAlarm.isChecked) {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
-                if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
-                    getAlarmPreviewString(
-                        currentAlarmClockDateTime!!
-                    )
+                setAlarmPreview(currentAlarmClockDateTime)
             } else {
                 currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, null, false)
-                if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
-                    getAlarmPreviewString(
-                        currentAlarmClockDateTime!!
-                    )
+                setAlarmPreview(currentAlarmClockDateTime)
             }
         }
         binding.resetAlarmTomorrow.isDisabled = true
@@ -293,10 +285,7 @@ class MainActivity :
                         AlarmClock.cancel(this)
                         AlarmClock.set(selectedDateTime, this)
                         currentAlarmClockDateTime = selectedDateTime
-                        if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
-                            getAlarmPreviewString(
-                                currentAlarmClockDateTime!!
-                            )
+                        setAlarmPreview(currentAlarmClockDateTime)
                     } else {
                         this.toast(getString(R.string.alarms_are_disabled))
                     }
@@ -369,11 +358,8 @@ class MainActivity :
                 AlarmScheduler(this).schedule(this)
                 CoroutineScope(Dispatchers.Default).launch {
                     currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, true)
-                    if (currentAlarmClockDateTime != null) {
-                        runOnUiThread {
-                            binding.alarmPreview.text =
-                                getAlarmPreviewString(currentAlarmClockDateTime!!)
-                        }
+                    runOnUiThread {
+                        setAlarmPreview(currentAlarmClockDateTime)
                     }
                 }
             } else {
@@ -426,10 +412,7 @@ class MainActivity :
         if (alarmClockDateTime == null) {
             currentAlarmClockDateTime = AlarmClockSetter.main(this)
             runOnUiThread {
-                if (currentAlarmClockDateTime != null) binding.alarmPreview.text =
-                    getAlarmPreviewString(
-                        currentAlarmClockDateTime!!
-                    )
+                setAlarmPreview(currentAlarmClockDateTime)
             }
             runOnUiThread {
                 binding.alarmPreview.isClickable = true
@@ -438,9 +421,17 @@ class MainActivity :
         }
         currentAlarmClockDateTime = alarmClockDateTime
         runOnUiThread {
-            binding.alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
+            setAlarmPreview(alarmClockDateTime)
             binding.alarmPreview.isClickable = true
         }
+    }
+
+    private fun setAlarmPreview(alarmClockDateTime: LocalDateTime?) {
+        if (alarmClockDateTime != null) {
+            binding.alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
+        }
+        binding.alarmPreview.text = getString(R.string.no_school)
+        //todo check if editing alarm still works, if not add alarmPreview.isDisabled = true
     }
 
     private suspend fun hasLoggedIn(): Boolean {

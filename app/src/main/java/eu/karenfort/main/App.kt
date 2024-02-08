@@ -6,6 +6,7 @@
 package eu.karenfort.main
 
 import android.app.Application
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.google.android.material.color.DynamicColors
@@ -26,7 +27,7 @@ class App : Application() {
             val storeData = StoreData(this@App)
 
             val darkMode = storeData.loadDarkMode() ?: DarkMode.DEFAULT
-            this@App.changeDarkMode(darkMode)
+            //this@App.changeDarkMode(darkMode)
 
             val language = storeData.loadLanguage()
             if (language != null) {

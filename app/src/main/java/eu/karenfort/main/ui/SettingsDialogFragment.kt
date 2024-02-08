@@ -8,6 +8,7 @@
 package eu.karenfort.main.ui
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -83,16 +84,15 @@ class SettingsDialogFragment : DialogFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        val view = inflater.inflate(R.layout.fragment_settings, container)
 
         setListener()
         disableClicking() //disabling clicks until everything was properly loaded to prevent errors
         loadAndDisplayStoredStates()
         setListener()
 
-        return view
+        return binding.root
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {

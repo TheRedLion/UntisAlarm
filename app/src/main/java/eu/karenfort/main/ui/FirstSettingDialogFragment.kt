@@ -29,7 +29,7 @@ import eu.karenfort.main.helper.StoreData
 
 class FirstSettingDialogFragment : DialogFragment() {
     private lateinit var context: Context
-    private val binding: FragmentFirstSettingBinding by viewBinding(FragmentFirstSettingBinding::inflate)
+    private lateinit var binding: FragmentFirstSettingBinding
 
     companion object {
         const val TAG = "FirstSettingDialogFragment"
@@ -39,17 +39,17 @@ class FirstSettingDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context = this.getContext() ?: throw Error("Context is Null")
+        binding = FragmentFirstSettingBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        val view = inflater.inflate(R.layout.fragment_first_setting, container)
         setListener()
-        return view
+        return binding.root
     }
 
     override fun getTheme(): Int {

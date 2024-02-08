@@ -113,6 +113,9 @@ fun Context.changeDarkMode(darkMode: DarkMode) {
 }
 
 fun Context.isOnline(): Boolean {
+    return hasNetworkConnection()
+
+    //todo this doesnt work
     if (hasNetworkConnection()) {
         try {
             val urlc = URL("https://www.webuntis.com").openConnection() as HttpURLConnection
