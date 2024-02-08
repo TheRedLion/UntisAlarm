@@ -70,7 +70,7 @@ class ReminderActivity : AppCompatActivity() {
     private var finished = false
 
     companion object {
-        const val TAG = "ReminderActivity"
+        const val TAG: String = "ReminderActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,8 +180,7 @@ class ReminderActivity : AppCompatActivity() {
                         getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
                     vibratorManager.defaultVibrator
                 } else {
-                    vibrator =
-                        @Suppress("DEPRECATION") getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 }
                 vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
             }, 500)
@@ -189,13 +188,13 @@ class ReminderActivity : AppCompatActivity() {
 
         try {
             mediaPlayer = MediaPlayer()
-            mediaPlayer!!.setAudioAttributes(
+            (mediaPlayer ?: return).setAudioAttributes(
                 AudioAttributes.Builder()
                     .setLegacyStreamType(AudioManager.STREAM_ALARM)
                     .build()
             )
 
-            mediaPlayer = mediaPlayer!!.apply {
+            mediaPlayer = (mediaPlayer ?: return).apply {
                 setDataSource(this@ReminderActivity, soundUri)
                 isLooping = true
                 prepare()
@@ -211,7 +210,7 @@ class ReminderActivity : AppCompatActivity() {
             if (increaseVolumeGradually) {
                 scheduleVolumeIncrease(
                     MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS.toFloat(),
-                    initialAlarmVolume!!.toFloat(),
+                    (initialAlarmVolume ?: return).toFloat(),
                     0
                 )
             }

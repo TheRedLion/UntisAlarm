@@ -56,7 +56,8 @@ class AlarmClock {
                 pendingIntent
             )
 
-            // this check is necessary because android automatically cancels alarms that happen in the past (back to the future vibes)
+            // this check is necessary because android automatically cancels alarms,
+            // that happen in the past (back to the future vibes)
             val nextAlarmClock: AlarmManager.AlarmClockInfo = alarmManager.nextAlarmClock
             if (nextAlarmClock.triggerTime > System.currentTimeMillis()) {
                 StoreData(context).storeAlarmClock(alarmClockDateTime)

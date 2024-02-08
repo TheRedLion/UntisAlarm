@@ -7,7 +7,9 @@
     <string name="fore_name">Vorname</string>
     <string name="last_name">Nachname</string>
     <string name="webuntis_password">Webuntis Passwort</string>
-    <string name="encryption_warning">Passwörter werden nicht verschlüsselt. Ihr Webuntis Passwort sollte auf keiner anderen Webseite benutzt werden. Nutze die App nicht als Lehrer.</string>
+    <string name="encryption_warning">Passwörter werden nicht verschlüsselt. Ihr Webuntis Passwort
+        sollte auf keiner anderen Webseite benutzt werden. Nutze die App nicht als Lehrer.
+    </string>
     <string name="webuntis_username">Webuntis Nutzername</string>
     <string name="fore_name_empty">Vorname darf nicht leer sein.</string>
     <string name="last_name_empty">Nachname darf nicht leer sein.</string>
@@ -21,11 +23,15 @@
     <string name="update">Aktualisieren</string>
     <string name="time_before_school">Zeit vor Schulbeginn</string>
     <string name="you_are_offline">Du bist offline!</string>
-    <string name="foregroundService_notification">Notwendig für UntisAlarm, um den Wecker zu stellen</string>
+    <string name="foregroundService_notification">Notwendig für UntisAlarm, um den Wecker zu
+        stellen
+    </string>
     <string name="webuntis_url">Name oder Adresse der Schule</string>
     <string name="select_school">Wähle deine Schule aus</string>
     <string name="label_got_it">Verstanden</string>
-    <string name="no_id_found">Es wurde keine ID für deinen Account gefunden, dies sollte nicht passieren, bitte sende einen Fehlerbericht.</string>
+    <string name="no_id_found">Es wurde keine ID für deinen Account gefunden, dies sollte nicht
+        passieren, bitte sende einen Fehlerbericht.
+    </string>
     <string name="short_minute">min</string>
     <string name="snooze">Schlummern</string>
     <string name="dismiss_alarm">Stopp</string>
@@ -41,7 +47,9 @@
     <string name="select_time_format">Wähle ein Zeitformat</string>
     <string name="_12_hours">12 Stunden</string>
     <string name="_24_hours">24 Stunden</string>
-    <string name="selected_date_and_time_is_before_the_current_time">Die ausgewählte Zeit ist vor der aktuellen Zeit.</string>
+    <string name="selected_date_and_time_is_before_the_current_time">Die ausgewählte Zeit ist vor
+        der aktuellen Zeit.
+    </string>
     <string name="time_expired">Zeit Abgelaufen</string>
     <string name="settings">Einstellungen</string>
     <string name="log_out">Abmelden</string>
@@ -61,28 +69,46 @@
     <string name="confirm">Bestätigen</string>
     <string name="currently">Gerade</string>
     <string name="error">FEHLER</string>
-    <string name="default_current_tbs">Der Wecker ist zur Zeit auf 60 minuten vor der ersten Schulstunde gestellt. Dies kann in den Einstellungen bearbeitet werden.</string>
-    <string name="error_loading_tbs">Bitte setzte die Zeit vor Schulbeginn in den Einstellungen.</string>
+    <string name="default_current_tbs">Der Wecker ist zur Zeit auf 60 minuten vor der ersten
+        Schulstunde gestellt. Dies kann in den Einstellungen bearbeitet werden.
+    </string>
+    <string name="error_loading_tbs">Bitte setzte die Zeit vor Schulbeginn in den Einstellungen.
+    </string>
     <string name="the_alarm_currently_goes_off">"Der Wecker ist zur Zeit auf "</string>
-    <string name="minutes_n_before_your_first_lesson">" minuten vor der ersten Schulstunde gestellt"</string>
-    <string name="button_to_change_tomorrows_alarm">Knopf um den morgigen Wecker zu bearbeiten.</string>
+    <string name="minutes_n_before_your_first_lesson">“ minuten vor der ersten Schulstunde
+        gestellt”
+    </string>
+    <string name="button_to_change_tomorrows_alarm">Knopf um den morgigen Wecker zu bearbeiten.
+    </string>
     <string name="webuntis_settings">Webuntis Einstellungen</string>
     <string name="cancellation_text">Ausfallnachricht</string>
-    <string name="cancelled_message_explanation">Einige Schulen zeigen ausgefallene Stunden nicht als ausgefallen an, stattdessen wird eine Nachricht, wie \"Stunde fällt aus\" oder \"Aufgaben Selbstständig\" an. Sollte das der Fall sein, gebe diese Nachricht bitte hier ein, damit diese Stunden auch als ausfallend registriert werden.</string>
+    <string name="cancelled_message_explanation">Einige Schulen zeigen ausgefallene Stunden nicht
+        als ausgefallen an, stattdessen wird eine Nachricht, wie \“Stunde fällt aus\” oder
+        \“Aufgaben Selbstständig\” an. Sollte das der Fall sein, gebe diese Nachricht bitte hier
+        ein, damit diese Stunden auch als ausfallend registriert werden.
+    </string>
     <string name="not_logged_in">Nicht angemeldet</string>
-    <string name="you_are_currently_not_logged_in_please_login_again">Du bist derzeit nicht angemeldet, bitte melde dich erneut an.</string>
+    <string name="you_are_currently_not_logged_in_please_login_again">Du bist derzeit nicht
+        angemeldet, bitte melde dich erneut an.
+    </string>
     <string name="login">Anmelden</string>
     <string name="alarm_clock_notifications">Wecker Benachrichtigungen</string>
     <string name="time_before_school_hint">Zeit vor Schulbeginn</string>
     <string name="loading">Lädt…</string>
     <string name="no_file_was_selected">Es wurde keine Datei ausgewählt.</string>
-    <string name="your_alarms_might_not_be_set_properly_please_make_sure_that_they_are">Dein Wecker ist eventuell nicht richtig eingestellt. Bitte stelle sicher, dass er passend eingestellt ist.</string>
+    <string name="your_alarms_might_not_be_set_properly_please_make_sure_that_they_are">Dein Wecker
+        ist eventuell nicht richtig eingestellt. Bitte stelle sicher, dass er passend eingestellt
+        ist.
+    </string>
     <string name="alarm_notifications_channel_name">Wecker Benachrichtigungen</string>
     <string name="info_notifications_channel_name">Informationen</string>
     <string name="enable_notifications">Benachrichtigungen müssen erlaubt sein.</string>
     <string name="alarm_sound">Wecker Ton</string>
     <string name="no_success">Kein Erfolg</string>
-    <string name="warning_notifications_are_not_enabled_please_enable_them_for_the_app_to_work_properly">Warnung: Notifications sind nicht erlaubt. Bitte erlaube diese damit die App richtig funktioniert.</string>
+    <string name="warning_notifications_are_not_enabled">
+        Warnung: Notifications sind nicht erlaubt. Bitte erlaube diese damit die App richtig
+        funktioniert.
+    </string>
     <string name="silent">Stumm</string>
     <string name="may_not_be_empty">Darf nicht leer sein.</string>
     <string name="school_must_be_selected">Es muss eine Schule ausgewählt sein.</string>
@@ -90,7 +116,9 @@
     <string name="pm">PM</string>
     <string name="am">AM</string>
     <string name="skip">Überspringen</string>
-    <string name="set_how_much_time_you_need_before_school_starts">Bestimme wie viel Zeit vor dem Schulstart benötigt wird.</string>
+    <string name="set_how_much_time_you_need_before_school_starts">Bestimme wie viel Zeit vor dem
+        Schulstart benötigt wird.
+    </string>
     <string name="globe">Sprache</string>
     <string name="moon">Dunkler Modus</string>
     <string name="bell">Wecker Ton</string>

@@ -22,8 +22,8 @@ import java.lang.RuntimeException
 
 class AlarmSoundPicker : AppCompatActivity() {
     companion object {
-        const val TAG = "AlarmSoundPicker"
-        const val INTENT_ALARM_SOUND_URI = "alarmSoundUri"
+        const val TAG: String = "AlarmSoundPicker"
+        const val INTENT_ALARM_SOUND_URI: String = "alarmSoundUri"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
