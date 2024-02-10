@@ -56,7 +56,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
-const val TAG = "Context"
+private const val TAG = "Context"
 
 val Context.notificationManager: NotificationManager get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 val Context.alarmManager: AlarmManager get() = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager

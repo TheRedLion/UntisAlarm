@@ -50,8 +50,9 @@ val ALARM_SOUND_DEFAULT_URI: Uri = RingtoneManager.getDefaultUri(RingtoneManager
 const val SILENT = "silent"
 val SILENT_URI: Uri = Uri.parse(SILENT)
 
-val COROUTINE_EXCEPTION_HANDLER = CoroutineExceptionHandler { _, throwable ->
-    throwable.printStackTrace()
-}
+val COROUTINE_EXCEPTION_HANDLER: CoroutineExceptionHandler =
+    CoroutineExceptionHandler { _, throwable ->
+        throwable.printStackTrace()
+    }
 val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy =
     StrictMode.ThreadPolicy.Builder().permitAll().build()

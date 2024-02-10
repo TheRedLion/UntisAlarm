@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets
 
 class WebApiCalls {
     companion object {
-        const val TAG = "WebApiCalls"
+        private const val TAG = "WebApiCalls"
         const val TOO_MANY_RESULTS = "too many results"
     }
 

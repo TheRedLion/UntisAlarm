@@ -31,8 +31,8 @@ class FirstSettingDialogFragment : DialogFragment() {
     private lateinit var binding: FragmentFirstSettingBinding
 
     companion object {
-        const val TAG = "FirstSettingDialogFragment"
-        const val DISMISSED = "dismissed"
+        const val TAG: String = "FirstSettingDialogFragment"
+        const val DISMISSED: String = "dismissed"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +88,7 @@ class FirstSettingDialogFragment : DialogFragment() {
         })
     }
 
-    private fun handleConfirmButtonPressed() {
+    internal fun handleConfirmButtonPressed() {
         val newTBSStr = binding.tbsInputField.text.toString()
         binding.tbsInputField.setText("")
         val newTBS: Int
