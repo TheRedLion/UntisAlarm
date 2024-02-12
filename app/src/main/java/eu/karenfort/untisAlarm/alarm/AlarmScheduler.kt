@@ -27,7 +27,8 @@ class AlarmScheduler(
         CoroutineScope(Dispatchers.Default).launch {
             AlarmClockSetter.main(context, true) //is always active if alarm was just scheduled
         }
-        val intent = Intent(context, AlarmReceiver::class.java).also {
+        //todo check if works without
+        /*val intent = Intent(context, AlarmReceiver::class.java).also {
             it.action = Intent.ACTION_CALL
         }
         val pendingIntent = PendingIntent.getBroadcast(
@@ -40,7 +41,7 @@ class AlarmScheduler(
             AlarmManager.RTC_WAKEUP,
             System.currentTimeMillis() + 900000,
             pendingIntent
-        )
+        )*/
     }
 
     fun cancel() {

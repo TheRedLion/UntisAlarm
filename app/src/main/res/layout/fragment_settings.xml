@@ -19,24 +19,17 @@
             android:layout_height="wrap_content" android:orientation="vertical">
 
 
-            <TextView
-                style="@style/settings_subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/webuntis_settings" />
+            <TextView style="@style/settings_subtitle" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="@string/webuntis_settings" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                style="@style/settings_text_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout style="@style/settings_text_holder"
+                android:layout_width="match_parent" android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/cancelled_message_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:hint="@string/cancellation_text"
-                    app:endIconDrawable="@drawable/ic_info_icon"
-                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_info_icon" app:endIconMode="custom"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -44,10 +37,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/cancelled_message_input_field"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:singleLine="true"/>
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="text" android:singleLine="true"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -207,34 +198,36 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!--
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/color_scheme_settings">
+            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:alpha="0.5">
 
                 <TextView
+                    android:id="@+id/textView"
                     style="@style/settings_normal_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/color_scheme"
+                    android:text="@string/version_in_settings"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/color_scheme_settings_image"
+                    app:layout_constraintStart_toEndOf="@+id/version_info_image"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
-                <ImageView
-                    android:id="@+id/color_scheme_settings_image"
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/version_code"
+                    app:layout_constraintStart_toEndOf="@+id/textView"
+                    style="@style/settings_normal_text"/>
+
+                <ImageView android:id="@+id/version_info_image" style="@style/settings_image_view"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:contentDescription="@string/version"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_color_sceme"
-                    style="@style/settings_image_view"/>
+                    app:srcCompat="@drawable/ic_info_icon" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-            -->
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.core.widget.NestedScrollView>
 

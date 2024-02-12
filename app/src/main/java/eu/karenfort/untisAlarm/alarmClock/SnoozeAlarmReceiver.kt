@@ -15,16 +15,20 @@ import android.content.Context
 import android.content.Intent
 import eu.karenfort.untisAlarm.extentions.hideNotification
 import eu.karenfort.untisAlarm.helper.ALARM_CLOCK_ID
+import eu.karenfort.untisAlarm.helper.COROUTINE_EXCEPTION_HANDLER
+import eu.karenfort.untisAlarm.helper.DEFAULT_SNOOZE_MIN
 import eu.karenfort.untisAlarm.helper.StoreData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class SnoozeAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         context.hideNotification(ALARM_CLOCK_ID)
-        var snoozeTime = 5
-        runBlocking {
-            snoozeTime = StoreData(context).loadSnoozeTime() ?: return@runBlocking
+        CoroutineScope(Dispatchers.Default + COROUTINE_EXCEPTION_HANDLER).launch {
+            val snoozeTime = StoreData(context).loadSnoozeTime() ?: DEFAULT_SNOOZE_MIN
+            AlarmClock.setSnooze(snoozeTime, context)
         }
-        AlarmClock.snooze(snoozeTime, context)
     }
 }

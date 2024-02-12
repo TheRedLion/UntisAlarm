@@ -3,7 +3,7 @@
  *
  * Licence: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
  *
- * Description: This Activity is the Main screen of the App and allows the user to activate and
+ * Description: This Activity is the Test screen of the App and allows the user to activate and
  *      deactivate the alarm as well as edit the alarm set for tomorrow.
  */
 package eu.karenfort.untisAlarm.ui
@@ -16,23 +16,24 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.DateFormat.is24HourFormat
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import eu.karenfort.untisAlarm.R
-import eu.karenfort.untisAlarm.databinding.ActivityMainBinding
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
 import com.google.android.material.timepicker.TimeFormat
+import eu.karenfort.untisAlarm.R
 import eu.karenfort.untisAlarm.alarm.AlarmScheduler
 import eu.karenfort.untisAlarm.alarmClock.AlarmClock
 import eu.karenfort.untisAlarm.alarmClock.AlarmClockSetter
 import eu.karenfort.untisAlarm.dataPass.OnDataPassedListener
+import eu.karenfort.untisAlarm.databinding.ActivityMainBinding
 import eu.karenfort.untisAlarm.extentions.areNotificationsEnabled
 import eu.karenfort.untisAlarm.extentions.getAlarmPreviewString
 import eu.karenfort.untisAlarm.extentions.isDisabled
@@ -58,9 +59,12 @@ import java.util.TimeZone
 class MainActivity :
     AppCompatActivity(),
     OnDataPassedListener {
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
     private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
     private var currentAlarmClockDateTime: LocalDateTime? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) { //todo bug: when editing alarm clock time and "No School" is shown it doesn't update
         super.onCreate(savedInstanceState)
@@ -86,7 +90,7 @@ class MainActivity :
     }
 
     override fun onAlarmPreviewPassed(newAlarmClockTime: LocalDateTime?) {
-        setAlarmPreview(newAlarmClockTime)
+        runOnUiThread { setAlarmPreview(newAlarmClockTime) }
     }
 
     override fun onNotificationsAllowedPassed(areNotificationsAllowed: Boolean) {
@@ -159,8 +163,9 @@ class MainActivity :
     private fun handleResetAlarm() {
         StoreData(this).storeAlarmClock(false)
         CoroutineScope(Dispatchers.Default).launch {
-            currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, binding.toggleAlarm.isChecked, false)
-            setAlarmPreview(currentAlarmClockDateTime)
+            currentAlarmClockDateTime =
+                AlarmClockSetter.main(this@MainActivity, binding.toggleAlarm.isChecked, false)
+            runOnUiThread { setAlarmPreview(currentAlarmClockDateTime) }
         }
         binding.resetAlarmTomorrow.isDisabled = true
     }
@@ -221,10 +226,10 @@ class MainActivity :
                     this.showErrorToast(getString(R.string.selected_date_and_time_is_before_the_current_time))
                 } else {
                     if (binding.toggleAlarm.isChecked) {
-                        AlarmClock.cancel(this)
-                        AlarmClock.set(selectedDateTime, this)
+                        Log.i(TAG, "alarm clock was set to $selectedDateTime")
                         currentAlarmClockDateTime = selectedDateTime
-                        setAlarmPreview(currentAlarmClockDateTime)
+                        setAlarmPreview(selectedDateTime)
+                        AlarmClock.set(selectedDateTime, this)
                     } else {
                         this.toast(getString(R.string.alarms_are_disabled))
                     }
@@ -346,7 +351,8 @@ class MainActivity :
         }
 
         runOnUiThread {
-            binding.alarmPreview.isClickable = true //was disabled in onCreate since loading is done on a different coroutine
+            binding.alarmPreview.isClickable =
+                true //was disabled in onCreate since loading is done on a different coroutine
         }
         if (alarmClockDateTime == null) {
             currentAlarmClockDateTime = AlarmClockSetter.main(this)
@@ -360,20 +366,22 @@ class MainActivity :
     }
 
     private fun setAlarmPreview(alarmClockDateTime: LocalDateTime?) {
+        Log.i(TAG, "setting alarm preview to $alarmClockDateTime")
         if (alarmClockDateTime != null) {
             binding.alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
         }
         binding.alarmPreview.text = getString(R.string.no_school)
     }
 
-    private suspend fun hasLoggedIn(): Boolean {
+    private suspend fun isLoggedOut(): Boolean {
         val storeData = StoreData(this)
         return storeData.loadLoginData()[0].isNullOrEmpty() || storeData.loadID() == null
     }
 
     private fun sendToWelcomeActivityIfNotLoggedIn() {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
-            if (!hasLoggedIn()) return@launch
+            if (!isLoggedOut()) return@launch
+            AlarmScheduler(this@MainActivity).cancel()
             intent = Intent(this@MainActivity, WelcomeActivity::class.java)
             startActivity(intent)
             finish()

@@ -272,7 +272,7 @@ class ReminderActivity : AppCompatActivity() {
         runBlocking {
             snoozeTime = StoreData(this@ReminderActivity).loadSnoozeTime() ?: return@runBlocking
         }
-        eu.karenfort.untisAlarm.alarmClock.AlarmClock.snooze(snoozeTime, this)
+        eu.karenfort.untisAlarm.alarmClock.AlarmClock.setSnooze(snoozeTime, this)
         wasAlarmSnoozed = true
         finishActivity(true)
     }

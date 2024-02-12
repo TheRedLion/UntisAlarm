@@ -24,6 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name="eu.karenfort.untisAlarm.ui.MainActivity"
             android:exported="true"
@@ -34,18 +35,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="eu.karenfort.untisAlarm.ui.CancelledMessageInfo"
             android:exported="false"
             android:parentActivityName="eu.karenfort.untisAlarm.ui.MainActivity" />
-        <activity
-            android:name="eu.karenfort.untisAlarm.ui.AlarmSoundPicker"
-            android:exported="false"
-            android:parentActivityName="eu.karenfort.untisAlarm.ui.SettingsDialogFragment" />
+
         <activity
             android:name="eu.karenfort.untisAlarm.ui.WelcomeActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name="eu.karenfort.untisAlarm.ui.ReminderActivity"
             android:excludeFromRecents="true"
@@ -68,6 +68,7 @@
                 android:name="autoStoreLocales"
                 android:value="true" />
         </service>
+
         <receiver
             android:name="eu.karenfort.untisAlarm.alarm.AlarmReceiver"
             android:exported="false">

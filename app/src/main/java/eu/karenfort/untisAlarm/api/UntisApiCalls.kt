@@ -22,6 +22,9 @@ import java.time.LocalDateTime
 
 /**
  * This class is responsible for sending API calls to the WebUntis API.
+ *
+ * @constructor Takes the users credentials and tries to login.
+ * @throws IOException if the credentials are invalid.
  */
 class UntisApiCalls(
     username: String,
@@ -30,10 +33,6 @@ class UntisApiCalls(
     schoolName: String
 ) {
     private val session: Session
-
-    companion object {
-        private const val TAG = "UntisApiCalls"
-    }
 
     init {
         try {
@@ -48,28 +47,39 @@ class UntisApiCalls(
         }
     }
 
+    companion object {
+        private const val TAG = "UntisApiCalls"
+    }
+
     /**
      * This function returns the ID of the person that is logged in.
+     *
+     * @return The users ID, null if there was an error.
      */
-    fun getID(): Int? {
+    fun getID(): Int? { //todo check if try catch is necessary
         var id: Int? = null
         try {
             id = session.infos.personId
-        } catch (_: IOException) {}
+        } catch (_: IOException) {
+        }
         return id
     }
 
     /**
      * This function returns the start of the next school day. Only if there is school
      * within the next 7 days, otherwise it returns null.
+     *
+     * @throws IOException
      */
-    @Throws(IOException::class)
-    fun getSchoolStartForDay(id: Int, context: Context): LocalDateTime? {
+    suspend fun getSchoolStartForDay(id: Int, context: Context): LocalDateTime? {
         //todo check if async is working
         var localDateTime: LocalDateTime? = null
+
         runBlocking {
             val nextDay = LocalDate.now().plusDays(1)
 
+            //todo check if networkonmainthread is still necessary
+            //StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
             val timetableAsync = async {
                 session.getTimetableFromPersonId(
                     nextDay,

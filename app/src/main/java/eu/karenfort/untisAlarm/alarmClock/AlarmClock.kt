@@ -63,14 +63,13 @@ class AlarmClock {
             }
         }
 
-        fun snooze(timeInM: Int, context: Context) {
-            if (timeInM < 0) {
+        fun setSnooze(timeInM: Int, context: Context) {
+            if (timeInM <= 0) {
                 return
             }
             if (!context.areNotificationsEnabled) {
                 return
             }
-
             cancel(context) //only one alarm may be active at any time
 
             val pendingIntent = context.alarmClockPendingIntent

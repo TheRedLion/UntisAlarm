@@ -134,4 +134,7 @@
     <string name="edit_alarm_time">Edit Alarm Time</string>
     <string name="select_date">Select date</string>
     <string name="no_school">No School</string>
+    <string name="version">Version</string>
+    <string name="version_in_settings">Version: </string>
+    <string name="version_code" translatable="false">0.0.0</string>
 </resources>

@@ -42,16 +42,16 @@ import eu.karenfort.untisAlarm.extentions.viewBinding
 import eu.karenfort.untisAlarm.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.untisAlarm.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.untisAlarm.helper.DarkMode
-import eu.karenfort.untisAlarm.helper.IVG_DEFAULT
-import eu.karenfort.untisAlarm.helper.MAX_SNOOZE
-import eu.karenfort.untisAlarm.helper.MAX_TBS
+import eu.karenfort.untisAlarm.helper.DEFAULT_DO_IVG
+import eu.karenfort.untisAlarm.helper.MAX_SNOOZE_MIN
+import eu.karenfort.untisAlarm.helper.MAX_TBS_MIN
 import eu.karenfort.untisAlarm.helper.SILENT_URI
-import eu.karenfort.untisAlarm.helper.SNOOZE_DEFAULT
+import eu.karenfort.untisAlarm.helper.DEFAULT_SNOOZE_MIN
 import eu.karenfort.untisAlarm.helper.SUPPORTED_LANGUAGES
 import eu.karenfort.untisAlarm.helper.SUPPORTED_LANGUAGES_TAG
 import eu.karenfort.untisAlarm.helper.StoreData
-import eu.karenfort.untisAlarm.helper.DEFAULT_TBS
-import eu.karenfort.untisAlarm.helper.VIBRATE_DEFAULT
+import eu.karenfort.untisAlarm.helper.DEFAULT_TBS_MIN
+import eu.karenfort.untisAlarm.helper.DEFAULT_DO_VIBRATE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -358,8 +358,8 @@ class SettingsDialogFragment : DialogFragment(),
             return
         }
 
-        if (newSnooze > MAX_SNOOZE) {
-            context.toast(getString(R.string.the_maximum_length_is) + MAX_SNOOZE + getString(R.string.minutes))
+        if (newSnooze > MAX_SNOOZE_MIN) {
+            context.toast(getString(R.string.the_maximum_length_is) + MAX_SNOOZE_MIN + getString(R.string.minutes))
             return
         }
 
@@ -385,8 +385,8 @@ class SettingsDialogFragment : DialogFragment(),
             return
         }
 
-        if (newTBS > MAX_TBS) {
-            context.toast(getString(R.string.the_maximum_length_is) + MAX_TBS / 12 + getString(R.string.hours))
+        if (newTBS > MAX_TBS_MIN) {
+            context.toast(getString(R.string.the_maximum_length_is) + MAX_TBS_MIN / 12 + getString(R.string.hours))
             return
         }
 
@@ -425,22 +425,22 @@ class SettingsDialogFragment : DialogFragment(),
     }
 
     private fun initIVG(): Boolean {
-        StoreData(context).storeIncreaseVolumeGradually(IVG_DEFAULT)
-        return IVG_DEFAULT
+        StoreData(context).storeIncreaseVolumeGradually(DEFAULT_DO_IVG)
+        return DEFAULT_DO_IVG
     }
 
     private fun initSnooze(): Int {
-        StoreData(context).storeSnoozeTime(SNOOZE_DEFAULT)
-        return SNOOZE_DEFAULT
+        StoreData(context).storeSnoozeTime(DEFAULT_SNOOZE_MIN)
+        return DEFAULT_SNOOZE_MIN
     }
 
     private fun initVibrate(): Boolean {
-        StoreData(context).storeVibrate(VIBRATE_DEFAULT)
-        return VIBRATE_DEFAULT
+        StoreData(context).storeVibrate(DEFAULT_DO_VIBRATE)
+        return DEFAULT_DO_VIBRATE
     }
 
     private fun initTBS(): Int {
-        StoreData(context).storeTBS(DEFAULT_TBS)
-        return DEFAULT_TBS
+        StoreData(context).storeTBS(DEFAULT_TBS_MIN)
+        return DEFAULT_TBS_MIN
     }
 }

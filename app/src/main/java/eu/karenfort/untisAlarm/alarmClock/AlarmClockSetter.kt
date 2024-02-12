@@ -11,18 +11,20 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.StrictMode
 import android.util.Log
 import eu.karenfort.untisAlarm.alarm.AlarmReceiver
 import eu.karenfort.untisAlarm.alarm.AlarmScheduler
 import eu.karenfort.untisAlarm.api.UntisApiCalls
 import eu.karenfort.untisAlarm.dataPass.DataPass
 import eu.karenfort.untisAlarm.extentions.hasNetworkConnection
+import eu.karenfort.untisAlarm.extentions.isScreenOn
 import eu.karenfort.untisAlarm.extentions.sendLoggedOutNotif
 import eu.karenfort.untisAlarm.extentions.sendNoInternetNotif
 import eu.karenfort.untisAlarm.helper.ALARM_REQUEST_CODE
-import eu.karenfort.untisAlarm.helper.ALLOW_NETWORK_ON_MAIN_THREAD
-import eu.karenfort.untisAlarm.helper.DEFAULT_TBS
+import eu.karenfort.untisAlarm.helper.DEFAULT_TBS_MIN
+import eu.karenfort.untisAlarm.helper.NEW_ALARM_TIME_MILLIS
+import eu.karenfort.untisAlarm.helper.NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY
+import eu.karenfort.untisAlarm.helper.NEW_ALARM_TIME_MILLIS_WHEN_NO_SCHOOL_FOUND
 import eu.karenfort.untisAlarm.helper.StoreData
 import java.io.IOException
 import java.time.LocalDateTime
@@ -59,7 +61,7 @@ class AlarmClockSetter {
             isEdited: Boolean?
         ): LocalDateTime? {
             Log.i(TAG, "Called alarmClockSetter")
-            //rest unnecessary without being able to make API calls
+
             if (!context.hasNetworkConnection()) {
                 context.sendNoInternetNotif()
                 setNew(REASON_NORMAL, context)
@@ -73,7 +75,7 @@ class AlarmClockSetter {
             val id = storeData.loadID()
             val loginData = storeData.loadLoginData()
             val tbs: Int = storeData.loadTBS()
-                ?: DEFAULT_TBS //just setting default value in case stored value is lost
+                ?: DEFAULT_TBS_MIN //just setting default value in case stored value is lost
             val alarmActive: Boolean = isActive ?: (storeData.loadAlarmActive() ?: false)
             var (storedAlarmClockDateTime, storedAlarmClockEdited) = storeData.loadAlarmClock()
             if (isEdited != null) {
@@ -81,13 +83,14 @@ class AlarmClockSetter {
             }
 
             if (id == null || loginData[0] == null || loginData[1] == null || loginData[2] == null || loginData[3] == null) {
-                context.sendLoggedOutNotif()
+                if (!context.isScreenOn) {
+                    context.sendLoggedOutNotif()
+                }
                 AlarmScheduler(context).cancel()
                 Log.i(TAG, "cancelled because user was logged out")
                 return null
             }
             var schoolStart: LocalDateTime? = null
-            StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
 
             try {
                 schoolStart = UntisApiCalls(
@@ -101,7 +104,8 @@ class AlarmClockSetter {
 
 
             if (!alarmActive) {
-                return schoolStart?.minusMinutes(tbs.toLong()) //no further action needed since alarm are disabled
+                //no further action needed since alarm are disabled
+                return schoolStart?.minusMinutes(tbs.toLong())
             }
 
             if (storedAlarmClockEdited) {
@@ -115,7 +119,8 @@ class AlarmClockSetter {
                 return null
             }
 
-            val newAlarmClockTime = schoolStart.minusMinutes(tbs.toLong())
+            //!! since it was just checked
+            val newAlarmClockTime = schoolStart!!.minusMinutes(tbs.toLong())
 
             if (storedAlarmClockDateTime == null) {
                 AlarmClock.set(newAlarmClockTime, context)
@@ -130,7 +135,6 @@ class AlarmClockSetter {
                 return newAlarmClockTime
             }
 
-            AlarmClock.cancel(context)
             AlarmClock.set(newAlarmClockTime, context)
 
             setNew(REASON_NORMAL, context)
@@ -143,7 +147,9 @@ class AlarmClockSetter {
             alarmClockTime: LocalDateTime?,
             storedAlarmClockDateTime: LocalDateTime?
         ) =
-            if (alarmClockTime == null || storedAlarmClockDateTime == null) false else alarmClockTime.isEqual(
+            if (alarmClockTime == null || storedAlarmClockDateTime == null)
+                false
+            else alarmClockTime.isEqual(
                 storedAlarmClockDateTime
             )
 
@@ -160,18 +166,18 @@ class AlarmClockSetter {
             )
 
             when (reason) {
-                REASON_NO_ALARM_TODAY -> {
+                REASON_NORMAL -> {
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC,
-                        System.currentTimeMillis() + 18000000, //5 hours
+                        System.currentTimeMillis() + NEW_ALARM_TIME_MILLIS, //1 hour
                         pendingIntent
                     )
                 }
 
-                REASON_NORMAL -> {
+                REASON_NO_ALARM_TODAY -> {
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC,
-                        System.currentTimeMillis() + 360000, //1 hour
+                        System.currentTimeMillis() + NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY, //5 hours
                         pendingIntent
                     )
                 }
@@ -179,7 +185,7 @@ class AlarmClockSetter {
                 REASON_NO_SCHOOL_START_FOUND -> {
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC,
-                        System.currentTimeMillis() + 259200000, //3 days
+                        System.currentTimeMillis() + NEW_ALARM_TIME_MILLIS_WHEN_NO_SCHOOL_FOUND, //3 days
                         pendingIntent
                     )
                 }

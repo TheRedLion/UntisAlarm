@@ -139,4 +139,6 @@
     <string name="edit_alarm_time">Wecker Zeit Bearbeiten</string>
     <string name="select_date">Datum Wählen</string>
     <string name="no_school">Kein Unterricht</string>
+    <string name="version">Version</string>
+    <string name="version_in_settings">Version:</string>
 </resources>

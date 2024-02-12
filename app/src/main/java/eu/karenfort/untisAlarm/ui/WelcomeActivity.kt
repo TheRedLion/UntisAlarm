@@ -19,9 +19,9 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.setFragmentResultListener
 import eu.karenfort.untisAlarm.R
-import eu.karenfort.untisAlarm.databinding.ActivityWelcomeBinding
 import eu.karenfort.untisAlarm.api.UntisApiCalls
 import eu.karenfort.untisAlarm.api.WebApiCalls
+import eu.karenfort.untisAlarm.databinding.ActivityWelcomeBinding
 import eu.karenfort.untisAlarm.extentions.hasNetworkConnection
 import eu.karenfort.untisAlarm.extentions.isDisabled
 import eu.karenfort.untisAlarm.extentions.toast
@@ -34,11 +34,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.lang.NullPointerException
 
 
 class WelcomeActivity : AppCompatActivity() {
-    private val binding: ActivityWelcomeBinding by viewBinding(ActivityWelcomeBinding::inflate)
+    internal val binding: ActivityWelcomeBinding by viewBinding(ActivityWelcomeBinding::inflate)
 
     private var schools: Array<Array<String>>? = null
     private var schoolName: String? = null
@@ -48,9 +47,10 @@ class WelcomeActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "WelcomeActivity"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_welcome)
+        setContentView(binding.root)
         setListener()
     }
 
@@ -80,73 +80,74 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleRunButtonPressed() {
+    internal fun handleRunButtonPressed() {
         binding.runButton.isDisabled = true
         CoroutineScope(Dispatchers.Default).launch {
             if (!hasNetworkConnection()) {
                 this@WelcomeActivity.toast(getString(R.string.you_are_offline))
-                runOnUiThread{ binding.runButton.isDisabled = false }
+                runOnUiThread { binding.runButton.isDisabled = false }
                 return@launch
             }
 
             if (binding.untisSchool.text.toString().isEmpty()) {
                 //show warning
-                runOnUiThread{
+                runOnUiThread {
                     binding.untisSchoolInputLayout.error = getString(R.string.may_not_be_empty)
                     binding.runButton.isDisabled = false
                 }
                 return@launch
             }
-            runOnUiThread{ binding.untisSchoolInputLayout.error = null }
+            runOnUiThread { binding.untisSchoolInputLayout.error = null }
 
             if (binding.untisUserName.text.toString().isEmpty()) {
                 //show warning
-                runOnUiThread{
+                runOnUiThread {
                     binding.untisUserNameInputLayout.error = getString(R.string.may_not_be_empty)
                     binding.runButton.isDisabled = false
                 }
                 return@launch
             }
-            runOnUiThread{ binding.untisUserNameInputLayout.error = null }
+            runOnUiThread { binding.untisUserNameInputLayout.error = null }
 
             if (binding.untisPassword.text.toString().isEmpty()) {
                 //show warning
-                runOnUiThread{
+                runOnUiThread {
                     binding.untisPasswordInputLayout.error = getString(R.string.may_not_be_empty)
                     binding.runButton.isDisabled = false
                 }
                 return@launch
             }
-            runOnUiThread{ binding.untisPasswordInputLayout.error = null }
+            runOnUiThread { binding.untisPasswordInputLayout.error = null }
 
             //check if school was selected
             if (schoolName == null || server == null) {
-                runOnUiThread{
-                    binding.selectUntisSchoolInputLayout.error = getString(R.string.school_must_be_selected)
+                runOnUiThread {
+                    binding.selectUntisSchoolInputLayout.error =
+                        getString(R.string.school_must_be_selected)
                     binding.runButton.isDisabled = false
                 }
                 return@launch
             }
-            runOnUiThread{ binding.selectUntisSchoolInputLayout.error = null }
+            runOnUiThread { binding.selectUntisSchoolInputLayout.error = null }
 
             //verify login data
             if (untisApiCalls == null) {
                 if (!verifyLoginData()) {
-                    runOnUiThread{ binding.runButton.isDisabled = false }
+                    runOnUiThread { binding.runButton.isDisabled = false }
                     return@launch
                 }
             }
-            runOnUiThread{
+            runOnUiThread {
                 binding.untisPasswordInputLayout.error = null
                 binding.untisUserNameInputLayout.error = null
             }
 
             val untisID =
-                untisApiCalls!!.getID()
+                (untisApiCalls ?: return@launch).getID()
 
             if (untisID == null) {
                 //no match was found
-                runOnUiThread{
+                runOnUiThread {
                     binding.untisPasswordInputLayout.error = getString(R.string.invalid_login_data)
                     binding.untisUserNameInputLayout.error = getString(R.string.invalid_login_data)
                     binding.runButton.isDisabled = false
@@ -158,14 +159,17 @@ class WelcomeActivity : AppCompatActivity() {
             storeData.storeLoginData(
                 binding.untisUserName.text.toString(),
                 binding.untisPassword.text.toString(),
-                server!!,
-                schoolName!!
+                server ?: return@launch,
+                schoolName ?: return@launch
             )
             storeData.storeID(untisID)
 
-            runOnUiThread{
+            runOnUiThread {
                 val firstSettingDialogFragment = FirstSettingDialogFragment()
-                firstSettingDialogFragment.show(supportFragmentManager, FirstSettingDialogFragment.TAG)
+                firstSettingDialogFragment.show(
+                    supportFragmentManager,
+                    FirstSettingDialogFragment.TAG
+                )
                 firstSettingDialogFragment.setFragmentResultListener(FirstSettingDialogFragment.DISMISSED) { _, _ ->
                     binding.runButton.isDisabled = false
                 }
@@ -178,16 +182,18 @@ class WelcomeActivity : AppCompatActivity() {
             return false
         }
         try {
-            StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
-            ensureBackgroundCoroutine{
+            //StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+            ensureBackgroundCoroutine { //todo check that is still works
                 untisApiCalls = UntisApiCalls(
                     binding.untisUserName.text.toString(),
                     binding.untisPassword.text.toString(),
-                    server!!,
-                    schoolName!!
+                    server ?: return@ensureBackgroundCoroutine,
+                    schoolName ?: return@ensureBackgroundCoroutine
                 )
             }
-        } catch (_: IOException) {} catch (_: NullPointerException) {}
+        } catch (_: IOException) {
+        } catch (_: NullPointerException) {
+        }
 
         if (untisApiCalls == null) {
             runOnUiThread {
@@ -207,7 +213,8 @@ class WelcomeActivity : AppCompatActivity() {
                 schoolName = schools!![position][3]
                 server = schools!![position][2]
             } catch (e: IndexOutOfBoundsException) {
-                binding.selectUntisSchoolInputLayout.helperText = getString(R.string.unable_to_load_address)
+                binding.selectUntisSchoolInputLayout.helperText =
+                    getString(R.string.unable_to_load_address)
             }
             binding.selectUntisSchoolInputLayout.error = null
         }
@@ -227,7 +234,10 @@ class WelcomeActivity : AppCompatActivity() {
 
                 CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
                     if (!hasNetworkConnection()) {
-                        runOnUiThread{ binding.untisSchoolInputLayout.error = getString(R.string.you_are_offline) }
+                        runOnUiThread {
+                            binding.untisSchoolInputLayout.error =
+                                getString(R.string.you_are_offline)
+                        }
                         return@launch
                     }
 
@@ -235,7 +245,7 @@ class WelcomeActivity : AppCompatActivity() {
                     try {
                         schools = webApiCalls.getUntisSchools("$text")
                     } catch (_: Error) {
-                        runOnUiThread{
+                        runOnUiThread {
                             binding.untisSchoolInputLayout.error =
                                 getString(R.string.error_when_searching_for_schools)
                         }
@@ -243,7 +253,10 @@ class WelcomeActivity : AppCompatActivity() {
                     }
 
                     if (schools!!.isEmpty()) {
-                        runOnUiThread{ binding.untisSchoolInputLayout.error = getString(R.string.no_school_found) }
+                        runOnUiThread {
+                            binding.untisSchoolInputLayout.error =
+                                getString(R.string.no_school_found)
+                        }
                         return@launch
                     }
 
@@ -253,14 +266,18 @@ class WelcomeActivity : AppCompatActivity() {
 
                     if (schools!![0][0] == WebApiCalls.TOO_MANY_RESULTS) {
                         runOnUiThread {
-                            binding.selectUntisSchoolInputLayout.hint = getString(R.string.too_many_results)
+                            binding.selectUntisSchoolInputLayout.hint =
+                                getString(R.string.too_many_results)
                         }
                         return@launch
                     }
 
-                    runOnUiThread{ binding.selectUntisSchoolInputLayout.hint = getString(R.string.select_school) }
+                    runOnUiThread {
+                        binding.selectUntisSchoolInputLayout.hint =
+                            getString(R.string.select_school)
+                    }
 
-                    try{
+                    try {
                         val schoolNames =
                             schools!!.map { "${it[0]}, ${it[1].split(',')[1].trim()}" }
                                 .toTypedArray()
@@ -274,7 +291,7 @@ class WelcomeActivity : AppCompatActivity() {
                         Log.i(TAG, "Size ${schools!!.size} ${schools!![0][0]}")
                         //if there is exactly one result
                         if (schools!!.size == 1 && schools!![0][0] != WebApiCalls.TOO_MANY_RESULTS) {
-                            runOnUiThread{
+                            runOnUiThread {
                                 //select the only result
                                 binding.untisSchoolSelector.setText(
                                     binding.untisSchoolSelector.adapter.getItem(0).toString(),
@@ -297,7 +314,7 @@ class WelcomeActivity : AppCompatActivity() {
             }
         })
         binding.untisPassword.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            if(b){
+            if (b) {
                 //entered in the edit text
             } else {
                 //left edit text
@@ -309,7 +326,7 @@ class WelcomeActivity : AppCompatActivity() {
             }
         }
         binding.untisUserName.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            if(b){
+            if (b) {
                 //entered in the edit text
             } else {
                 //left edit text
