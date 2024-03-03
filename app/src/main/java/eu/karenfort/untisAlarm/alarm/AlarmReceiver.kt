@@ -23,6 +23,7 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.i(TAG, "called onReceive")
         //intent check to prevent spoofed intents since this receiver is called upon phone restart
         if (intent.action != Intent.ACTION_BOOT_COMPLETED &&
             intent.action != Intent.ACTION_CALL

@@ -66,7 +66,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    implementation files("libs/untis4j.jar")
+    implementation 'com.github.untisapi:untis4j:v1.3.5'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'

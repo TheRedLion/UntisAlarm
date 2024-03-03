@@ -32,5 +32,6 @@ follow [this](https://getstream.io/blog/use-github-android-studio/) tutorial.
 We would like to thank the [Simple-Clock](https://github.com/SimpleMobileTools/Simple-Clock) project
 since some of our code related to the Alarm Clock is taken from them.
 
-This project is not related to the [UntisAlarm](https://www.rala.io/app/untisAlarm) from rala, who
+This project is not related to the [UntisAlarm](https://www.rala.io/app/untisAlarm)
+from [rala](https://www.rala.io), who
 created a similar app in 2016. We have their permission to use the name.
