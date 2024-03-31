@@ -6,11 +6,15 @@ import java.time.LocalDateTime
 class DataPass {
     companion object {
         fun passAlarmActive(context: Context, localDateTime: LocalDateTime?) {
-            (context as OnDataPassedListener).onAlarmPreviewPassed(localDateTime)
+            try {
+                (context as OnDataPassedListener).onAlarmPreviewPassed(localDateTime)
+            } catch (_: ClassCastException) {}
         }
 
         fun passNotificationsAllowed(context: Context, notificationsAllowed: Boolean) {
-            (context as OnDataPassedListener).onNotificationsAllowedPassed(notificationsAllowed)
+            try {
+                (context as OnDataPassedListener).onNotificationsAllowedPassed(notificationsAllowed)
+            } catch (_: ClassCastException) {}
         }
     }
 }

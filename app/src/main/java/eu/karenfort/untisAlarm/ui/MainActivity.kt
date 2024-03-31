@@ -70,6 +70,8 @@ class MainActivity :
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        Log.i(TAG, "onCreate, in MainActivity")
+
         disableClicking() //disabling clicks until everything was properly loaded to stop errors
         createNotificationChannel()
         sendToWelcomeActivityIfNotLoggedIn() //send user to welcomeActivity if they have not logged in yet
@@ -122,7 +124,6 @@ class MainActivity :
 
             R.id.logout -> {
                 startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
-                AlarmScheduler(this).cancel()
                 AlarmClock.cancel(this)
                 StoreData(this).deleteLoginData()
             }
@@ -299,7 +300,7 @@ class MainActivity :
         StoreData(this).storeAlarmActive(isChecked)
         if (isChecked) {
             if (areNotificationsEnabled) {
-                AlarmScheduler(this).schedule(this)
+                //AlarmScheduler(this).schedule(this)
                 CoroutineScope(Dispatchers.Default).launch {
                     currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, true)
                 }
@@ -309,7 +310,6 @@ class MainActivity :
             }
         } else {
             AlarmClock.cancel(this)
-            AlarmScheduler(this).cancel()
         }
     }
 

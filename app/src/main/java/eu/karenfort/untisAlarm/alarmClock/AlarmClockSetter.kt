@@ -19,7 +19,6 @@ import eu.karenfort.untisAlarm.dataPass.DataPass
 import eu.karenfort.untisAlarm.extentions.hasNetworkConnection
 import eu.karenfort.untisAlarm.extentions.isScreenOn
 import eu.karenfort.untisAlarm.extentions.sendLoggedOutNotif
-import eu.karenfort.untisAlarm.extentions.sendNoInternetNotif
 import eu.karenfort.untisAlarm.helper.ALARM_REQUEST_CODE
 import eu.karenfort.untisAlarm.helper.DEFAULT_TBS_MIN
 import eu.karenfort.untisAlarm.helper.NEW_ALARM_TIME_MILLIS
@@ -32,10 +31,6 @@ import java.time.LocalDateTime
 class AlarmClockSetter {
     companion object {
         private const val TAG = "AlarmClockSetter"
-        private const val REASON_NORMAL = "normal"
-        private const val REASON_NO_ALARM_TODAY = "no_alarm_today"
-        private const val REASON_NO_SCHOOL_START_FOUND = "no_school_start"
-
         /* isActive and isEdited is used to override stored data, necessary because storing is
             done on a different coroutine and thus takes time. Used when a new state is set and the
             AlarmClock needs to be adjusted right after that for example to update UI
@@ -55,16 +50,17 @@ class AlarmClockSetter {
             return result
         }
 
+        //the second function is to make return values easier to pass along with dataPass
         private suspend fun main2(
             context: Context,
             isActive: Boolean?,
             isEdited: Boolean?
         ): LocalDateTime? {
             Log.i(TAG, "Called alarmClockSetter")
+            val alarmScheduler = AlarmScheduler(context)
 
             if (!context.hasNetworkConnection()) {
-                context.sendNoInternetNotif()
-                setNew(REASON_NORMAL, context)
+                alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS)
                 Log.i(TAG, "cancelling because phone is offline")
                 return null
             }
@@ -109,35 +105,35 @@ class AlarmClockSetter {
             }
 
             if (storedAlarmClockEdited) {
-                setNew(REASON_NO_ALARM_TODAY, context)
+                alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY)
                 return storedAlarmClockDateTime
             }
 
             if (schoolStart == null) {
-                setNew(REASON_NO_SCHOOL_START_FOUND, context)
                 Log.i(TAG, "no school start was found")
+                alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS_WHEN_NO_SCHOOL_FOUND)
                 return null
             }
 
             //!! since it was just checked
-            val newAlarmClockTime = schoolStart!!.minusMinutes(tbs.toLong())
+            val newAlarmClockTime = schoolStart.minusMinutes(tbs.toLong())
 
             if (storedAlarmClockDateTime == null) {
                 AlarmClock.set(newAlarmClockTime, context)
-                setNew(REASON_NORMAL, context)
+                alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS)
                 Log.i(TAG, "cancelled because couldn't load stored AlarmClockDateTime")
                 return newAlarmClockTime
             }
 
             if (isAlarmClockSetProperly(newAlarmClockTime, storedAlarmClockDateTime)) {
-                setNew(REASON_NORMAL, context)
+                alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS)
                 Log.i(TAG, "alarm clock is set properly")
                 return newAlarmClockTime
             }
 
             AlarmClock.set(newAlarmClockTime, context)
 
-            setNew(REASON_NORMAL, context)
+            alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS)
             storeData.storeAlarmClock(newAlarmClockTime)
             Log.i(TAG, "updating alarm clock")
             return newAlarmClockTime
@@ -153,47 +149,5 @@ class AlarmClockSetter {
                 storedAlarmClockDateTime
             )
 
-        private fun setNew(reason: String, context: Context) {
-            val alarmManager = context.getSystemService(AlarmManager::class.java)
-            val intent = Intent(context, AlarmReceiver::class.java).also {
-                it.action = Intent.ACTION_CALL
-            }
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                ALARM_REQUEST_CODE,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-
-            when (reason) {
-                REASON_NORMAL -> {
-                    alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC,
-                        System.currentTimeMillis() + NEW_ALARM_TIME_MILLIS, //1 hour
-                        pendingIntent
-                    )
-                }
-
-                REASON_NO_ALARM_TODAY -> {
-                    alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC,
-                        System.currentTimeMillis() + NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY, //5 hours
-                        pendingIntent
-                    )
-                }
-
-                REASON_NO_SCHOOL_START_FOUND -> {
-                    alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC,
-                        System.currentTimeMillis() + NEW_ALARM_TIME_MILLIS_WHEN_NO_SCHOOL_FOUND, //3 days
-                        pendingIntent
-                    )
-                }
-
-                else -> {
-                    throw Error("No matching Reason.")
-                }
-            }
-        }
     }
 }

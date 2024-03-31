@@ -38,9 +38,9 @@ const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
 const val MAX_ALARM_DURATION = 60
 const val DISABLED_BUTTON_ALPHA_VALUE = .4F
 
-const val NEW_ALARM_TIME_MILLIS = 60 * 60 * 1000
-const val NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY = 5 * 60 * 60 * 1000
-const val NEW_ALARM_TIME_MILLIS_WHEN_NO_SCHOOL_FOUND = 3 * 24 * 60 * 60 * 1000
+const val NEW_ALARM_TIME_MILLIS = 60 * 60 * 1000 //1 hour
+const val NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY = 5 * 60 * 60 * 1000 //5 hours
+const val NEW_ALARM_TIME_MILLIS_WHEN_NO_SCHOOL_FOUND = 3 * 24 * 60 * 60 * 1000 //3 days
 
 //links
 val ABOUT_US_PAGE: Uri = Uri.parse("https://github.com/TheRedLion/UntisAlarm")

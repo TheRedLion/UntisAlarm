@@ -11,6 +11,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import eu.karenfort.untisAlarm.alarmClock.AlarmClock
 import eu.karenfort.untisAlarm.alarmClock.AlarmClockSetter
 import eu.karenfort.untisAlarm.helper.ALARM_REQUEST_CODE
@@ -22,37 +23,33 @@ class AlarmScheduler(
     private val context: Context
 ) {
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
+    private val TAG = "AlarmScheduler"
 
-    fun schedule(context: Context) {
-        CoroutineScope(Dispatchers.Default).launch {
-            AlarmClockSetter.main(context, true) //is always active if alarm was just scheduled
-        }
-        //todo check if works without
-        /*val intent = Intent(context, AlarmReceiver::class.java).also {
-            it.action = Intent.ACTION_CALL
-        }
+    fun schedule(timeInMills: Int) {
+        Log.i(TAG, "scheduling alarm in $timeInMills ms")
+
+        val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             ALARM_REQUEST_CODE,
             intent,
             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.setExactAndAllowWhileIdle(
+
+        alarmManager.setAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() + 900000,
+            System.currentTimeMillis() + timeInMills,
             pendingIntent
-        )*/
+        )
     }
 
     fun cancel() {
-        AlarmClock.cancel(context)
+        Log.i(TAG, "canceling alarm")
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
                 ALARM_REQUEST_CODE,
-                Intent(context, AlarmReceiver::class.java).also {
-                    it.action = Intent.ACTION_CALL
-                },
+                Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )

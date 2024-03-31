@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import eu.karenfort.untisAlarm.alarm.AlarmScheduler
 import eu.karenfort.untisAlarm.dataPass.DataPass
 import eu.karenfort.untisAlarm.extentions.alarmClockPendingIntent
 import eu.karenfort.untisAlarm.extentions.alarmManager
@@ -101,6 +102,7 @@ class AlarmClock {
         fun cancel(context: Context) {
             context.alarmManager.cancel(context.alarmClockPendingIntent)
             StoreData(context).storeAlarmClock(null, false)
+            AlarmScheduler(context).cancel()
         }
     }
 }

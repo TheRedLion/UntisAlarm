@@ -158,7 +158,8 @@ fun Context.grantReadUriPermission(uri: Uri) {
     }
 }
 
-fun Context.sendNoInternetNotif() {
+//todo I think this would be annoying
+/*fun Context.sendNoInternetNotif() {
     NotificationChannel(
         INFO_NOTIFICATION_CHANNEL_ID,
         getString(R.string.info_notifications_channel_name),
@@ -180,7 +181,7 @@ fun Context.sendNoInternetNotif() {
         notificationManager.notify(ALARM_CLOCK_ID, notification)
     } catch (_: Exception) {
     }
-}
+}*/
 
 fun Context.sendLoggedOutNotif() {
     NotificationChannel(
