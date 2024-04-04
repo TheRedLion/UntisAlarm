@@ -21,16 +21,16 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.carlkarenfort.test.R
+import eu.karenfort.main.helper.StoreData
+import eu.karenfort.main.ui.ReminderActivity
+import eu.karenfort.main.helper.ALARM_CLOCK_ID
+import eu.karenfort.main.helper.ALARM_NOTIFICATION_CHANNEL_ID
+import eu.karenfort.main.helper.ALARM_NOTIFICATION_ID
+import eu.karenfort.main.helper.MAX_ALARM_DURATION
 import eu.karenfort.main.extentions.hideNotification
 import eu.karenfort.main.extentions.isScreenOn
 import eu.karenfort.main.extentions.showAlarmNotification
 import eu.karenfort.main.extentions.showErrorToast
-import eu.karenfort.main.helper.ALARM_CLOCK_ID
-import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_CHANNEL_ID
-import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_ID
-import eu.karenfort.main.helper.MAX_ALARM_DURATION
-import eu.karenfort.main.helper.StoreData
-import eu.karenfort.main.ui.ReminderActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,9 +53,9 @@ class AlarmClockReceiver : BroadcastReceiver() {
         Log.i("test", "screen is ff")
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (notificationManager.getNotificationChannel(ALARM_CLOCK_NOTIFICATION_CHANNEL_ID) == null) {
+        if (notificationManager.getNotificationChannel(ALARM_NOTIFICATION_CHANNEL_ID) == null) {
             NotificationChannel(
-                ALARM_CLOCK_NOTIFICATION_CHANNEL_ID,
+                ALARM_NOTIFICATION_CHANNEL_ID,
                 context.getString(R.string.alarm_clock_notifications),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
@@ -74,7 +74,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val builder = NotificationCompat.Builder(context, ALARM_CLOCK_NOTIFICATION_CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, ALARM_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm_vector)
             .setContentTitle(context.getString(R.string.app_name))
             .setAutoCancel(true)
@@ -83,7 +83,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
             .setFullScreenIntent(pendingIntent, true)
 
         try {
-            notificationManager.notify(ALARM_CLOCK_NOTIFICATION_ID, builder.build())
+            notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build())
         } catch (e: Exception) {
             context.showErrorToast(e)
         }

@@ -38,7 +38,7 @@ import eu.karenfort.main.extentions.notificationManager
 import eu.karenfort.main.extentions.onGlobalLayout
 import eu.karenfort.main.extentions.performHapticFeedback
 import eu.karenfort.main.extentions.viewBinding
-import eu.karenfort.main.helper.ALARM_CLOCK_NOTIFICATION_ID
+import eu.karenfort.main.helper.ALARM_NOTIFICATION_ID
 import eu.karenfort.main.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.main.helper.INCREASE_VOLUME_DELAY
 import eu.karenfort.main.helper.MAX_ALARM_DURATION
@@ -251,7 +251,7 @@ class ReminderActivity : AppCompatActivity() {
         vibrationHandler.removeCallbacksAndMessages(null)
         if (!finished) {
             finishActivity()
-            notificationManager.cancel(ALARM_CLOCK_NOTIFICATION_ID)
+            notificationManager.cancel(ALARM_NOTIFICATION_ID)
         } else {
             destroyEffects()
         }

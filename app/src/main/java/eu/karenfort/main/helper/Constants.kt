@@ -12,15 +12,15 @@ import android.os.StrictMode
 import kotlinx.coroutines.CoroutineExceptionHandler
 
 //notification channels
+const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
+const val INFO_NOTIFICATION_CHANNEL_ID = "Info_Notifs_Channel"
 const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
-const val INFO_NOTIFICATION_CHANNEL_ID = "info_notifs_channel"
 
 //codes
 const val ALARM_REQUEST_CODE = 73295871
 const val OPEN_ALARM_TAB_INTENT_CODE = 9996
 
-//ids
-const val ALARM_CLOCK_NOTIFICATION_ID = 9998
+const val ALARM_NOTIFICATION_ID = 9998
 const val ALARM_CLOCK_ID = 543
 
 //settings default
