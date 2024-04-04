@@ -11,6 +11,7 @@
 package eu.karenfort.untisAlarm.ui
 
 import android.annotation.SuppressLint
+import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -300,14 +301,19 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun showOverLockscreen() {
+        with(getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager) {
+            requestDismissKeyguard(this@ReminderActivity, null)
+        }
+
         if (isOreoMr1Plus()) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
             return
+        } else {
+            window.addFlags(
+                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
         }
-        window.addFlags(
-            @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                    @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-        ) //to support older api versions
     }
 }

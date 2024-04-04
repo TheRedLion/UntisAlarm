@@ -10,16 +10,20 @@
  */
 package eu.karenfort.untisAlarm.alarmClock
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import eu.karenfort.untisAlarm.R
 import eu.karenfort.untisAlarm.extentions.hideNotification
 import eu.karenfort.untisAlarm.extentions.isScreenOn
@@ -36,10 +40,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlarmClockReceiver : BroadcastReceiver() {
+    private val TAG = "AlarmClockReceiver"
     override fun onReceive(context: Context, intent: Intent) {
+        Log.i(TAG, "receiving alarm clock")
         StoreData(context).storeAlarmClock(false)
         if (context.isScreenOn) {
-            Log.i("test", "screen is on")
             context.showAlarmNotification()
             Handler(Looper.getMainLooper()).postDelayed({
                 context.hideNotification(ALARM_CLOCK_ID)
@@ -49,12 +54,12 @@ class AlarmClockReceiver : BroadcastReceiver() {
             }, MAX_ALARM_DURATION * 1000L)
             return
         }
-        Log.i("test", "screen is ff")
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (notificationManager.getNotificationChannel(ALARM_CLOCK_NOTIFICATION_CHANNEL_ID)
-            == null
+        if (
+            notificationManager.getNotificationChannel(ALARM_CLOCK_NOTIFICATION_CHANNEL_ID) == null
         ) {
+            notificationManager.deleteNotificationChannel(ALARM_CLOCK_NOTIFICATION_CHANNEL_ID)
             NotificationChannel(
                 ALARM_CLOCK_NOTIFICATION_CHANNEL_ID,
                 context.getString(R.string.alarm_clock_notifications),
@@ -70,7 +75,7 @@ class AlarmClockReceiver : BroadcastReceiver() {
             context,
             0,
             Intent(context, ReminderActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -84,8 +89,17 @@ class AlarmClockReceiver : BroadcastReceiver() {
             .setFullScreenIntent(pendingIntent, true)
 
         try {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
             notificationManager.notify(ALARM_CLOCK_NOTIFICATION_ID, builder.build())
+            Log.i(TAG, "showing fullscreen notification")
         } catch (e: Exception) {
+            Log.i(TAG, "error")
             context.showErrorToast(e)
         }
     }

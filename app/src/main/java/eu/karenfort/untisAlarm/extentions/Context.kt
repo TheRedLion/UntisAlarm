@@ -158,31 +158,6 @@ fun Context.grantReadUriPermission(uri: Uri) {
     }
 }
 
-//todo I think this would be annoying
-/*fun Context.sendNoInternetNotif() {
-    NotificationChannel(
-        INFO_NOTIFICATION_CHANNEL_ID,
-        getString(R.string.info_notifications_channel_name),
-        NotificationManager.IMPORTANCE_HIGH
-    ).apply {
-        notificationManager.createNotificationChannel(this)
-    }
-
-    val builder = NotificationCompat.Builder(this, INFO_NOTIFICATION_CHANNEL_ID)
-        .setContentTitle(this.getString(R.string.you_have_no_internet_connection))
-        .setContentText(this.getString(R.string.your_alarms_might_not_be_set_properly_please_make_sure_that_they_are))
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-    val notification = builder.build()
-    notification.flags = notification.flags or Notification.FLAG_INSISTENT
-
-    val notificationManager = this.notificationManager
-
-    try {
-        notificationManager.notify(ALARM_CLOCK_ID, notification)
-    } catch (_: Exception) {
-    }
-}*/
-
 fun Context.sendLoggedOutNotif() {
     NotificationChannel(
         INFO_NOTIFICATION_CHANNEL_ID,

@@ -49,6 +49,9 @@ android {
 }
 
 dependencies {
+    /* implementing untis4j library as a jar file that does not have caching capabilities,
+    since the caching library is not compatible with android
+     */
     implementation files('libs/untis4j.jar')
 
     implementation 'androidx.core:core-ktx:1.12.0'

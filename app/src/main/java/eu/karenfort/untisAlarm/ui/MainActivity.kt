@@ -187,8 +187,6 @@ class MainActivity :
         timePicker.show(supportFragmentManager, null)
 
         timePicker.addOnPositiveButtonClickListener {
-            timePicker.dismiss()
-
             val startDate = getStartDate()
 
             val constraintsBuilder =
@@ -196,7 +194,7 @@ class MainActivity :
                     .setStart(startDate)
 
             val selectedDateMilli = currentAlarmClockDateTime?.toInstant(
-                ZoneOffset.UTC
+                ZoneOffset.UTC //todo add proper timezone
             )?.toEpochMilli()
                 ?: MaterialDatePicker.todayInUtcMilliseconds()
 
@@ -210,7 +208,7 @@ class MainActivity :
 
             datePicker.addOnPositiveButtonClickListener {
 
-                val selectedCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                val selectedCalendar = Calendar.getInstance(TimeZone.getDefault())
                 selectedCalendar.timeInMillis = it
 
                 // Extract day, month, and year from the selected date
@@ -229,12 +227,13 @@ class MainActivity :
                     if (binding.toggleAlarm.isChecked) {
                         Log.i(TAG, "alarm clock was set to $selectedDateTime")
                         currentAlarmClockDateTime = selectedDateTime
-                        setAlarmPreview(selectedDateTime)
                         AlarmClock.set(selectedDateTime, this)
                     } else {
                         this.toast(getString(R.string.alarms_are_disabled))
                     }
                     StoreData(this).storeAlarmClock(selectedDateTime, true)
+                    Log.i(TAG, "displaying alarmPreview as $selectedDateTime")
+                    setAlarmPreview(selectedDateTime)
                     binding.resetAlarmTomorrow.isDisabled = false
                 }
             }
@@ -261,7 +260,7 @@ class MainActivity :
 
     private fun getStartDate(): Long {
         val today = MaterialDatePicker.todayInUtcMilliseconds()
-        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        val calendar = Calendar.getInstance(TimeZone.getDefault())
 
         calendar.timeInMillis = today
 
@@ -366,11 +365,11 @@ class MainActivity :
     }
 
     private fun setAlarmPreview(alarmClockDateTime: LocalDateTime?) {
-        Log.i(TAG, "setting alarm preview to $alarmClockDateTime")
         if (alarmClockDateTime != null) {
             binding.alarmPreview.text = getAlarmPreviewString(alarmClockDateTime)
+        } else {
+            binding.alarmPreview.text = getString(R.string.no_school)
         }
-        binding.alarmPreview.text = getString(R.string.no_school)
     }
 
     private suspend fun isLoggedOut(): Boolean {

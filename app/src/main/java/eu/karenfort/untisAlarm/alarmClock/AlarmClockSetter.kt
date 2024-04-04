@@ -88,13 +88,26 @@ class AlarmClockSetter {
             }
             var schoolStart: LocalDateTime? = null
 
-            try {
-                schoolStart = UntisApiCalls(
+            val untisApiCalls = try {
+                UntisApiCalls(
                     loginData[0]!!,
                     loginData[1]!!,
                     loginData[2]!!,
                     loginData[3]!!
-                ).getSchoolStartForDay(id, context)
+                )
+            } catch (e: IOException) {
+                if (e.message == "An unexpected exception occurred: {\"jsonrpc\":\"2.0\",\"id\":\"ID\",\"error\":{\"message\":\"bad credentials\",\"code\":-8504}}") {
+                    if (!context.isScreenOn) {
+                        context.sendLoggedOutNotif()
+                    }
+                    AlarmScheduler(context).cancel()
+                    Log.i(TAG, "cancelled because user was logged out")
+                    return null
+                } else null
+            }
+
+            try {
+                schoolStart = untisApiCalls?.getSchoolStartForDay(id, context)
             } catch (_: IOException) {
             }
 
@@ -136,7 +149,7 @@ class AlarmClockSetter {
             alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS)
             storeData.storeAlarmClock(newAlarmClockTime)
             Log.i(TAG, "updating alarm clock")
-            return newAlarmClockTime
+            return newAlarmClockTime //todo should also be shown after closing reminderActivity
         }
 
         private fun isAlarmClockSetProperly(

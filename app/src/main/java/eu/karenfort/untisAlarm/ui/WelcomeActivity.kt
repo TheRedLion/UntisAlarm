@@ -145,16 +145,6 @@ class WelcomeActivity : AppCompatActivity() {
             val untisID =
                 (untisApiCalls ?: return@launch).getID()
 
-            if (untisID == null) {
-                //no match was found
-                runOnUiThread {
-                    binding.untisPasswordInputLayout.error = getString(R.string.invalid_login_data)
-                    binding.untisUserNameInputLayout.error = getString(R.string.invalid_login_data)
-                    binding.runButton.isDisabled = false
-                }
-                return@launch
-            }
-
             val storeData = StoreData(this@WelcomeActivity)
             storeData.storeLoginData(
                 binding.untisUserName.text.toString(),
@@ -191,14 +181,26 @@ class WelcomeActivity : AppCompatActivity() {
                     schoolName ?: return@ensureBackgroundCoroutine
                 )
             }
-        } catch (_: IOException) {
-        } catch (_: NullPointerException) {
+        } catch (e: IOException) {
+            e.printStackTrace()
+            if (e.message == "An unexpected exception occurred: {\"jsonrpc\":\"2.0\",\"id\":\"ID\",\"error\":{\"message\":\"bad credentials\",\"code\":-8504}}") {
+                runOnUiThread {
+                    binding.untisPasswordInputLayout.error = getString(R.string.invalid_login_data)
+                    binding.untisUserNameInputLayout.error = getString(R.string.invalid_login_data)
+                }
+            }
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
         }
 
         if (untisApiCalls == null) {
-            runOnUiThread {
-                binding.untisPasswordInputLayout.error = getString(R.string.invalid_login_data)
-                binding.untisUserNameInputLayout.error = getString(R.string.invalid_login_data)
+            if (binding.untisPasswordInputLayout.error == null && binding.untisUserNameInputLayout.error == null) {
+                runOnUiThread {
+                    binding.untisPasswordInputLayout.error =
+                        getString(R.string.error_when_logging_in)
+                    binding.untisUserNameInputLayout.error =
+                        getString(R.string.error_when_logging_in)
+                }
             }
             return false
         }

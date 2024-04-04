@@ -34,6 +34,10 @@ class UntisApiCalls(
 ) {
     private val session: Session
 
+    companion object {
+        private const val TAG = "UntisApiCalls"
+    }
+
     init {
         try {
             this.session = Session.login(
@@ -44,11 +48,7 @@ class UntisApiCalls(
             )
         } catch (e: IOException) {
             throw e // IO exception is used to check if login data was valid
-        }
-    }
-
-    companion object {
-        private const val TAG = "UntisApiCalls"
+        } //todo why caught and then thrown again?
     }
 
     /**
@@ -56,13 +56,8 @@ class UntisApiCalls(
      *
      * @return The users ID, null if there was an error.
      */
-    fun getID(): Int? { //todo check if try catch is necessary
-        var id: Int? = null
-        try {
-            id = session.infos.personId
-        } catch (_: IOException) {
-        }
-        return id
+    fun getID(): Int {
+        return session.infos.personId
     }
 
     /**
@@ -106,6 +101,12 @@ class UntisApiCalls(
         return localDateTime
     }
 
+    /**
+     * This function checks weather a lesson is cancelled. It checks if there is no teacher assigned,
+     * since in this case the lesson must be cancelled. It also checks if the lesson has a substText
+     * that matches the stored cancelled message. It is not possible to just check for the lesson code
+     * since lessons are often cancelled but not given the cancelled lesson code.
+     */
     private fun lessonIsCancelled(
         lesson: Timetable.Lesson,
         storedCancelledMessage: String?
@@ -117,7 +118,7 @@ class UntisApiCalls(
         } //if there is no teacher assigned there is no school
 
         if (!storedCancelledMessage.isNullOrEmpty()) {
-            if (lesson.substText == storedCancelledMessage) {
+            if (lesson.substText.contains(storedCancelledMessage)) {
                 isCancelled = true
             }
         }

@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import eu.karenfort.untisAlarm.alarm.AlarmScheduler
 import eu.karenfort.untisAlarm.dataPass.DataPass
 import eu.karenfort.untisAlarm.extentions.alarmClockPendingIntent
@@ -31,6 +32,7 @@ class AlarmClock {
         private const val TAG = "AlarmClock"
 
         fun set(alarmClockDateTime: LocalDateTime, context: Context) {
+            Log.i(TAG, "setting alarm clock for $alarmClockDateTime")
             cancel(context) //only one alarm may be active at any time
 
             if (!context.areNotificationsEnabled) {
