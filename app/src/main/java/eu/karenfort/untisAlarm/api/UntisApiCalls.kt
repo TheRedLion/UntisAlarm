@@ -10,6 +10,7 @@ package eu.karenfort.untisAlarm.api
 
 
 import android.content.Context
+import android.util.Log
 import eu.karenfort.untisAlarm.helper.StoreData
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -91,9 +92,11 @@ class UntisApiCalls(
 
             timetable.sortByDate()
             timetable.sortByStartTime()
+
             for (i in timetable) {
                 if (!lessonIsCancelled(i, cancellationMessage)) {
                     localDateTime = LocalDateTime.of(i.date, i.startTime)
+                    break
                 }
             }
             return@runBlocking null
