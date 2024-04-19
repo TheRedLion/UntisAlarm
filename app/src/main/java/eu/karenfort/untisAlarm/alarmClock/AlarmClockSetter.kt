@@ -50,7 +50,7 @@ class AlarmClockSetter {
             return result
         }
 
-        //the second function is to make return values easier to pass along with dataPass
+        //the second function makes it easier to pass return value with dataPass
         private suspend fun main2(
             context: Context,
             isActive: Boolean?,
