@@ -56,7 +56,6 @@ class AlarmClockSetter {
             isActive: Boolean?,
             isEdited: Boolean?
         ): LocalDateTime? {
-            Log.i(TAG, "Called alarmClockSetter")
             val alarmScheduler = AlarmScheduler(context)
 
             if (!context.hasNetworkConnection()) {
@@ -140,7 +139,6 @@ class AlarmClockSetter {
 
             if (isAlarmClockSetProperly(newAlarmClockTime, storedAlarmClockDateTime)) {
                 alarmScheduler.schedule(NEW_ALARM_TIME_MILLIS)
-                Log.i(TAG, "alarm clock is set properly")
                 return newAlarmClockTime
             }
 

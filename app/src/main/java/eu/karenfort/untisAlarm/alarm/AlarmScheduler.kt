@@ -26,8 +26,6 @@ class AlarmScheduler(
     private val TAG = "AlarmScheduler"
 
     fun schedule(timeInMills: Int) {
-        Log.i(TAG, "scheduling alarm in $timeInMills ms")
-
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -44,7 +42,6 @@ class AlarmScheduler(
     }
 
     fun cancel() {
-        Log.i(TAG, "canceling alarm")
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,

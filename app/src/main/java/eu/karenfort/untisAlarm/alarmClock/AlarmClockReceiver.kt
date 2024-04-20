@@ -93,7 +93,6 @@ class AlarmClockReceiver : BroadcastReceiver() { //todo bug: when clock is set m
                 return
             }
             notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build())
-            Log.i(TAG, "showing fullscreen notification")
         } catch (e: Exception) {
             Log.i(TAG, "error")
             context.showErrorToast(e)
