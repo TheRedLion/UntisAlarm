@@ -301,19 +301,14 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun showOverLockscreen() {
-        with(getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager) {
-            requestDismissKeyguard(this@ReminderActivity, null)
-        }
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        )
 
         if (isOreoMr1Plus()) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-            return
-        } else {
-            window.addFlags(
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                        @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-            )
         }
     }
 }
