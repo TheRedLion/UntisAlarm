@@ -32,14 +32,14 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import eu.karenfort.untisAlarm.R
-import eu.karenfort.untisAlarm.databinding.ActivityReminderBinding
 import eu.karenfort.untisAlarm.alarmClock.AlarmClockSetter
+import eu.karenfort.untisAlarm.databinding.ActivityReminderBinding
 import eu.karenfort.untisAlarm.extentions.getAlarmPreviewString
 import eu.karenfort.untisAlarm.extentions.notificationManager
 import eu.karenfort.untisAlarm.extentions.onGlobalLayout
 import eu.karenfort.untisAlarm.extentions.performHapticFeedback
 import eu.karenfort.untisAlarm.extentions.viewBinding
-import eu.karenfort.untisAlarm.helper.ALARM_CLOCK_NOTIFICATION_ID
+import eu.karenfort.untisAlarm.helper.ALARM_NOTIFICATION_ID
 import eu.karenfort.untisAlarm.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.untisAlarm.helper.INCREASE_VOLUME_DELAY
 import eu.karenfort.untisAlarm.helper.MAX_ALARM_DURATION
@@ -252,7 +252,7 @@ class ReminderActivity : AppCompatActivity() {
         vibrationHandler.removeCallbacksAndMessages(null)
         if (!finished) {
             finishActivity()
-            notificationManager.cancel(ALARM_CLOCK_NOTIFICATION_ID)
+            notificationManager.cancel(ALARM_NOTIFICATION_ID)
         } else {
             destroyEffects()
         }
