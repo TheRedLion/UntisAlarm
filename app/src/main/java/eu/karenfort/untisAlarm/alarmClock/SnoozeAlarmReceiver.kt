@@ -21,14 +21,13 @@ import eu.karenfort.untisAlarm.helper.StoreData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class SnoozeAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         context.hideNotification(ALARM_CLOCK_ID)
         CoroutineScope(Dispatchers.Default + COROUTINE_EXCEPTION_HANDLER).launch {
             val snoozeTime = StoreData(context).loadSnoozeTime() ?: DEFAULT_SNOOZE_MIN
-            AlarmClock.setSnooze(snoozeTime, context)
+            AlarmClock.snooze(snoozeTime, context)
         }
     }
 }

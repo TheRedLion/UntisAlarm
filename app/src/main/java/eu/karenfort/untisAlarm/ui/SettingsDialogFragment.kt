@@ -95,7 +95,7 @@ class SettingsDialogFragment : DialogFragment(),
             if (newUri == null) {
                 newUri = SILENT_URI //there is no uri given when "Silent" was selected
             }
-            String
+
             StoreData(context).storeSound(newUri)
             storedSoundUri = newUri
         }

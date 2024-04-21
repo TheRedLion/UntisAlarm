@@ -11,7 +11,6 @@
 package eu.karenfort.untisAlarm.ui
 
 import android.annotation.SuppressLint
-import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -273,7 +272,7 @@ class ReminderActivity : AppCompatActivity() {
         runBlocking {
             snoozeTime = StoreData(this@ReminderActivity).loadSnoozeTime() ?: return@runBlocking
         }
-        eu.karenfort.untisAlarm.alarmClock.AlarmClock.setSnooze(snoozeTime, this)
+        eu.karenfort.untisAlarm.alarmClock.AlarmClock.snooze(snoozeTime, this)
         wasAlarmSnoozed = true
         finishActivity(true)
     }

@@ -107,6 +107,11 @@ class MainActivity :
     override fun onResume() {
         super.onResume()
         updateNotificationsDisabledWarning()
+        CoroutineScope(Dispatchers.Default).launch {
+            currentAlarmClockDateTime =
+                AlarmClockSetter.main(this@MainActivity, binding.toggleAlarm.isChecked, false)
+            runOnUiThread { setAlarmPreview(currentAlarmClockDateTime) }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

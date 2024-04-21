@@ -66,7 +66,7 @@ class AlarmClock {
             }
         }
 
-        fun setSnooze(timeInM: Int, context: Context) {
+        fun snooze(timeInM: Int, context: Context) {
             if (timeInM <= 0) {
                 return
             }

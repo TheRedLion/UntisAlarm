@@ -198,8 +198,10 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:alpha="0.5">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.5">
 
                 <TextView
                     android:id="@+id/textView"
@@ -213,14 +215,20 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
+                    style="@style/settings_normal_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="@string/version_code"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/textView"
-                    style="@style/settings_normal_text"/>
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
 
-                <ImageView android:id="@+id/version_info_image" style="@style/settings_image_view"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <ImageView
+                    android:id="@+id/version_info_image"
+                    style="@style/settings_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:contentDescription="@string/version"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
