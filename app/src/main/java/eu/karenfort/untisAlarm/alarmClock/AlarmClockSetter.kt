@@ -7,19 +7,14 @@
  */
 package eu.karenfort.untisAlarm.alarmClock
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import eu.karenfort.untisAlarm.alarm.AlarmReceiver
 import eu.karenfort.untisAlarm.alarm.AlarmScheduler
 import eu.karenfort.untisAlarm.api.UntisApiCalls
 import eu.karenfort.untisAlarm.dataPass.DataPass
 import eu.karenfort.untisAlarm.extentions.hasNetworkConnection
 import eu.karenfort.untisAlarm.extentions.isScreenOn
 import eu.karenfort.untisAlarm.extentions.sendLoggedOutNotif
-import eu.karenfort.untisAlarm.helper.ALARM_REQUEST_CODE
 import eu.karenfort.untisAlarm.helper.DEFAULT_TBS_MIN
 import eu.karenfort.untisAlarm.helper.NEW_ALARM_TIME_MILLIS
 import eu.karenfort.untisAlarm.helper.NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY
@@ -127,7 +122,6 @@ class AlarmClockSetter {
                 return null
             }
 
-            //!! since it was just checked
             val newAlarmClockTime = schoolStart.minusMinutes(tbs.toLong())
 
             if (storedAlarmClockDateTime == null) {

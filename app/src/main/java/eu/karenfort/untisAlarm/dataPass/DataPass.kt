@@ -8,13 +8,15 @@ class DataPass {
         fun passAlarmActive(context: Context, localDateTime: LocalDateTime?) {
             try {
                 (context as OnDataPassedListener).onAlarmPreviewPassed(localDateTime)
-            } catch (_: ClassCastException) {}
+            } catch (_: ClassCastException) {
+            }
         }
 
         fun passNotificationsAllowed(context: Context, notificationsAllowed: Boolean) {
             try {
                 (context as OnDataPassedListener).onNotificationsAllowedPassed(notificationsAllowed)
-            } catch (_: ClassCastException) {}
+            } catch (_: ClassCastException) {
+            }
         }
     }
 }

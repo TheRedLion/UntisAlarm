@@ -11,13 +11,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import eu.karenfort.untisAlarm.alarmClock.AlarmClock
-import eu.karenfort.untisAlarm.alarmClock.AlarmClockSetter
 import eu.karenfort.untisAlarm.helper.ALARM_REQUEST_CODE
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class AlarmScheduler(
     private val context: Context

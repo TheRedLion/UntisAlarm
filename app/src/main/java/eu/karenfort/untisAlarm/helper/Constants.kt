@@ -59,5 +59,3 @@ val COROUTINE_EXCEPTION_HANDLER: CoroutineExceptionHandler =
     CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     }
-val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy =
-    StrictMode.ThreadPolicy.Builder().permitAll().build()

@@ -144,11 +144,12 @@ class SettingsDialogFragment : DialogFragment(),
                 handleSetTBS()
             }
         }
-        binding.cancelledMessageInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            if (!b) {
-                handleSetCancellationMessageEnd()
+        binding.cancelledMessageInputField.onFocusChangeListener =
+            View.OnFocusChangeListener { _, b ->
+                if (!b) {
+                    handleSetCancellationMessageEnd()
+                }
             }
-        }
         //lister for 2sec after entering something
         val snoozeHandler = Handler(Looper.getMainLooper())
         binding.snoozeInputField.addTextChangedListener(object : TextWatcher {
@@ -256,7 +257,8 @@ class SettingsDialogFragment : DialogFragment(),
 
         try {
             checkedItem = SUPPORTED_LANGUAGES.indexOf(storedLanguage)
-        } catch (_: Error) {}
+        } catch (_: Error) {
+        }
 
         MaterialAlertDialogBuilder(context)
             .setTitle(getString(R.string.select_language))

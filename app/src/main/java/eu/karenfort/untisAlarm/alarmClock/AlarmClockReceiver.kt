@@ -38,7 +38,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AlarmClockReceiver : BroadcastReceiver() { //todo bug: when clock is set manually it doesn't go back to not beeing set after alarm clock was played
+class AlarmClockReceiver : BroadcastReceiver() {
     private val TAG = "AlarmClockReceiver"
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "receiving alarm clock")

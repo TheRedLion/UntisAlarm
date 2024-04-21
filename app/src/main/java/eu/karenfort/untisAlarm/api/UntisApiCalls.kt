@@ -10,7 +10,6 @@ package eu.karenfort.untisAlarm.api
 
 
 import android.content.Context
-import android.util.Log
 import eu.karenfort.untisAlarm.helper.StoreData
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -20,6 +19,7 @@ import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * This class is responsible for sending API calls to the WebUntis API.
@@ -40,16 +40,12 @@ class UntisApiCalls(
     }
 
     init {
-        try {
-            this.session = Session.login(
-                username,
-                password,
-                server,
-                schoolName
-            )
-        } catch (e: IOException) {
-            throw e // IO exception is used to check if login data was valid
-        } //todo why caught and then thrown again?
+        this.session = Session.login(
+            username,
+            password,
+            server,
+            schoolName
+        )
     }
 
     /**
@@ -68,18 +64,14 @@ class UntisApiCalls(
      * @throws IOException
      */
     suspend fun getSchoolStartForDay(id: Int, context: Context): LocalDateTime? {
-        //todo check if async is working
         var localDateTime: LocalDateTime? = null
 
         runBlocking {
-            val nextDay = LocalDate.now().plusDays(1)
-
-            //todo check if networkonmainthread is still necessary
-            //StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+            val day = LocalDate.now() //todo: needs to account for updating at night but also not setting alarms multiple times a day
             val timetableAsync = async {
                 session.getTimetableFromPersonId(
-                    nextDay,
-                    nextDay.plusDays(6),
+                    day,
+                    day.plusDays(7),
                     id
                 )
             }
@@ -94,9 +86,11 @@ class UntisApiCalls(
             timetable.sortByStartTime()
 
             for (i in timetable) {
-                if (!lessonIsCancelled(i, cancellationMessage)) {
-                    localDateTime = LocalDateTime.of(i.date, i.startTime)
-                    break
+                if (LocalDateTime.of(i.date, i.startTime).isAfter(LocalDateTime.now())) {
+                    if (!lessonIsCancelled(i, cancellationMessage)) {
+                        localDateTime = LocalDateTime.of(i.date, i.startTime)
+                        break
+                    }
                 }
             }
             return@runBlocking null
