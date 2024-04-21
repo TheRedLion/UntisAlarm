@@ -234,9 +234,9 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent?.action == AlarmClock.ACTION_SNOOZE_ALARM) {
+        if (intent.action == AlarmClock.ACTION_SNOOZE_ALARM) {
             snoozeAlarmClock()
         } else {
             finishActivity()
