@@ -114,7 +114,7 @@ class UntisApiCalls(
             isCancelled = true
         } //if there is no teacher assigned there is no school
 
-        if (!storedCancelledMessage.isNullOrEmpty()) {
+        if ((!storedCancelledMessage.isNullOrEmpty()) && !(lesson.substText.isNullOrEmpty())) {
             if (lesson.substText.contains(storedCancelledMessage)) {
                 isCancelled = true
             }
@@ -124,5 +124,25 @@ class UntisApiCalls(
             isCancelled = true
         }
         return isCancelled
+    }
+
+    fun getCancelledMessages(id: Int): ArrayList<String> {
+        val timetable = session.getTimetableFromPersonId(
+            LocalDate.now(),
+            LocalDate.now().plusDays(7),
+            id
+        )
+
+        val resultList: ArrayList<String> = arrayListOf()
+
+        for (lesson in timetable) {
+            if (!lesson.substText.isNullOrEmpty()) {
+                if (!resultList.contains(lesson.substText)) {
+                    resultList.add(lesson.substText)
+                }
+            }
+        }
+
+        return resultList
     }
 }

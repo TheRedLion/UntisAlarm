@@ -13,9 +13,9 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Used to allow the app to draw over other apps -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
 
     <application
         android:name="eu.karenfort.untisAlarm.App"
@@ -38,7 +38,7 @@
         </activity>
 
         <activity
-            android:name="eu.karenfort.untisAlarm.ui.CancelledMessageInfo"
+            android:name="eu.karenfort.untisAlarm.ui.CancelledMessageSettingsFragment"
             android:exported="false"
             android:parentActivityName="eu.karenfort.untisAlarm.ui.MainActivity" />
 
