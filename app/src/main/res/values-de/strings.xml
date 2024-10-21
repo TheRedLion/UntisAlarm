@@ -141,4 +141,5 @@
     <string name="no_school">Kein Unterricht</string>
     <string name="version">Version</string>
     <string name="version_in_settings">Version:</string>
+    <string name="error_when_logging_in">Fehler beim anmelden!</string>
 </resources>

@@ -107,6 +107,11 @@ class MainActivity :
     override fun onResume() {
         super.onResume()
         updateNotificationsDisabledWarning()
+        CoroutineScope(Dispatchers.Default).launch {
+            currentAlarmClockDateTime =
+                AlarmClockSetter.main(this@MainActivity, binding.toggleAlarm.isChecked, false)
+            runOnUiThread { setAlarmPreview(currentAlarmClockDateTime) }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -149,10 +154,10 @@ class MainActivity :
         binding.alarmPreview.setOnClickListener { handleEditAlarmToday() }
         binding.toggleAlarm.setOnCheckedChangeListener { _, isChecked -> handleToggleAlarm(isChecked) }
         binding.resetAlarmTomorrow.setOnClickListener { handleResetAlarm() }
-        binding.disabledNotifsCard.setOnClickListener { handleNotifsDisabledCardClick() }
+        binding.disabledNotifsCard.setOnClickListener { handleNotificationsDisabledCardClick() }
     }
 
-    private fun handleNotifsDisabledCardClick() {
+    private fun handleNotificationsDisabledCardClick() {
         //send user to notification settings of app
         val intent = Intent()
         intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")

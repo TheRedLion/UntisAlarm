@@ -63,12 +63,7 @@
     <string name="button_to_change_tomorrows_alarm">Button to change tomorrows alarm.</string>
     <string name="webuntis_settings">Webuntis Settings</string>
     <string name="cancellation_text">Cancellation Text</string>
-    <string name="cancelled_message_explanation">Some Schools do not display cancelled messages as
-        cancelled, instead they set a Message like \“Lesson is cancelled\” or \“Do assigned Tasks\”.
-        If this is the case for you, enter the shown Message, so that these lessons will also be
-        registered as cancelled. You can also enter only a part of the Message, it is just checked
-        weather the message contains the entered text.
-    </string>
+    <string name="cancelled_message_explanation">"Some Schools do not display cancelled messages as         cancelled, instead they set a Message like \\“Lesson is cancelled\\” or \\“Do assigned Tasks\\”.         If this is the case for you, enter the shown Message, so that these lessons will also be         registered as cancelled. You can also enter only a part of the Message, it is just checked         weather the message contains the entered text.     "</string>
     <string name="error">ERROR</string>
     <string name="not_logged_in">Not Logged in</string>
     <string name="you_are_currently_not_logged_in_please_login_again">You are currently not logged
@@ -137,6 +132,5 @@
     <string name="no_school">No School</string>
     <string name="version">Version</string>
     <string name="version_in_settings">Version: </string>
-    <string name="version_code" translatable="false">0.0.0</string>
     <string name="error_when_logging_in">Error when trying to log in!</string>
 </resources>

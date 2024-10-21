@@ -8,7 +8,6 @@
 package eu.karenfort.untisAlarm.ui
 
 import android.os.Bundle
-import android.os.StrictMode
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -26,7 +25,6 @@ import eu.karenfort.untisAlarm.extentions.hasNetworkConnection
 import eu.karenfort.untisAlarm.extentions.isDisabled
 import eu.karenfort.untisAlarm.extentions.toast
 import eu.karenfort.untisAlarm.extentions.viewBinding
-import eu.karenfort.untisAlarm.helper.ALLOW_NETWORK_ON_MAIN_THREAD
 import eu.karenfort.untisAlarm.helper.COROUTINE_EXCEPTION_HANDLER
 import eu.karenfort.untisAlarm.helper.StoreData
 import eu.karenfort.untisAlarm.helper.ensureBackgroundCoroutine

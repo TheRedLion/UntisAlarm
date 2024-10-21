@@ -19,6 +19,7 @@ import org.bytedream.untis4j.responseObjects.Timetable
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * This class is responsible for sending API calls to the WebUntis API.
@@ -39,16 +40,12 @@ class UntisApiCalls(
     }
 
     init {
-        try {
-            this.session = Session.login(
-                username,
-                password,
-                server,
-                schoolName
-            )
-        } catch (e: IOException) {
-            throw e // IO exception is used to check if login data was valid
-        } //todo why caught and then thrown again?
+        this.session = Session.login(
+            username,
+            password,
+            server,
+            schoolName
+        )
     }
 
     /**
@@ -67,18 +64,14 @@ class UntisApiCalls(
      * @throws IOException
      */
     suspend fun getSchoolStartForDay(id: Int, context: Context): LocalDateTime? {
-        //todo check if async is working
         var localDateTime: LocalDateTime? = null
 
         runBlocking {
-            val nextDay = LocalDate.now().plusDays(1)
-
-            //todo check if networkonmainthread is still necessary
-            //StrictMode.setThreadPolicy(ALLOW_NETWORK_ON_MAIN_THREAD)
+            val day = LocalDate.now() //todo: needs to account for updating at night but also not setting alarms multiple times a day
             val timetableAsync = async {
                 session.getTimetableFromPersonId(
-                    nextDay,
-                    nextDay.plusDays(6),
+                    day,
+                    day.plusDays(7),
                     id
                 )
             }
@@ -91,9 +84,13 @@ class UntisApiCalls(
 
             timetable.sortByDate()
             timetable.sortByStartTime()
+
             for (i in timetable) {
-                if (!lessonIsCancelled(i, cancellationMessage)) {
-                    localDateTime = LocalDateTime.of(i.date, i.startTime)
+                if (LocalDateTime.of(i.date, i.startTime).isAfter(LocalDateTime.now())) {
+                    if (!lessonIsCancelled(i, cancellationMessage)) {
+                        localDateTime = LocalDateTime.of(i.date, i.startTime)
+                        break
+                    }
                 }
             }
             return@runBlocking null
@@ -117,7 +114,7 @@ class UntisApiCalls(
             isCancelled = true
         } //if there is no teacher assigned there is no school
 
-        if (!storedCancelledMessage.isNullOrEmpty()) {
+        if ((!storedCancelledMessage.isNullOrEmpty()) && !(lesson.substText.isNullOrEmpty())) {
             if (lesson.substText.contains(storedCancelledMessage)) {
                 isCancelled = true
             }
@@ -127,5 +124,25 @@ class UntisApiCalls(
             isCancelled = true
         }
         return isCancelled
+    }
+
+    fun getCancelledMessages(id: Int): ArrayList<String> {
+        val timetable = session.getTimetableFromPersonId(
+            LocalDate.now(),
+            LocalDate.now().plusDays(7),
+            id
+        )
+
+        val resultList: ArrayList<String> = arrayListOf()
+
+        for (lesson in timetable) {
+            if (!lesson.substText.isNullOrEmpty()) {
+                if (!resultList.contains(lesson.substText)) {
+                    resultList.add(lesson.substText)
+                }
+            }
+        }
+
+        return resultList
     }
 }

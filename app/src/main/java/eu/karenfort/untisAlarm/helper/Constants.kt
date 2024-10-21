@@ -12,16 +12,17 @@ import android.os.StrictMode
 import kotlinx.coroutines.CoroutineExceptionHandler
 
 //notification channels
+const val ALARM_NOTIFICATION_CHANNEL_ID = "Alarm_Channel"
+const val INFO_NOTIFICATION_CHANNEL_ID = "Info_Notifs_Channel"
 const val ALARM_CLOCK_NOTIFICATION_CHANNEL_ID = "alarm_clock_channel"
-const val INFO_NOTIFICATION_CHANNEL_ID = "info_notifs_channel"
 
 //codes
 const val ALARM_REQUEST_CODE = 1000
 const val OPEN_ALARM_TAB_INTENT_CODE = 1001
 
 //ids
-const val ALARM_CLOCK_NOTIFICATION_ID = 1002
-const val ALARM_CLOCK_ID = 1003
+const val ALARM_NOTIFICATION_ID = 9998
+const val ALARM_CLOCK_ID = 543
 
 //settings default
 const val DEFAULT_TBS_MIN = 60 //min
@@ -58,5 +59,3 @@ val COROUTINE_EXCEPTION_HANDLER: CoroutineExceptionHandler =
     CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     }
-val ALLOW_NETWORK_ON_MAIN_THREAD: StrictMode.ThreadPolicy =
-    StrictMode.ThreadPolicy.Builder().permitAll().build()

@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 fun isOnMainThread(): Boolean = Looper.myLooper() == Looper.getMainLooper()
 
 fun ensureBackgroundCoroutine(callback: () -> Unit) {

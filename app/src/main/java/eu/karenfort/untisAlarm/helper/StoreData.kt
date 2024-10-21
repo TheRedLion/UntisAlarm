@@ -57,10 +57,12 @@ class StoreData(
             }
         }
     }
+
     suspend fun loadCancelledMessage(): String? {
         val preferences = context.dataStore.data.first()
         return preferences[KEY_CANCELLED_MESSAGE]
     }
+
     fun storeDarkMode(darkMode: DarkMode) {
         CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
             context.dataStore.edit { settings ->

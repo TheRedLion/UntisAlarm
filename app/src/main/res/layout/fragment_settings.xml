@@ -22,25 +22,32 @@
             <TextView style="@style/settings_subtitle" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:text="@string/webuntis_settings" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout style="@style/settings_text_holder"
-                android:layout_width="match_parent" android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cancelled_message" android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/cancelled_message_input_layout"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:hint="@string/cancellation_text"
-                    app:endIconDrawable="@drawable/ic_info_icon" app:endIconMode="custom"
+                <Button android:id="@+id/cancelled_message_explanation" style="?attr/materialIconButtonOutlinedStyle"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/settings_label_start_margin"
+                    app:icon="@drawable/ic_info_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView style="@style/settings_normal_text" android:layout_width="wrap_content"
+                    android:layout_height="match_parent" android:text="@string/cancellation_text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cancelled_message_image"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <ImageView android:id="@+id/cancelled_message_image" style="@style/settings_image_view"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:contentDescription="@string/bell"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/cancelled_message_input_field"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:inputType="text" android:singleLine="true"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_cancel_vector" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -198,8 +205,10 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:alpha="0.5">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.5">
 
                 <TextView
                     android:id="@+id/textView"
@@ -213,14 +222,20 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
+                    style="@style/settings_normal_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="@string/version_code"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/textView"
-                    style="@style/settings_normal_text"/>
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
 
-                <ImageView android:id="@+id/version_info_image" style="@style/settings_image_view"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <ImageView
+                    android:id="@+id/version_info_image"
+                    style="@style/settings_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:contentDescription="@string/version"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

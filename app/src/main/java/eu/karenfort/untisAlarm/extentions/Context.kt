@@ -113,8 +113,6 @@ fun Context.hasNetworkConnection(): Boolean {
     val connectivityManager =
         this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-
-    Log.i(TAG, capabilities.toString())
     return capabilities != null
 }
 

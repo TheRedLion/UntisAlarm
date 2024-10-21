@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 
 class SettingsDialogFragment : DialogFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
-    private val binding: FragmentSettingsBinding by viewBinding(FragmentSettingsBinding::inflate)
+    val binding: FragmentSettingsBinding by viewBinding(FragmentSettingsBinding::inflate)
 
     //these are used to preload settings
     private lateinit var storedLanguage: String
@@ -95,7 +95,7 @@ class SettingsDialogFragment : DialogFragment(),
             if (newUri == null) {
                 newUri = SILENT_URI //there is no uri given when "Silent" was selected
             }
-            String
+
             StoreData(context).storeSound(newUri)
             storedSoundUri = newUri
         }
@@ -116,14 +116,23 @@ class SettingsDialogFragment : DialogFragment(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, string: String?) {
         if (string == null) return //don't know when this would happen
 
-        if (!string.equals(StoreData.KEY_SOUND_URI)) return //only respond if alarmClockTime was edited
+        if (string.equals(StoreData.KEY_SOUND_URI)) {
+            CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+                val newUri = StoreData(context).loadSound() ?: return@launch
+                storedSoundUri = newUri
 
-        CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
-            val newUri = StoreData(context).loadSound() ?: return@launch
-            storedSoundUri = newUri
-
-            Log.i(TAG, "uri changed to $storedSoundUri")
+                Log.i(TAG, "uri changed to $storedSoundUri")
+            }
         }
+        /*if (string.equals(StoreData.KEY_CANCELLED_MESSAGE)) {
+            Log.i(TAG, "cancelled message changed")
+            CoroutineScope(Dispatchers.IO + COROUTINE_EXCEPTION_HANDLER).launch {
+                val cancelledMessageText =
+                    StoreData(context).loadCancelledMessage() ?: return@launch
+                binding.cancelledMessageInputField.hint =
+                    "${context.getString(R.string.cancellation_text)} ($cancelledMessageText)"
+            }
+        }*/
     }
 
     override fun getTheme(): Int {
@@ -131,7 +140,7 @@ class SettingsDialogFragment : DialogFragment(),
     }
 
     private fun setListener() {
-        binding.cancelledMessageInputLayout.setEndIconOnClickListener { handleCancellationMessageInfo() }
+        binding.cancelledMessageExplanation.setOnClickListener { handleCancellationMessageInfo() }
 
         //listener when exiting field
         binding.snoozeInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
@@ -144,11 +153,12 @@ class SettingsDialogFragment : DialogFragment(),
                 handleSetTBS()
             }
         }
-        binding.cancelledMessageInputField.onFocusChangeListener = View.OnFocusChangeListener { _, b ->
-            if (!b) {
-                handleSetCancellationMessageEnd()
-            }
-        }
+        /*binding.cancelledMessageInputField.onFocusChangeListener =
+            View.OnFocusChangeListener { _, b ->
+                if (!b) {
+                    handleSetCancellationMessageEnd()
+                }
+            }*/
         //lister for 2sec after entering something
         val snoozeHandler = Handler(Looper.getMainLooper())
         binding.snoozeInputField.addTextChangedListener(object : TextWatcher {
@@ -171,7 +181,7 @@ class SettingsDialogFragment : DialogFragment(),
             }
         })
         val cancelledMessageHandler = Handler(Looper.getMainLooper())
-        binding.cancelledMessageInputField.addTextChangedListener(object : TextWatcher {
+        /*binding.cancelledMessageInputField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
@@ -179,7 +189,7 @@ class SettingsDialogFragment : DialogFragment(),
                     handleSetCancellationMessageEnd()
                 }, 2 * 1000L)
             }
-        })
+        })*/
 
         //colorSchemeSettings.setOnClickListener { colorDialog() }
         binding.vibrateToggle.addOnCheckedStateChangedListener { _, state ->
@@ -200,7 +210,7 @@ class SettingsDialogFragment : DialogFragment(),
 
 
     private fun handleCancellationMessageInfo() {
-        startActivity(Intent(context, CancelledMessageInfo::class.java))
+        CancelledMessageInfoFragment().show(parentFragmentManager, CancelledMessageSettingsFragment.TAG)
     }
 
     private fun enableClicking() {
@@ -256,7 +266,8 @@ class SettingsDialogFragment : DialogFragment(),
 
         try {
             checkedItem = SUPPORTED_LANGUAGES.indexOf(storedLanguage)
-        } catch (_: Error) {}
+        } catch (_: Error) {
+        }
 
         MaterialAlertDialogBuilder(context)
             .setTitle(getString(R.string.select_language))
@@ -332,8 +343,7 @@ class SettingsDialogFragment : DialogFragment(),
         StoreData(context).storeIncreaseVolumeGradually(stateBool)
     }
 
-
-    private fun handleSetCancellationMessageEnd() {
+    /*private fun handleSetCancellationMessageEnd() {
         val newMessage = binding.cancelledMessageInputField.text.toString()
 
         binding.cancelledMessageInputField.setText("")
@@ -342,7 +352,7 @@ class SettingsDialogFragment : DialogFragment(),
             "${context.getString(R.string.cancellation_text)} ($newMessage)"
 
         StoreData(context).storeCancelledMessage(newMessage)
-    }
+    }*/
 
     private fun handleSetSnooze() {
         val newSnoozeStr = binding.snoozeInputField.text.toString()

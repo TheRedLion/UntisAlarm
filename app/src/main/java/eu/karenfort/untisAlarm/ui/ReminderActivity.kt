@@ -11,7 +11,6 @@
 package eu.karenfort.untisAlarm.ui
 
 import android.annotation.SuppressLint
-import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -32,14 +31,14 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import eu.karenfort.untisAlarm.R
-import eu.karenfort.untisAlarm.databinding.ActivityReminderBinding
 import eu.karenfort.untisAlarm.alarmClock.AlarmClockSetter
+import eu.karenfort.untisAlarm.databinding.ActivityReminderBinding
 import eu.karenfort.untisAlarm.extentions.getAlarmPreviewString
 import eu.karenfort.untisAlarm.extentions.notificationManager
 import eu.karenfort.untisAlarm.extentions.onGlobalLayout
 import eu.karenfort.untisAlarm.extentions.performHapticFeedback
 import eu.karenfort.untisAlarm.extentions.viewBinding
-import eu.karenfort.untisAlarm.helper.ALARM_CLOCK_NOTIFICATION_ID
+import eu.karenfort.untisAlarm.helper.ALARM_NOTIFICATION_ID
 import eu.karenfort.untisAlarm.helper.ALARM_SOUND_DEFAULT_URI
 import eu.karenfort.untisAlarm.helper.INCREASE_VOLUME_DELAY
 import eu.karenfort.untisAlarm.helper.MAX_ALARM_DURATION
@@ -235,9 +234,9 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent?.action == AlarmClock.ACTION_SNOOZE_ALARM) {
+        if (intent.action == AlarmClock.ACTION_SNOOZE_ALARM) {
             snoozeAlarmClock()
         } else {
             finishActivity()
@@ -252,7 +251,7 @@ class ReminderActivity : AppCompatActivity() {
         vibrationHandler.removeCallbacksAndMessages(null)
         if (!finished) {
             finishActivity()
-            notificationManager.cancel(ALARM_CLOCK_NOTIFICATION_ID)
+            notificationManager.cancel(ALARM_NOTIFICATION_ID)
         } else {
             destroyEffects()
         }
@@ -273,7 +272,7 @@ class ReminderActivity : AppCompatActivity() {
         runBlocking {
             snoozeTime = StoreData(this@ReminderActivity).loadSnoozeTime() ?: return@runBlocking
         }
-        eu.karenfort.untisAlarm.alarmClock.AlarmClock.setSnooze(snoozeTime, this)
+        eu.karenfort.untisAlarm.alarmClock.AlarmClock.snooze(snoozeTime, this)
         wasAlarmSnoozed = true
         finishActivity(true)
     }
@@ -301,19 +300,14 @@ class ReminderActivity : AppCompatActivity() {
     }
 
     private fun showOverLockscreen() {
-        with(getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager) {
-            requestDismissKeyguard(this@ReminderActivity, null)
-        }
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        )
 
         if (isOreoMr1Plus()) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-            return
-        } else {
-            window.addFlags(
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                        @Suppress("DEPRECATION") WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-            )
         }
     }
 }
