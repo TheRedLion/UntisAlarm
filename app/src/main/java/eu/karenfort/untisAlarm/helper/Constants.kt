@@ -35,10 +35,10 @@ const val MAX_TBS_MIN = 12 * 60 //12h*60min
 //not settable defaults
 const val INCREASE_VOLUME_DELAY = 300L
 const val MIN_ALARM_VOLUME_FOR_INCREASING_ALARMS = 1
-const val MAX_ALARM_DURATION = 60
+const val MAX_ALARM_DURATION = 60 //seconds
 const val DISABLED_BUTTON_ALPHA_VALUE = .4F
 
-const val NEW_ALARM_TIME_MILLIS = 60 * 60 * 1000 //1 hour
+//const val NEW_ALARM_TIME_MILLIS = 60 * 60 * 1000 //1 hour //todo remove if repeating alarms work now
 const val NEW_ALARM_TIME_MILLIS_WHEN_NO_ALARM_TODAY = 5 * 60 * 60 * 1000 //5 hours
 const val NEW_ALARM_TIME_MILLIS_WHEN_NO_SCHOOL_FOUND = 3 * 24 * 60 * 60 * 1000 //3 days
 

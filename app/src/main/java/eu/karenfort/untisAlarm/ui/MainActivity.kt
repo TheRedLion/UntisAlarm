@@ -302,6 +302,7 @@ class MainActivity :
                 //AlarmScheduler(this).schedule(this)
                 CoroutineScope(Dispatchers.Default).launch {
                     currentAlarmClockDateTime = AlarmClockSetter.main(this@MainActivity, true)
+                    AlarmScheduler(this@MainActivity).schedule()
                 }
             } else {
                 binding.toggleAlarm.isChecked = false

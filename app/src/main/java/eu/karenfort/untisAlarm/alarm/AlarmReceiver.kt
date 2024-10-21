@@ -30,6 +30,9 @@ class AlarmReceiver : BroadcastReceiver() {
         ) {
             return
         }
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED) {
+            AlarmScheduler(context).schedule()
+        }
         CoroutineScope(Dispatchers.Default).launch {
             AlarmClockSetter.main(context)
         }

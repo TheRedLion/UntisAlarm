@@ -12,11 +12,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import eu.karenfort.untisAlarm.alarmClock.AlarmClock
-import eu.karenfort.untisAlarm.alarmClock.AlarmClockSetter
 import eu.karenfort.untisAlarm.helper.ALARM_REQUEST_CODE
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlarmScheduler(
@@ -25,8 +22,8 @@ class AlarmScheduler(
     private var alarmManager = context.getSystemService(AlarmManager::class.java)
     private val TAG = "AlarmScheduler"
 
-    fun schedule(timeInMills: Int) {
-        Log.i(TAG, "scheduling alarm in $timeInMills ms")
+    fun schedule() {
+        Log.i(TAG, "scheduling alarms")
 
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -36,9 +33,10 @@ class AlarmScheduler(
             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.setAndAllowWhileIdle(
+        alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() + timeInMills,
+            System.currentTimeMillis() + 10000, //run again after 10 seconds
+            AlarmManager.INTERVAL_HOUR,
             pendingIntent
         )
     }
