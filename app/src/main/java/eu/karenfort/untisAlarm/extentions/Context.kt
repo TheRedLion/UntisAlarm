@@ -264,7 +264,6 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         notificationManager.createNotificationChannel(this)
     }
 
-    val dismissIntent = hideAlarmPendingIntent
     val builder = NotificationCompat.Builder(this, ALARM_CLOCK_NOTIFICATION_CHANNEL_ID)
         .setContentTitle(label)
         .setContentText(getAlarmPreviewString(LocalDateTime.now()))
@@ -275,8 +274,12 @@ fun Context.getAlarmNotification(pendingIntent: PendingIntent): Notification {
         .setAutoCancel(true)
         .setChannelId(channelId)
         .addAction(R.drawable.ic_snooze_vector, getString(R.string.snooze), snoozePendingIntent)
-        .addAction(R.drawable.ic_cross_vector, getString(R.string.dismiss_alarm), dismissIntent)
-        .setDeleteIntent(dismissIntent)
+        .addAction(
+            R.drawable.ic_cross_vector,
+            getString(R.string.dismiss_alarm),
+            hideAlarmPendingIntent
+        )
+        .setDeleteIntent(hideAlarmPendingIntent)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
     if (soundUri != Uri.parse("content://silent")) {
